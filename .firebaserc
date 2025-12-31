@@ -5,11 +5,8 @@
   "targets": {
     "myplayground2004": {
       "hosting": {
-        "redpanda-raccoon": [
-          "redpanda-raccoon"
-        ],
-        "malay-literature": [
-          "malay-literature"
+        "academic-advising": [
+          "academic-advising"
         ]
       }
     }
