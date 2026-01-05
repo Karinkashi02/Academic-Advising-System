@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | Advisor Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Blue Theme Colors */
+            --blue-primary: #3498db;
+            --blue-dark: #2980b9;
+            --blue-light: #ebf5fb;
+            --blue-border: #d4e6f1;
+            
+            /* Additional colors */
+            --sidebar-bg: #2c3e50;
+            --sidebar-text: #ecf0f1;
+            --bg-light: #f8f9fa;
+            --bg-card: #ffffff;
+            --text-dark: #2c3e50;
+            --text-light: #7f8c8d;
+            --border: #dfe6e9;
+            
+            /* Action colors - Minimized */
+            --success-green: #27ae60;
+            --danger-red: #e74c3c;
+            --warning: #f39c12;
+            
+            /* Profile specific */
+            --profile-gradient: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.08);
+            z-index: 100;
+            position: relative;
+        }
+
+        .sidebar-header {
+            padding: 24px 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #FFFFFF;
+            text-align: center;
+            line-height: 1.2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo-main {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-main span {
+            color: var(--blue-primary);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 20px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            transition: all 0.2s;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+            font-size: 15px;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-left-color: var(--blue-primary);
+        }
+
+        .nav-item.active {
+            background-color: rgba(52, 152, 219, 0.2);
+            border-left-color: var(--blue-primary);
+            color: white;
+        }
+
+        .nav-item i {
+            margin-right: 12px;
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 13px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .header {
+            background-color: var(--bg-card);
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .profile-btn, .logout-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .profile-btn:hover {
+            background: var(--blue-primary);
+            color: white;
+            border-color: var(--blue-primary);
+        }
+
+        .logout-btn {
+            background: var(--bg-light);
+            color: var(--text-light);
+            border-color: var(--border);
+        }
+
+        .logout-btn:hover {
+            background: var(--blue-light);
+            color: var(--blue-primary);
+        }
+
+        /* Content Area */
+        .content {
+            padding: 30px;
+            flex: 1;
+        }
+
+        /* Profile Card Styles */
+        .profile-card {
+            background: var(--bg-card);
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            margin-bottom: 30px;
+            border-top: 3px solid var(--blue-primary);
+        }
+
+        .profile-header {
+            background: var(--profile-gradient);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 48px;
+            color: white;
+        }
+
+        .profile-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .profile-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .profile-content {
+            padding: 30px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--blue-primary);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--blue-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Detail Rows */
+        .detail-row {
+            display: flex;
+            align-items: flex-start;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--blue-light);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            width: 200px;
+            flex-shrink: 0;
+            color: var(--text-dark);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+        }
+
+        .detail-label i {
+            color: var(--blue-primary);
+            width: 20px;
+            text-align: center;
+        }
+
+        .detail-value {
+            flex: 1;
+            color: var(--text-dark);
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .detail-value p {
+            margin-bottom: 8px;
+        }
+
+        .detail-value p:last-child {
+            margin-bottom: 0;
+        }
+
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--profile-gradient);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Button Styles */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 1px solid var(--blue-light);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: var(--blue-primary);
+            color: white;
+            border: 1px solid var(--blue-primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--blue-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: var(--blue-light);
+            color: var(--blue-primary);
+            border: 1px solid var(--blue-border);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(52, 152, 219, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 13px;
+            background: var(--bg-light);
+            margin-top: auto;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .sidebar .logo-main span,
+            .sidebar .nav-item span {
+                display: none;
+            }
+            
+            .logo-main {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .sidebar .nav-item {
+                justify-content: center;
+                padding: 18px 0;
+            }
+            
+            .sidebar .nav-item i {
+                margin-right: 0;
+                font-size: 20px;
+            }
+            
+            .header h1 {
+                font-size: 18px;
+            }
+            
+            .profile-avatar {
+                width: 100px;
+                height: 100px;
+                font-size: 40px;
+            }
+            
+            .profile-title {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .header-actions {
+                align-self: flex-end;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .profile-header {
+                padding: 30px 20px;
+            }
+            
+            .profile-content {
+                padding: 20px;
+            }
+            
+            .detail-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .detail-label {
+                width: 100%;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 32px;
+            }
+            
+            .profile-title {
+                font-size: 20px;
+            }
+            
+            .section-title {
+                font-size: 18px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-main">
+                        Advise<span>.</span>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="advisor_dashboard.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="manage_student.html" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>My Students</span>
+                </a>
+                <a href="view_advising_session.html" class="nav-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Advising Sessions</span>
+                </a>
+                <a href="advisor_report.html" class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reports</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <p>© 2025 Advising System</p>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <h1>My Profile - Advisor Dashboard</h1>
+                <div class="header-actions">
+                    <div class="profile-btn" title="Advisor Profile">👤</div>
+                    <div class="logout-btn" title="Logout" id="logoutBtn">🚪</div>
+                </div>
+            </header>
+            
+            <!-- Content Area -->
+            <div class="content">
+                <!-- Profile Card -->
+                <div class="profile-card">
+                    <!-- Profile Header with Avatar -->
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <h2 class="profile-title">Dr. Sarah Johnson</h2>
+                        <div class="profile-badge">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span>Academic Advisor</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Content -->
+                    <div class="profile-content">
+                        <!-- Profile Details Section -->
+                        <div class="section-title">
+                            <i class="fas fa-user-circle"></i>
+                            <span>Profile Details</span>
+                        </div>
+                        
+                        <!-- Role -->
+                        <div class="detail-row">
+                            <div class="detail-label">
+                                <i class="fas fa-user-tag"></i>
+                                <span>Role</span>
+                            </div>
+                            <div class="detail-value">
+                                <div class="role-badge">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                    <span>Academic Advisor</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Email Address -->
+                        <div class="detail-row">
+                            <div class="detail-label">
+                                <i class="fas fa-envelope"></i>
+                                <span>Email Address</span>
+                            </div>
+                            <div class="detail-value">
+                                sarah.johnson@university.edu
+                            </div>
+                        </div>
+                        
+                        <!-- Full Name -->
+                        <div class="detail-row">
+                            <div class="detail-label">
+                                <i class="fas fa-user"></i>
+                                <span>Full Name</span>
+                            </div>
+                            <div class="detail-value">
+                                Dr. Sarah Johnson
+                            </div>
+                        </div>
+                        
+                        <!-- Department -->
+                        <div class="detail-row">
+                            <div class="detail-label">
+                                <i class="fas fa-university"></i>
+                                <span>Department</span>
+                            </div>
+                            <div class="detail-value">
+                                Computer Science
+                            </div>
+                        </div>
+                        
+                        <!-- Expertise -->
+                        <div class="detail-row">
+                            <div class="detail-label">
+                                <i class="fas fa-lightbulb"></i>
+                                <span>Expertise</span>
+                            </div>
+                            <div class="detail-value">
+                                Machine Learning, Data Science, Artificial Intelligence
+                            </div>
+                        </div>
+                        
+                        <!-- Office Hours -->
+                        <div class="detail-row">
+                            <div class="detail-label">
+                                <i class="fas fa-clock"></i>
+                                <span>Office Hours</span>
+                            </div>
+                            <div class="detail-value">
+                                <p>Monday & Wednesday: 2:00 PM - 4:00 PM</p>
+                                <p>Thursday: 10:00 AM - 12:00 PM</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Phone Number -->
+                        <div class="detail-row">
+                            <div class="detail-label">
+                                <i class="fas fa-phone"></i>
+                                <span>Phone Number</span>
+                            </div>
+                            <div class="detail-value">
+                                +1 (555) 123-4567
+                            </div>
+                        </div>
+                        
+                        <!-- Office Location -->
+                        <div class="detail-row">
+                            <div class="detail-label">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Office Location</span>
+                            </div>
+                            <div class="detail-value">
+                                Science Building, Room 305
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="action-buttons">
+                            <a href="advisor_dashboard.html" class="btn btn-primary">
+                                <i class="fas fa-tachometer-alt"></i>
+                                <span>Back to Dashboard</span>
+                            </a>
+                            <button class="btn btn-secondary" id="editProfileBtn">
+                                <i class="fas fa-edit"></i>
+                                <span>Edit Profile</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <footer>
+                © 2025 Advising System — University Academic Services
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Logout button functionality
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                if (confirm("Are you sure you want to logout?")) {
+                    alert("You have been logged out.");
+                    // In a real application, redirect to logout page
+                    // window.location.href = 'logout.html';
+                }
+            });
+
+            // Edit profile button functionality
+            document.getElementById('editProfileBtn').addEventListener('click', function() {
+                showEditForm();
+            });
+
+            // Profile button in header - already on profile page, so just scroll to top
+            document.querySelector('.profile-btn').addEventListener('click', function() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+
+        function showEditForm() {
+            // Create modal for edit form
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            `;
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: white;
+                border-radius: 10px;
+                width: 90%;
+                max-width: 600px;
+                max-height: 90vh;
+                overflow-y: auto;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            `;
+            
+            modalContent.innerHTML = `
+                <div style="padding: 25px; border-bottom: 1px solid #dfe6e9;">
+                    <h3 style="color: #3498db; font-size: 20px; font-weight: 700; margin: 0;">Edit Profile</h3>
+                </div>
+                <div style="padding: 25px;">
+                    <form id="editProfileForm">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2c3e50;">First Name</label>
+                                <input type="text" style="width: 100%; padding: 12px 15px; border: 1px solid #dfe6e9; border-radius: 6px;" value="Sarah" required>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2c3e50;">Last Name</label>
+                                <input type="text" style="width: 100%; padding: 12px 15px; border: 1px solid #dfe6e9; border-radius: 6px;" value="Johnson" required>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2c3e50;">Email</label>
+                            <input type="email" style="width: 100%; padding: 12px 15px; border: 1px solid #dfe6e9; border-radius: 6px;" value="sarah.johnson@university.edu" required>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2c3e50;">Department</label>
+                            <input type="text" style="width: 100%; padding: 12px 15px; border: 1px solid #dfe6e9; border-radius: 6px;" value="Computer Science" required>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2c3e50;">Expertise</label>
+                            <textarea style="width: 100%; padding: 12px 15px; border: 1px solid #dfe6e9; border-radius: 6px; min-height: 80px; resize: vertical;">Machine Learning, Data Science, Artificial Intelligence</textarea>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2c3e50;">Office Hours</label>
+                            <textarea style="width: 100%; padding: 12px 15px; border: 1px solid #dfe6e9; border-radius: 6px; min-height: 80px; resize: vertical;">Monday & Wednesday: 2:00 PM - 4:00 PM\nThursday: 10:00 AM - 12:00 PM</textarea>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2c3e50;">Phone Number</label>
+                                <input type="tel" style="width: 100%; padding: 12px 15px; border: 1px solid #dfe6e9; border-radius: 6px;" value="+1 (555) 123-4567">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2c3e50;">Office Location</label>
+                                <input type="text" style="width: 100%; padding: 12px 15px; border: 1px solid #dfe6e9; border-radius: 6px;" value="Science Building, Room 305">
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2c3e50;">Change Password (Optional)</label>
+                            <input type="password" style="width: 100%; padding: 12px 15px; border: 1px solid #dfe6e9; border-radius: 6px;" placeholder="Leave blank to keep current password">
+                        </div>
+                    </form>
+                </div>
+                <div style="padding: 20px 25px; border-top: 1px solid #dfe6e9; display: flex; justify-content: flex-end; gap: 15px;">
+                    <button id="cancelEditBtn" style="padding: 10px 18px; border-radius: 6px; background: #ebf5fb; color: #3498db; border: 1px solid #d4e6f1; font-weight: 600; cursor: pointer;">Cancel</button>
+                    <button id="saveEditBtn" style="padding: 10px 18px; border-radius: 6px; background: #3498db; color: white; border: 1px solid #3498db; font-weight: 600; cursor: pointer;">Save Changes</button>
+                </div>
+            `;
+            
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+            
+            // Add event listeners
+            document.getElementById('cancelEditBtn').addEventListener('click', function() {
+                document.body.removeChild(modal);
+            });
+            
+            document.getElementById('saveEditBtn').addEventListener('click', function() {
+                // Validate form
+                const form = document.getElementById('editProfileForm');
+                const inputs = form.querySelectorAll('input[required]');
+                let isValid = true;
+                
+                inputs.forEach(input => {
+                    if (!input.value.trim()) {
+                        isValid = false;
+                        input.style.borderColor = '#e74c3c';
+                    } else {
+                        input.style.borderColor = '#dfe6e9';
+                    }
+                });
+                
+                if (!isValid) {
+                    alert('Please fill in all required fields.');
+                    return;
+                }
+                
+                // Show success message
+                alert('Profile updated successfully!');
+                
+                // Close modal
+                document.body.removeChild(modal);
+                
+                // In a real application, you would update the UI with new data
+                // For demo, we'll just refresh the page
+                // location.reload();
+            });
+            
+            // Close modal when clicking outside
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

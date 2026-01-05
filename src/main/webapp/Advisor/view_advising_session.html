@@ -353,15 +353,36 @@
         .status-badge {
             display: inline-block;
             padding: 6px 12px;
-            background-color: rgba(52, 152, 219, 0.1);
-            color: var(--blue-primary);
             border-radius: 16px;
             font-size: 12px;
             font-weight: 600;
+        }
+
+        .status-pending {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--warning);
+            border: 1px solid rgba(243, 156, 18, 0.3);
+        }
+
+        .status-approved {
+            background-color: rgba(39, 174, 96, 0.1);
+            color: var(--success-green);
+            border: 1px solid rgba(39, 174, 96, 0.3);
+        }
+
+        .status-rejected {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger-red);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .status-completed {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--blue-primary);
             border: 1px solid rgba(52, 152, 219, 0.3);
         }
 
-        /* Action buttons - Updated to match Gurindam style */
+        /* Action buttons */
         .action-buttons {
             display: flex;
             gap: 8px;
@@ -380,6 +401,18 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
+        }
+
+        .btn-primary {
+            background-color: var(--blue-primary);
+            color: white;
+            border: 1px solid var(--blue-primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--blue-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
         }
 
         .btn-approve {
@@ -442,6 +475,54 @@
             border-color: var(--blue-primary);
         }
 
+        /* Pagination Styles */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .pagination-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--blue-border);
+            background: white;
+            color: var(--blue-primary);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background-color: var(--blue-light);
+            transform: translateY(-2px);
+        }
+
+        .pagination-btn.active {
+            background-color: var(--blue-primary);
+            color: white;
+            border-color: var(--blue-primary);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-info {
+            margin: 0 15px;
+            color: var(--text-light);
+            font-size: 14px;
+            min-width: 150px;
+            text-align: center;
+        }
+
         /* Footer */
         footer {
             text-align: center;
@@ -485,6 +566,11 @@
             
             .search-box {
                 width: 200px;
+            }
+            
+            .pagination {
+                flex-direction: column;
+                gap: 15px;
             }
         }
 
@@ -534,6 +620,10 @@
                 width: 100%;
                 justify-content: center;
             }
+            
+            .pagination-info {
+                margin: 10px 0;
+            }
         }
 
         @media (max-width: 480px) {
@@ -553,6 +643,11 @@
                 padding: 6px 10px;
                 font-size: 12px;
             }
+            
+            .pagination-btn {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
         }
     </style>
 </head>
@@ -569,34 +664,34 @@
             </div>
             
             <nav class="sidebar-nav">
-                <a href="#" class="nav-item">
+                <a href="advisor_dashboard.html" class="nav-item">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="manage_student.html" class="nav-item">
                     <i class="fas fa-users"></i>
-                    <span>Manage Students</span>
+                    <span>My Advisees</span>
                 </a>
-                <a href="#" class="nav-item active">
+                <a href="view_advising_session.html" class="nav-item active">
                     <i class="fas fa-calendar-check"></i>
                     <span>Advising Sessions</span>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="advisor_report.html" class="nav-item">
                     <i class="fas fa-chart-bar"></i>
                     <span>Reports</span>
                 </a>
             </nav>
             
             <div class="sidebar-footer">
-                <p>© 2025 Advising System</p>
+                © 2025 Advising System
             </div>
-        </div>
+        </div>  <!-- END OF SIDEBAR -->
         
         <!-- Main Content -->
         <div class="main-content">
             <!-- Header -->
             <header class="header">
-                <h1>Advising Session Requests</h1>
+                <h1>Advising Session Management</h1>
                 <div class="header-actions">
                     <div class="search-btn" title="Search">🔍</div>
                     <div class="profile-btn" title="Admin Profile">👤</div>
@@ -646,12 +741,47 @@
                     </div>
                 </div>
                 
-                <!-- Advising Sessions Card -->
+                <!-- My Advising Sessions Card -->
                 <div class="card">
                     <div class="card-header">
-                        <h2>Advising Session List</h2>
+                        <h2>My Advising Sessions</h2>
                         <div style="display: flex; gap: 15px; align-items: center;">
-                            <input type="text" class="search-box" placeholder="Search sessions..." id="searchInput">
+                            <button class="btn btn-primary" id="createSessionBtn">
+                                <i class="fas fa-calendar-plus"></i> Create New Session
+                            </button>
+                            <input type="text" class="search-box" placeholder="Search my sessions..." id="searchMySessions">
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table id="mySessionsTable">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Session Name</th>
+                                    <th>Student(s)</th>
+                                    <th>Date & Time</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mySessionsTableBody">
+                                <!-- Sessions will be loaded by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination for My Sessions -->
+                    <div class="pagination" id="mySessionsPagination">
+                        <!-- Pagination will be loaded by JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Session Requests Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Session Requests for Review</h2>
+                        <div style="display: flex; gap: 15px; align-items: center;">
+                            <input type="text" class="search-box" placeholder="Search requests..." id="searchRequests">
                             <button class="btn btn-export" id="exportBtn">
                                 <i class="fas fa-download"></i> Export
                             </button>
@@ -659,120 +789,27 @@
                     </div>
                     
                     <div class="table-container">
-                        <table id="sessionsTable">
+                        <table id="requestsTable">
                             <thead>
                                 <tr>
                                     <th>No.</th>
                                     <th>Session Name</th>
                                     <th>Student Name</th>
                                     <th>Date</th>
+                                    <th>Status</th>
                                     <th>Notes</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="sessionsTableBody">
-                                <!-- Session 1 -->
-                                <tr data-id="1">
-                                    <td class="number-cell">1</td>
-                                    <td>
-                                        <div class="session-name-cell">Course Selection Advising</div>
-                                        <div class="session-type-cell">Academic • 45 mins</div>
-                                    </td>
-                                    <td>
-                                        <div class="student-name-cell">Sarah Johnson</div>
-                                        <div class="student-id-cell">ID: S10023</div>
-                                    </td>
-                                    <td class="date-cell">Oct 15, 2023</td>
-                                    <td class="notes-cell">Student needs guidance on selecting courses for Spring 2024 semester. Interested in Data Science track.</td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-approve" onclick="approveSession(1)">
-                                                <i class="fas fa-check"></i> Approve
-                                            </button>
-                                            <button class="btn btn-reject" onclick="rejectSession(1)">
-                                                <i class="fas fa-times"></i> Reject
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                
-                                <!-- Session 3 -->
-                                <tr data-id="3">
-                                    <td class="number-cell">2</td>
-                                    <td>
-                                        <div class="session-name-cell">Internship Guidance</div>
-                                        <div class="session-type-cell">Career • 60 mins</div>
-                                    </td>
-                                    <td>
-                                        <div class="student-name-cell">David Wilson</div>
-                                        <div class="student-id-cell">ID: S10067</div>
-                                    </td>
-                                    <td class="date-cell">Oct 20, 2023</td>
-                                    <td class="notes-cell">Student needs resources for summer internship applications. Resume review requested.</td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-approve" onclick="approveSession(3)">
-                                                <i class="fas fa-check"></i> Approve
-                                            </button>
-                                            <button class="btn btn-reject" onclick="rejectSession(3)">
-                                                <i class="fas fa-times"></i> Reject
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                
-                                <!-- Session 6 -->
-                                <tr data-id="6">
-                                    <td class="number-cell">3</td>
-                                    <td>
-                                        <div class="session-name-cell">Research Opportunities</div>
-                                        <div class="session-type-cell">Academic • 45 mins</div>
-                                    </td>
-                                    <td>
-                                        <div class="student-name-cell">Olivia Taylor</div>
-                                        <div class="student-id-cell">ID: S10034</div>
-                                    </td>
-                                    <td class="date-cell">Oct 28, 2023</td>
-                                    <td class="notes-cell">Student interested in AI research opportunities. Needs connection with faculty.</td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-approve" onclick="approveSession(6)">
-                                                <i class="fas fa-check"></i> Approve
-                                            </button>
-                                            <button class="btn btn-reject" onclick="rejectSession(6)">
-                                                <i class="fas fa-times"></i> Reject
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                
-                                <!-- Session 7 -->
-                                <tr data-id="7">
-                                    <td class="number-cell">4</td>
-                                    <td>
-                                        <div class="session-name-cell">Career Counseling</div>
-                                        <div class="session-type-cell">Career • 60 mins</div>
-                                    </td>
-                                    <td>
-                                        <div class="student-name-cell">Robert Brown</div>
-                                        <div class="student-id-cell">ID: S10056</div>
-                                    </td>
-                                    <td class="date-cell">Nov 1, 2023</td>
-                                    <td class="notes-cell">Student unsure about career path after graduation. Wants to explore options in tech industry.</td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-approve" onclick="approveSession(7)">
-                                                <i class="fas fa-check"></i> Approve
-                                            </button>
-                                            <button class="btn btn-reject" onclick="rejectSession(7)">
-                                                <i class="fas fa-times"></i> Reject
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                
+                            <tbody id="requestsTableBody">
+                                <!-- Requests will be loaded by JavaScript -->
                             </tbody>
                         </table>
+                    </div>
+                    
+                    <!-- Pagination for Session Requests -->
+                    <div class="pagination" id="requestsPagination">
+                        <!-- Pagination will be loaded by JavaScript -->
                     </div>
                 </div>
             </div>
@@ -784,61 +821,727 @@
     </div>
 
     <script>
-        // Track session statuses
-        let sessionStatuses = {
-            1: "pending",
-            2: "approved",
-            3: "pending",
-            4: "approved",
-            5: "rejected",
-            6: "pending",
-            7: "pending",
-            8: "approved"
-        };
+        // Database for "My Advising Sessions"
+        const mySessions = [
+            {
+                id: 101,
+                name: "Graduation Planning",
+                type: "Graduation Planning",
+                duration: "60 mins",
+                students: ["Sarah Johnson", "Emily Davis"],
+                date: "Oct 25, 2023",
+                time: "10:00 AM",
+                notes: "Review graduation requirements and plan final semester courses.",
+                createdBy: "Advisor"
+            },
+            {
+                id: 102,
+                name: "Academic Progress Review",
+                type: "Academic Advising",
+                duration: "45 mins",
+                students: ["Michael Chen"],
+                date: "Oct 26, 2023",
+                time: "2:00 PM",
+                notes: "Mid-semester progress check and course adjustment discussion.",
+                createdBy: "Advisor"
+            },
+            {
+                id: 103,
+                name: "Research Guidance",
+                type: "Research Guidance",
+                duration: "90 mins",
+                students: ["Olivia Taylor"],
+                date: "Oct 27, 2023",
+                time: "11:30 AM",
+                notes: "Discuss research opportunities in AI ethics and machine learning.",
+                createdBy: "Advisor"
+            },
+            {
+                id: 104,
+                name: "Study Abroad Planning",
+                type: "Academic Advising",
+                duration: "45 mins",
+                students: ["Amanda Wilson"],
+                date: "Oct 28, 2023",
+                time: "3:15 PM",
+                notes: "Explore study abroad options for next academic year.",
+                createdBy: "Advisor"
+            },
+            {
+                id: 105,
+                name: "Capstone Project Review",
+                type: "Research Guidance",
+                duration: "60 mins",
+                students: ["Thomas Anderson"],
+                date: "Oct 29, 2023",
+                time: "9:00 AM",
+                notes: "Review capstone project proposal and timeline.",
+                createdBy: "Advisor"
+            },
+            {
+                id: 106,
+                name: "Career Counseling",
+                type: "Career Counseling",
+                duration: "60 mins",
+                students: ["Robert Brown"],
+                date: "Oct 30, 2023",
+                time: "1:45 PM",
+                notes: "Discuss career options in cybersecurity industry.",
+                createdBy: "Advisor"
+            },
+            {
+                id: 107,
+                name: "Tutoring Support Planning",
+                type: "Academic Advising",
+                duration: "30 mins",
+                students: ["Jennifer Lee"],
+                date: "Oct 31, 2023",
+                time: "10:30 AM",
+                notes: "Set up tutoring support for statistics courses.",
+                createdBy: "Advisor"
+            },
+            {
+                id: 108,
+                name: "Time Management Workshop",
+                type: "Personal Development",
+                duration: "90 mins",
+                students: ["Sophia Rodriguez", "James Martinez"],
+                date: "Nov 1, 2023",
+                time: "4:00 PM",
+                notes: "Group session on effective time management strategies.",
+                createdBy: "Advisor"
+            },
+            {
+                id: 109,
+                name: "Graduate School Applications",
+                type: "Academic Advising",
+                duration: "45 mins",
+                students: ["William Garcia"],
+                date: "Nov 2, 2023",
+                time: "2:30 PM",
+                notes: "Review graduate school application materials and timeline.",
+                createdBy: "Advisor"
+            },
+            {
+                id: 110,
+                name: "Internship Preparation",
+                type: "Career Counseling",
+                duration: "60 mins",
+                students: ["David Wilson"],
+                date: "Nov 3, 2023",
+                time: "11:00 AM",
+                notes: "Prepare for upcoming internship interviews and applications.",
+                createdBy: "Advisor"
+            },
+            {
+                id: 111,
+                name: "Academic Probation Review",
+                type: "Academic Advising",
+                duration: "60 mins",
+                students: ["James Martinez"],
+                date: "Nov 4, 2023",
+                time: "3:00 PM",
+                notes: "Review academic standing and create improvement plan.",
+                createdBy: "Advisor"
+            },
+            {
+                id: 112,
+                name: "Leadership Development",
+                type: "Personal Development",
+                duration: "45 mins",
+                students: ["Emily Davis"],
+                date: "Nov 5, 2023",
+                time: "10:15 AM",
+                notes: "Discuss leadership opportunities on campus and skill development.",
+                createdBy: "Advisor"
+            }
+        ];
 
-        // Initialize stats
-        updateStats();
+        // Database for "Session Requests"
+        const sessionRequests = [
+            {
+                id: 1,
+                name: "Course Selection Advising",
+                type: "Academic",
+                duration: "45 mins",
+                student: "Sarah Johnson",
+                studentId: "S10023",
+                date: "Oct 15, 2023",
+                notes: "Student needs guidance on selecting courses for Spring 2024 semester. Interested in Data Science track.",
+                status: "pending"
+            },
+            {
+                id: 2,
+                name: "Graduate School Planning",
+                type: "Academic",
+                duration: "60 mins",
+                student: "Michael Chen",
+                studentId: "S10045",
+                date: "Oct 16, 2023",
+                notes: "Discuss graduate school options and application timeline.",
+                status: "approved"
+            },
+            {
+                id: 3,
+                name: "Internship Guidance",
+                type: "Career",
+                duration: "60 mins",
+                student: "David Wilson",
+                studentId: "S10067",
+                date: "Oct 20, 2023",
+                notes: "Student needs resources for summer internship applications. Resume review requested.",
+                status: "pending"
+            },
+            {
+                id: 4,
+                name: "Personal Development",
+                type: "Personal",
+                duration: "45 mins",
+                student: "Emily Davis",
+                studentId: "S10089",
+                date: "Oct 22, 2023",
+                notes: "Student wants to improve public speaking skills and leadership abilities.",
+                status: "approved"
+            },
+            {
+                id: 5,
+                name: "Academic Probation",
+                type: "Academic",
+                duration: "60 mins",
+                student: "Robert Brown",
+                studentId: "S10012",
+                date: "Oct 24, 2023",
+                notes: "Student on academic probation needs improvement plan.",
+                status: "rejected"
+            },
+            {
+                id: 6,
+                name: "Research Opportunities",
+                type: "Academic",
+                duration: "45 mins",
+                student: "Olivia Taylor",
+                studentId: "S10034",
+                date: "Oct 28, 2023",
+                notes: "Student interested in AI research opportunities. Needs connection with faculty.",
+                status: "pending"
+            },
+            {
+                id: 7,
+                name: "Career Counseling",
+                type: "Career",
+                duration: "60 mins",
+                student: "Robert Brown",
+                studentId: "S10056",
+                date: "Nov 1, 2023",
+                notes: "Student unsure about career path after graduation. Wants to explore options in tech industry.",
+                status: "pending"
+            },
+            {
+                id: 8,
+                name: "Study Skills Workshop",
+                type: "Academic",
+                duration: "90 mins",
+                student: "James Martinez",
+                studentId: "S10078",
+                date: "Nov 3, 2023",
+                notes: "Group session requested for study skills and time management techniques.",
+                status: "approved"
+            },
+            {
+                id: 9,
+                name: "Course Withdrawal",
+                type: "Academic",
+                duration: "30 mins",
+                student: "Amanda Wilson",
+                studentId: "S10091",
+                date: "Nov 5, 2023",
+                notes: "Student considering withdrawing from a challenging course. Needs guidance.",
+                status: "pending"
+            },
+            {
+                id: 10,
+                name: "Summer Research Program",
+                type: "Research",
+                duration: "45 mins",
+                student: "Thomas Anderson",
+                studentId: "S10023",
+                date: "Nov 7, 2023",
+                notes: "Discuss summer research program opportunities and applications.",
+                status: "pending"
+            },
+            {
+                id: 11,
+                name: "Extracurricular Planning",
+                type: "Personal",
+                duration: "45 mins",
+                student: "Sophia Rodriguez",
+                studentId: "S10045",
+                date: "Nov 9, 2023",
+                notes: "Student wants to balance academics with extracurricular activities.",
+                status: "pending"
+            },
+            {
+                id: 12,
+                name: "Industry Connections",
+                type: "Career",
+                duration: "60 mins",
+                student: "William Garcia",
+                studentId: "S10067",
+                date: "Nov 11, 2023",
+                notes: "Seeking guidance on networking and industry connections in cybersecurity.",
+                status: "pending"
+            }
+        ];
 
-        // Function to approve a session
-        function approveSession(sessionId) {
-            const row = document.querySelector(`tr[data-id="${sessionId}"]`);
-            const approveBtn = row.querySelector('.btn-approve');
-            const rejectBtn = row.querySelector('.btn-reject');
+        // Pagination variables for My Sessions
+        let currentPageMySessions = 1;
+        const sessionsPerPage = 8;
+        let filteredMySessions = [];
+
+        // Pagination variables for Session Requests
+        let currentPageRequests = 1;
+        const requestsPerPage = 8;
+        let filteredRequests = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize filtered sessions
+            filteredMySessions = [...mySessions];
+            filteredRequests = [...sessionRequests];
             
-            // Update session status
-            sessionStatuses[sessionId] = "approved";
-            row.setAttribute('data-status', 'approved');
+            // Load My Sessions
+            renderMySessions();
+            renderMySessionsPagination();
             
-            // Update buttons
-            approveBtn.disabled = true;
-            rejectBtn.disabled = false;
+            // Load Session Requests
+            renderRequests();
+            renderRequestsPagination();
             
-            // Update stats
             updateStats();
             
-            // Show notification
-            alert(`Session #${sessionId} has been approved.`);
+            // Add event listeners
+            document.getElementById('createSessionBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Create Session modal would open here. This would allow creating a new advising session.');
+            });
+            
+            // Search functionality for My Sessions
+            document.getElementById('searchMySessions').addEventListener('keyup', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                if (searchTerm.trim() === '') {
+                    filteredMySessions = [...mySessions];
+                } else {
+                    filteredMySessions = mySessions.filter(session => {
+                        return session.name.toLowerCase().includes(searchTerm) ||
+                               session.type.toLowerCase().includes(searchTerm) ||
+                               session.students.some(student => student.toLowerCase().includes(searchTerm)) ||
+                               session.notes.toLowerCase().includes(searchTerm);
+                    });
+                }
+                
+                currentPageMySessions = 1;
+                renderMySessions();
+                renderMySessionsPagination();
+            });
+
+            // Search functionality for Requests
+            document.getElementById('searchRequests').addEventListener('keyup', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                if (searchTerm.trim() === '') {
+                    filteredRequests = [...sessionRequests];
+                } else {
+                    filteredRequests = sessionRequests.filter(request => {
+                        return request.name.toLowerCase().includes(searchTerm) ||
+                               request.student.toLowerCase().includes(searchTerm) ||
+                               request.notes.toLowerCase().includes(searchTerm) ||
+                               request.status.toLowerCase().includes(searchTerm);
+                    });
+                }
+                
+                currentPageRequests = 1;
+                renderRequests();
+                renderRequestsPagination();
+            });
+            
+            // Export button
+            document.getElementById('exportBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Export functionality would download session data as CSV file.');
+            });
+            
+            // Header action buttons
+            document.querySelector('.search-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('searchMySessions').focus();
+            });
+            
+            document.querySelector('.profile-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert("Admin profile page would open here.");
+            });
+            
+            document.querySelector('.logout-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm("Are you sure you want to logout?")) {
+                    alert("You have been logged out.");
+                }
+            });
+        });
+
+        // Render My Sessions for current page
+        function renderMySessions() {
+            const tbody = document.getElementById('mySessionsTableBody');
+            tbody.innerHTML = '';
+            
+            // Calculate start and end index for current page
+            const startIndex = (currentPageMySessions - 1) * sessionsPerPage;
+            const endIndex = startIndex + sessionsPerPage;
+            const pageSessions = filteredMySessions.slice(startIndex, endIndex);
+            
+            if (pageSessions.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-light);">
+                            <i class="fas fa-calendar-times" style="font-size: 32px; margin-bottom: 15px; display: block;"></i>
+                            <h3 style="margin-bottom: 10px; color: var(--text-light);">No sessions found</h3>
+                            <p>Try adjusting your search criteria or create a new session</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            pageSessions.forEach((session, index) => {
+                const row = document.createElement('tr');
+                row.setAttribute('data-id', session.id);
+                
+                // Format students list
+                const studentsText = session.students.length > 1 
+                    ? `${session.students[0]} + ${session.students.length - 1} more` 
+                    : session.students[0];
+                
+                row.innerHTML = `
+                    <td class="number-cell">${startIndex + index + 1}</td>
+                    <td>
+                        <div class="session-name-cell">${session.name}</div>
+                        <div class="session-type-cell">${session.type} • ${session.duration}</div>
+                    </td>
+                    <td>
+                        <div class="student-name-cell">${studentsText}</div>
+                        <div class="student-id-cell">${session.students.length} student(s)</div>
+                    </td>
+                    <td class="date-cell">
+                        <div>${session.date}</div>
+                        <div style="font-size: 12px; color: var(--text-light);">${session.time}</div>
+                    </td>
+                    <td class="notes-cell">${session.notes}</td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        // Render pagination for My Sessions
+        function renderMySessionsPagination() {
+            const totalPages = Math.ceil(filteredMySessions.length / sessionsPerPage);
+            const paginationContainer = document.getElementById('mySessionsPagination');
+            
+            if (totalPages <= 1) {
+                paginationContainer.style.display = 'none';
+                return;
+            }
+            
+            paginationContainer.style.display = 'flex';
+            
+            let paginationHTML = `
+                <button class="pagination-btn" id="firstPageMySessions" ${currentPageMySessions === 1 ? 'disabled' : ''}>
+                    <i class="fas fa-angle-double-left"></i> First
+                </button>
+                <button class="pagination-btn" id="prevPageMySessions" ${currentPageMySessions === 1 ? 'disabled' : ''}>
+                    <i class="fas fa-angle-left"></i> Previous
+                </button>
+                <div class="pagination-info">
+                    Page ${currentPageMySessions} of ${totalPages}
+                </div>
+            `;
+            
+            // Show page numbers
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPageMySessions - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+            
+            // Adjust start page if we're near the end
+            if (endPage - startPage + 1 < maxVisiblePages) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                if (i === currentPageMySessions) {
+                    paginationHTML += `<button class="pagination-btn active">${i}</button>`;
+                } else {
+                    paginationHTML += `<button class="pagination-btn page-number-my-sessions" data-page="${i}">${i}</button>`;
+                }
+            }
+            
+            paginationHTML += `
+                <button class="pagination-btn" id="nextPageMySessions" ${currentPageMySessions === totalPages ? 'disabled' : ''}>
+                    Next <i class="fas fa-angle-right"></i>
+                </button>
+                <button class="pagination-btn" id="lastPageMySessions" ${currentPageMySessions === totalPages ? 'disabled' : ''}>
+                    Last <i class="fas fa-angle-double-right"></i>
+                </button>
+            `;
+            
+            paginationContainer.innerHTML = paginationHTML;
+            
+            // Add event listeners to pagination buttons
+            document.getElementById('firstPageMySessions').addEventListener('click', function(e) {
+                e.preventDefault();
+                goToPageMySessions(1);
+            });
+            
+            document.getElementById('prevPageMySessions').addEventListener('click', function(e) {
+                e.preventDefault();
+                goToPageMySessions(currentPageMySessions - 1);
+            });
+            
+            document.getElementById('nextPageMySessions').addEventListener('click', function(e) {
+                e.preventDefault();
+                goToPageMySessions(currentPageMySessions + 1);
+            });
+            
+            document.getElementById('lastPageMySessions').addEventListener('click', function(e) {
+                e.preventDefault();
+                goToPageMySessions(totalPages);
+            });
+            
+            // Add event listeners to page number buttons
+            document.querySelectorAll('.page-number-my-sessions').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = parseInt(this.getAttribute('data-page'));
+                    goToPageMySessions(page);
+                });
+            });
+        }
+
+        // Go to specific page for My Sessions
+        function goToPageMySessions(page) {
+            const totalPages = Math.ceil(filteredMySessions.length / sessionsPerPage);
+            
+            if (page < 1 || page > totalPages || page === currentPageMySessions) {
+                return;
+            }
+            
+            currentPageMySessions = page;
+            renderMySessions();
+            renderMySessionsPagination();
+        }
+
+        // Render Session Requests for current page
+        function renderRequests() {
+            const tbody = document.getElementById('requestsTableBody');
+            tbody.innerHTML = '';
+            
+            // Calculate start and end index for current page
+            const startIndex = (currentPageRequests - 1) * requestsPerPage;
+            const endIndex = startIndex + requestsPerPage;
+            const pageRequests = filteredRequests.slice(startIndex, endIndex);
+            
+            if (pageRequests.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-light);">
+                            <i class="fas fa-calendar-times" style="font-size: 32px; margin-bottom: 15px; display: block;"></i>
+                            <h3 style="margin-bottom: 10px; color: var(--text-light);">No session requests found</h3>
+                            <p>Try adjusting your search criteria</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            pageRequests.forEach((request, index) => {
+                const row = document.createElement('tr');
+                row.setAttribute('data-id', request.id);
+                row.setAttribute('data-status', request.status);
+                
+                // Get status badge class and text
+                let statusClass, statusText;
+                switch(request.status) {
+                    case 'pending':
+                        statusClass = 'status-pending';
+                        statusText = 'Pending';
+                        break;
+                    case 'approved':
+                        statusClass = 'status-approved';
+                        statusText = 'Approved';
+                        break;
+                    case 'rejected':
+                        statusClass = 'status-rejected';
+                        statusText = 'Rejected';
+                        break;
+                    default:
+                        statusClass = 'status-pending';
+                        statusText = 'Pending';
+                }
+                
+                // Determine button states based on status
+                const isApproved = request.status === "approved";
+                const isRejected = request.status === "rejected";
+                
+                row.innerHTML = `
+                    <td class="number-cell">${startIndex + index + 1}</td>
+                    <td>
+                        <div class="session-name-cell">${request.name}</div>
+                        <div class="session-type-cell">${request.type} • ${request.duration}</div>
+                    </td>
+                    <td>
+                        <div class="student-name-cell">${request.student}</div>
+                        <div class="student-id-cell">ID: ${request.studentId}</div>
+                    </td>
+                    <td class="date-cell">${request.date}</td>
+                    <td>
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    </td>
+                    <td class="notes-cell">${request.notes}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-approve" onclick="approveRequest(${request.id})" ${isApproved ? 'disabled' : ''}>
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="btn btn-reject" onclick="rejectRequest(${request.id})" ${isRejected ? 'disabled' : ''}>
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        // Render pagination for Session Requests
+        function renderRequestsPagination() {
+            const totalPages = Math.ceil(filteredRequests.length / requestsPerPage);
+            const paginationContainer = document.getElementById('requestsPagination');
+            
+            if (totalPages <= 1) {
+                paginationContainer.style.display = 'none';
+                return;
+            }
+            
+            paginationContainer.style.display = 'flex';
+            
+            let paginationHTML = `
+                <button class="pagination-btn" id="firstPageRequests" ${currentPageRequests === 1 ? 'disabled' : ''}>
+                    <i class="fas fa-angle-double-left"></i> First
+                </button>
+                <button class="pagination-btn" id="prevPageRequests" ${currentPageRequests === 1 ? 'disabled' : ''}>
+                    <i class="fas fa-angle-left"></i> Previous
+                </button>
+                <div class="pagination-info">
+                    Page ${currentPageRequests} of ${totalPages}
+                </div>
+            `;
+            
+            // Show page numbers
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPageRequests - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+            
+            // Adjust start page if we're near the end
+            if (endPage - startPage + 1 < maxVisiblePages) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                if (i === currentPageRequests) {
+                    paginationHTML += `<button class="pagination-btn active">${i}</button>`;
+                } else {
+                    paginationHTML += `<button class="pagination-btn page-number-requests" data-page="${i}">${i}</button>`;
+                }
+            }
+            
+            paginationHTML += `
+                <button class="pagination-btn" id="nextPageRequests" ${currentPageRequests === totalPages ? 'disabled' : ''}>
+                    Next <i class="fas fa-angle-right"></i>
+                </button>
+                <button class="pagination-btn" id="lastPageRequests" ${currentPageRequests === totalPages ? 'disabled' : ''}>
+                    Last <i class="fas fa-angle-double-right"></i>
+                </button>
+            `;
+            
+            paginationContainer.innerHTML = paginationHTML;
+            
+            // Add event listeners to pagination buttons
+            document.getElementById('firstPageRequests').addEventListener('click', function(e) {
+                e.preventDefault();
+                goToPageRequests(1);
+            });
+            
+            document.getElementById('prevPageRequests').addEventListener('click', function(e) {
+                e.preventDefault();
+                goToPageRequests(currentPageRequests - 1);
+            });
+            
+            document.getElementById('nextPageRequests').addEventListener('click', function(e) {
+                e.preventDefault();
+                goToPageRequests(currentPageRequests + 1);
+            });
+            
+            document.getElementById('lastPageRequests').addEventListener('click', function(e) {
+                e.preventDefault();
+                goToPageRequests(totalPages);
+            });
+            
+            // Add event listeners to page number buttons
+            document.querySelectorAll('.page-number-requests').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = parseInt(this.getAttribute('data-page'));
+                    goToPageRequests(page);
+                });
+            });
+        }
+
+        // Go to specific page for Session Requests
+        function goToPageRequests(page) {
+            const totalPages = Math.ceil(filteredRequests.length / requestsPerPage);
+            
+            if (page < 1 || page > totalPages || page === currentPageRequests) {
+                return;
+            }
+            
+            currentPageRequests = page;
+            renderRequests();
+            renderRequestsPagination();
+        }
+
+        // Function to approve a session request
+        function approveRequest(sessionId) {
+            const request = sessionRequests.find(r => r.id === sessionId);
+            if (request) {
+                request.status = "approved";
+                renderRequests();
+                renderRequestsPagination();
+                updateStats();
+                alert(`Session request #${sessionId} has been approved.`);
+            }
         }
         
-        // Function to reject a session
-        function rejectSession(sessionId) {
-            const row = document.querySelector(`tr[data-id="${sessionId}"]`);
-            const approveBtn = row.querySelector('.btn-approve');
-            const rejectBtn = row.querySelector('.btn-reject');
-            
-            // Update session status
-            sessionStatuses[sessionId] = "rejected";
-            row.setAttribute('data-status', 'rejected');
-            
-            // Update buttons
-            rejectBtn.disabled = true;
-            approveBtn.disabled = false;
-            
-            // Update stats
-            updateStats();
-            
-            // Show notification
-            alert(`Session #${sessionId} has been rejected.`);
+        // Function to reject a session request
+        function rejectRequest(sessionId) {
+            const request = sessionRequests.find(r => r.id === sessionId);
+            if (request) {
+                request.status = "rejected";
+                renderRequests();
+                renderRequestsPagination();
+                updateStats();
+                alert(`Session request #${sessionId} has been rejected.`);
+            }
         }
         
         // Function to update stats
@@ -847,53 +1550,22 @@
             let approvedCount = 0;
             let rejectedCount = 0;
             
-            // Count statuses
-            for (const id in sessionStatuses) {
-                if (sessionStatuses[id] === "pending") pendingCount++;
-                if (sessionStatuses[id] === "approved") approvedCount++;
-                if (sessionStatuses[id] === "rejected") rejectedCount++;
-            }
+            // Count statuses for requests
+            sessionRequests.forEach(request => {
+                if (request.status === "pending") pendingCount++;
+                if (request.status === "approved") approvedCount++;
+                if (request.status === "rejected") rejectedCount++;
+            });
             
             // Update stat cards
             document.getElementById('pending-count').textContent = pendingCount;
             document.getElementById('approved-count').textContent = approvedCount;
             document.getElementById('rejected-count').textContent = rejectedCount;
-        }
-        
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('keyup', function() {
-            const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('#sessionsTableBody tr');
             
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                if (text.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        });
-        
-        // Export button
-        document.getElementById('exportBtn').addEventListener('click', function() {
-            alert('Export functionality would download session data as CSV file.');
-        });
-        
-        // Header action buttons
-        document.querySelector('.search-btn').addEventListener('click', function() {
-            document.getElementById('searchInput').focus();
-        });
-        
-        document.querySelector('.profile-btn').addEventListener('click', function() {
-            alert("Admin profile page would open here.");
-        });
-        
-        document.querySelector('.logout-btn').addEventListener('click', function() {
-            if (confirm("Are you sure you want to logout?")) {
-                alert("You have been logged out.");
-            }
-        });
+            // Update total sessions (My Sessions + Requests)
+            const totalSessions = mySessions.length + sessionRequests.length;
+            document.getElementById('total-sessions').textContent = totalSessions;
+        }
     </script>
 </body>
 </html>

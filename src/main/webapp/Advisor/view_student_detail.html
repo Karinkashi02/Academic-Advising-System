@@ -720,11 +720,11 @@
             </div>
             
             <nav class="sidebar-nav">
-                <a href="#" class="nav-item">
+                <a href="advisor_dashboard.html" class="nav-item">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="manage_student.html" class="nav-item">
                     <i class="fas fa-users"></i>
                     <span>My Students</span>
                 </a>
@@ -732,7 +732,7 @@
                     <i class="fas fa-user-graduate"></i>
                     <span>Student Details</span>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="advisor_report.html" class="nav-item">
                     <i class="fas fa-chart-bar"></i>
                     <span>Reports</span>
                 </a>
@@ -752,7 +752,7 @@
                     <div class="back-btn" title="Back to Students" id="backBtn">
                         <i class="fas fa-arrow-left"></i>
                     </div>
-                    <div class="profile-btn" title="Advisor Profile">👤</div>
+                    <a href="advisor_profile.html" class="profile-btn" title="Advisor Profile">👤</a>
                     <div class="logout-btn" title="Logout">🚪</div>
                 </div>
             </header>
@@ -1042,10 +1042,8 @@
             
             // Add event listeners to buttons
             document.getElementById('backBtn').addEventListener('click', function() {
-                if (confirm("Go back to students list?")) {
-                    alert("Navigating back to students list...");
-                    // In a real application, this would redirect to the students page
-                }
+                // Go back to My Students page
+                window.location.href = 'manage_student.html';
             });
             
             document.getElementById('printTranscriptBtn').addEventListener('click', function() {
@@ -1063,13 +1061,10 @@
                 // In a real application, this would open a scheduling form
             });
             
-            document.querySelector('.profile-btn').addEventListener('click', function() {
-                alert("Advisor profile page would open here.");
-            });
-            
             document.querySelector('.logout-btn').addEventListener('click', function() {
                 if (confirm("Are you sure you want to logout?")) {
                     alert("You have been logged out.");
+                    // In real application, redirect to logout page
                 }
             });
         });
