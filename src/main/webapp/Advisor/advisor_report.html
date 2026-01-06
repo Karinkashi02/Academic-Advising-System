@@ -64,7 +64,7 @@
             min-height: 100vh;
         }
 
-        /* Sidebar Styles */
+        /* Sidebar Styles - CONSISTENT WITH OTHER PAGES */
         .sidebar {
             width: 260px;
             background-color: var(--sidebar-bg);
@@ -1309,35 +1309,34 @@
             <div class="sidebar-header">
                 <div class="logo">
                     <div class="logo-main">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Advise</span>.
+                        Advise<span>.</span>
                     </div>
                 </div>
             </div>
             
             <nav class="sidebar-nav">
-                <a href="#" class="nav-item">
+                <a href="advisor_dashboard.html" class="nav-item">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="manage_student.html" class="nav-item">
                     <i class="fas fa-users"></i>
                     <span>My Students</span>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="view_advising_session.html" class="nav-item">
                     <i class="fas fa-calendar-check"></i>
                     <span>Advising Sessions</span>
                 </a>
-                <a href="report_page.html" class="nav-item active">
+                <a href="advisor_report.html" class="nav-item active">
                     <i class="fas fa-chart-bar"></i>
-                    <span>Reports & Analytics</span>
+                    <span>Reports</span>
                 </a>
             </nav>
             
             <div class="sidebar-footer">
                 <p>© 2025 Advising System</p>
             </div>
-        </div>
+        </div> <!-- END OF SIDEBAR -->
         
         <!-- Main Content -->
         <div class="main-content">
@@ -1351,7 +1350,7 @@
                     <button class="btn btn-secondary" id="printReportBtn">
                         <i class="fas fa-print"></i> Print
                     </button>
-                    <div class="profile-btn" title="Advisor Profile">👤</div>
+                    <a href="advisor_profile.html" class="profile-btn" title="Advisor Profile">👤</a>
                     <div class="logout-btn" title="Logout">🚪</div>
                 </div>
             </header>
@@ -1673,7 +1672,7 @@
                                         </table>
                                     </div>
                                     <div class="view-all-link">
-                                        <a href="#">View all upcoming sessions →</a>
+                                        <a href="view_advising_session.html">View all upcoming sessions →</a>
                                     </div>
                                 </div>
                             </div>
@@ -1870,11 +1869,7 @@
                 resetAllFilters();
             });
             
-            // Header action buttons
-            document.querySelector('.profile-btn').addEventListener('click', function() {
-                alert("Advisor profile page would open here.");
-            });
-            
+            // Logout button
             document.querySelector('.logout-btn').addEventListener('click', function() {
                 if (confirm("Are you sure you want to logout?")) {
                     alert("You have been logged out.");

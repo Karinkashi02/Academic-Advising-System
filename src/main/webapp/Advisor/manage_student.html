@@ -1036,7 +1036,7 @@
                     <button class="btn btn-primary" id="createSessionBtn">
                         <i class="fas fa-calendar-plus"></i> Create Session
                     </button>
-                    <div class="profile-btn" title="Advisor Profile">👤</div>
+                    <a href="advisor_profile.html" class="profile-btn" title="Advisor Profile">👤</a>
                     <div class="logout-btn" title="Logout">🚪</div>
                 </div>
             </header>
@@ -1557,13 +1557,15 @@
             });
 
             // Header action buttons
-            document.querySelector('.profile-btn').addEventListener('click', function() {
-                alert("Advisor profile page would open here.");
+            document.querySelector('.profile-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = "advisor_profile.html";
             });
             
             document.querySelector('.logout-btn').addEventListener('click', function() {
                 if (confirm("Are you sure you want to logout?")) {
-                    alert("You have been logged out.");
+                    alert("You have been logged out. Redirecting to login page.");
+                    window.location.href = "login.html";
                 }
             });
 

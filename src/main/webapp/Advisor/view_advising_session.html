@@ -694,7 +694,7 @@
                 <h1>Advising Session Management</h1>
                 <div class="header-actions">
                     <div class="search-btn" title="Search">🔍</div>
-                    <div class="profile-btn" title="Admin Profile">👤</div>
+                    <a href="advisor_profile.html" class="profile-btn" title="Admin Profile">👤</a>
                     <div class="logout-btn" title="Logout">🚪</div>
                 </div>
             </header>
@@ -1179,13 +1179,14 @@
             
             document.querySelector('.profile-btn').addEventListener('click', function(e) {
                 e.preventDefault();
-                alert("Admin profile page would open here.");
+                window.location.href = "advisor_profile.html";
             });
             
             document.querySelector('.logout-btn').addEventListener('click', function(e) {
                 e.preventDefault();
                 if (confirm("Are you sure you want to logout?")) {
-                    alert("You have been logged out.");
+                    alert("You have been logged out. Redirecting to login page.");
+                    window.location.href = "login.html";
                 }
             });
         });
