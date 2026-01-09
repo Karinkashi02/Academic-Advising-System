@@ -324,6 +324,28 @@
             transform: translateY(-2px);
         }
 
+        .btn-success {
+            background-color: var(--success-green);
+            color: white;
+            border: 1px solid var(--success-green);
+        }
+
+        .btn-success:hover {
+            background-color: #219653;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-red);
+            color: white;
+            border: 1px solid var(--danger-red);
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+
         .btn-small {
             padding: 6px 10px;
             font-size: 12px;
@@ -907,6 +929,8 @@
             
             .header-actions {
                 align-self: flex-end;
+                width: 100%;
+                justify-content: space-between;
             }
             
             .content {
@@ -988,6 +1012,16 @@
                 padding: 6px 10px;
                 font-size: 12px;
             }
+            
+            .header-actions {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .header-actions .btn {
+                font-size: 12px;
+                padding: 8px 12px;
+            }
         }
     </style>
 </head>
@@ -1033,6 +1067,10 @@
             <header class="header">
                 <h1>My Students - Advisor Dashboard</h1>
                 <div class="header-actions">
+                    <!-- MOVED: Add Student Button to Header -->
+                    <button class="btn btn-success" id="addStudentBtn">
+                        <i class="fas fa-user-plus"></i> Add Advisee
+                    </button>
                     <button class="btn btn-primary" id="createSessionBtn">
                         <i class="fas fa-calendar-plus"></i> Create Session
                     </button>
@@ -1198,6 +1236,107 @@
                 </button>
                 <button class="btn btn-primary" id="submitSessionBtn">
                     <i class="fas fa-calendar-check"></i> Create Session
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for Adding New Advisee -->
+    <div class="modal" id="addStudentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> Add New Advisee</h3>
+                <button class="close-modal" id="closeAddStudentModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addStudentForm">
+                    <div class="form-group">
+                        <label for="studentId"><i class="fas fa-id-card"></i> Student ID *</label>
+                        <input type="text" class="form-control" id="studentId" placeholder="Enter student ID (e.g., S10035)" required>
+                        <div style="font-size: 12px; color: var(--text-light); margin-top: 5px;">
+                            Format: S followed by numbers (e.g., S10035)
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="studentName"><i class="fas fa-user"></i> Full Name *</label>
+                            <input type="text" class="form-control" id="studentName" placeholder="Enter student's full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentEmail"><i class="fas fa-envelope"></i> Email Address *</label>
+                            <input type="email" class="form-control" id="studentEmail" placeholder="student@university.edu" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="studentMajor"><i class="fas fa-graduation-cap"></i> Major/Program *</label>
+                            <select class="form-control" id="studentMajor" required>
+                                <option value="">Select a program</option>
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Data Science">Data Science</option>
+                                <option value="Software Engineering">Software Engineering</option>
+                                <option value="Cybersecurity">Cybersecurity</option>
+                                <option value="Information Systems">Information Systems</option>
+                                <option value="Artificial Intelligence">Artificial Intelligence</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentYear"><i class="fas fa-calendar"></i> Year Level *</label>
+                            <select class="form-control" id="studentYear" required>
+                                <option value="">Select year level</option>
+                                <option value="Freshman">Freshman</option>
+                                <option value="Sophomore">Sophomore</option>
+                                <option value="Junior">Junior</option>
+                                <option value="Senior">Senior</option>
+                                <option value="Graduate">Graduate</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="studentCGPA"><i class="fas fa-chart-line"></i> Current CGPA</label>
+                            <input type="number" class="form-control" id="studentCGPA" placeholder="e.g., 3.5" min="0" max="4" step="0.01">
+                            <div style="font-size: 12px; color: var(--text-light); margin-top: 5px;">
+                                Optional - Leave blank if unknown
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentPhone"><i class="fas fa-phone"></i> Phone Number</label>
+                            <input type="tel" class="form-control" id="studentPhone" placeholder="(555) 123-4567">
+                            <div style="font-size: 12px; color: var(--text-light); margin-top: 5px;">
+                                Optional
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="studentInitialNotes"><i class="fas fa-sticky-note"></i> Initial Notes</label>
+                        <textarea class="form-control" id="studentInitialNotes" placeholder="Any initial observations or notes about this student..." rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="studentRemark"><i class="fas fa-flag"></i> Initial Status</label>
+                        <select class="form-control" id="studentRemark">
+                            <option value="On Track">On Track</option>
+                            <option value="Need Attention">Need Attention</option>
+                            <option value="At Risk">At Risk</option>
+                        </select>
+                        <div style="font-size: 12px; color: var(--text-light); margin-top: 5px;">
+                            Set the initial academic status for this student
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelAddStudentBtn">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="btn btn-success" id="submitAddStudentBtn">
+                    <i class="fas fa-user-plus"></i> Add Student
                 </button>
             </div>
         </div>
@@ -1407,6 +1546,11 @@
                 openSessionModal();
             });
             
+            // Add Student button (now in header)
+            document.getElementById('addStudentBtn').addEventListener('click', function() {
+                openAddStudentModal();
+            });
+            
             // Search functionality
             document.getElementById('searchInput').addEventListener('keyup', function() {
                 const searchTerm = this.value.toLowerCase();
@@ -1475,6 +1619,10 @@
             // Modal close buttons
             document.getElementById('closeSessionModal').addEventListener('click', closeSessionModal);
             document.getElementById('cancelSessionBtn').addEventListener('click', closeSessionModal);
+            
+            // Add Student Modal close buttons
+            document.getElementById('closeAddStudentModal').addEventListener('click', closeAddStudentModal);
+            document.getElementById('cancelAddStudentBtn').addEventListener('click', closeAddStudentModal);
 
             // Add student button in session modal
             document.getElementById('addStudentBtnModal').addEventListener('click', addStudentDropdown);
@@ -1555,6 +1703,92 @@
                 resetSessionForm();
                 closeSessionModal();
             });
+            
+            // Submit Add Student form
+            document.getElementById('submitAddStudentBtn').addEventListener('click', function() {
+                const studentId = document.getElementById('studentId').value.trim();
+                const studentName = document.getElementById('studentName').value.trim();
+                const studentEmail = document.getElementById('studentEmail').value.trim();
+                const studentMajor = document.getElementById('studentMajor').value;
+                const studentYear = document.getElementById('studentYear').value;
+                const studentCGPA = document.getElementById('studentCGPA').value;
+                const studentPhone = document.getElementById('studentPhone').value.trim();
+                const studentInitialNotes = document.getElementById('studentInitialNotes').value.trim();
+                const studentRemark = document.getElementById('studentRemark').value;
+                
+                // Validation
+                if (!studentId || !studentName || !studentEmail || !studentMajor || !studentYear) {
+                    alert('Please fill in all required fields (marked with *).');
+                    return;
+                }
+                
+                // Check if student ID already exists
+                if (students.find(s => s.id === studentId)) {
+                    alert(`Student ID "${studentId}" already exists. Please use a different ID.`);
+                    return;
+                }
+                
+                // Check if email already exists
+                if (students.find(s => s.email === studentEmail)) {
+                    alert(`Email "${studentEmail}" is already registered. Please use a different email.`);
+                    return;
+                }
+                
+                // Validate student ID format (optional but recommended)
+                if (!/^S\d+$/.test(studentId)) {
+                    if (!confirm(`Student ID "${studentId}" doesn't match the recommended format (S followed by numbers). Continue anyway?`)) {
+                        return;
+                    }
+                }
+                
+                // Get first letter of first name for avatar
+                const firstName = studentName.split(' ')[0];
+                const avatar = firstName.charAt(0).toUpperCase();
+                
+                // Determine status based on CGPA
+                let status = "Pass";
+                if (studentCGPA) {
+                    const cgpaNum = parseFloat(studentCGPA);
+                    if (cgpaNum >= 3.5) {
+                        status = "Dean's List";
+                    } else if (cgpaNum < 2.0) {
+                        status = "Probation";
+                    }
+                }
+                
+                // Create new student object
+                const newStudent = {
+                    id: studentId,
+                    name: studentName,
+                    major: studentMajor,
+                    year: studentYear,
+                    cgpa: studentCGPA || "N/A",
+                    status: status,
+                    remark: studentRemark,
+                    email: studentEmail,
+                    phone: studentPhone || "Not provided",
+                    lastMeeting: "Never",
+                    notes: studentInitialNotes || "New advisee added manually.",
+                    avatar: avatar
+                };
+                
+                // Add to students array
+                students.push(newStudent);
+                
+                // Update filtered students and UI
+                filteredStudents = [...students];
+                currentPage = Math.ceil(students.length / studentsPerPage); // Go to last page
+                renderStudentCards();
+                renderPagination();
+                updateStats();
+                
+                // Clear and close modal
+                resetAddStudentForm();
+                closeAddStudentModal();
+                
+                // Show success message
+                alert(`Successfully added ${studentName} as your advisee!`);
+            });
 
             // Header action buttons
             document.querySelector('.profile-btn').addEventListener('click', function(e) {
@@ -1572,8 +1806,14 @@
             // Click outside modal to close
             window.addEventListener('click', function(event) {
                 const sessionModal = document.getElementById('sessionModal');
+                const addStudentModal = document.getElementById('addStudentModal');
+                
                 if (event.target === sessionModal) {
                     closeSessionModal();
+                }
+                
+                if (event.target === addStudentModal) {
+                    closeAddStudentModal();
                 }
             });
         });
@@ -1594,8 +1834,16 @@
                         <i class="fas fa-user-slash" style="font-size: 48px; margin-bottom: 20px; color: var(--blue-border);"></i>
                         <h3 style="margin-bottom: 10px; color: var(--text-light);">No students found</h3>
                         <p>Try adjusting your search or filter criteria</p>
+                        <button class="btn btn-success" id="addFirstStudentBtn" style="margin-top: 15px;">
+                            <i class="fas fa-user-plus"></i> Add Your First Advisee
+                        </button>
                     </div>
                 `;
+                
+                // Add event listener to the "Add First Student" button
+                document.getElementById('addFirstStudentBtn')?.addEventListener('click', function() {
+                    openAddStudentModal();
+                });
                 return;
             }
             
@@ -1778,6 +2026,35 @@
             document.getElementById('total-students').textContent = totalStudents;
             document.getElementById('attention-needed').textContent = needAttention + atRisk;
             document.getElementById('graduating-soon').textContent = graduatingSoon;
+        }
+
+        // Open Add Student Modal
+        function openAddStudentModal() {
+            // Generate a new student ID suggestion
+            const highestId = students.reduce((max, student) => {
+                const num = parseInt(student.id.substring(1));
+                return num > max ? num : max;
+            }, 0);
+            
+            const newId = `S${String(highestId + 1).padStart(5, '0')}`;
+            document.getElementById('studentId').value = newId;
+            
+            const modal = document.getElementById('addStudentModal');
+            modal.style.display = 'flex';
+        }
+
+        // Close Add Student Modal
+        function closeAddStudentModal() {
+            const modal = document.getElementById('addStudentModal');
+            modal.style.display = 'none';
+        }
+
+        // Reset Add Student Form
+        function resetAddStudentForm() {
+            document.getElementById('addStudentForm').reset();
+            
+            // Set default remark
+            document.getElementById('studentRemark').value = "On Track";
         }
 
         // Modal functions
