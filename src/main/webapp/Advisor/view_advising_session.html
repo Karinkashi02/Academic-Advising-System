@@ -229,6 +229,75 @@
             color: var(--blue-primary);
         }
 
+        /* Filter Section Styles */
+        .filter-section {
+            background: var(--blue-light);
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--blue-border);
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .filter-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--blue-dark);
+        }
+
+        .filter-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            background: white;
+            border: 2px solid var(--blue-border);
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--blue-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: var(--blue-light);
+        }
+
+        .filter-btn.active {
+            background: var(--blue-primary);
+            color: white;
+            border-color: var(--blue-primary);
+        }
+
+        .clear-filter-btn {
+            padding: 8px 16px;
+            background: white;
+            border: 2px solid var(--blue-border);
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .clear-filter-btn:hover {
+            background: var(--blue-light);
+            color: var(--blue-primary);
+        }
+
         /* Stats Cards */
         .stats {
             display: grid;
@@ -944,6 +1013,16 @@
                 gap: 15px;
             }
             
+            .filter-options {
+                justify-content: center;
+            }
+            
+            .filter-btn {
+                flex: 1;
+                min-width: 100px;
+                text-align: center;
+            }
+            
             .table-container {
                 font-size: 13px;
             }
@@ -1009,6 +1088,12 @@
             .action-buttons .btn {
                 font-size: 11px;
                 padding: 4px 6px;
+            }
+            
+            .filter-btn {
+                min-width: 80px;
+                font-size: 12px;
+                padding: 6px 10px;
             }
             
             /* Hide session type on very small screens to save space */
@@ -1120,6 +1205,22 @@
                         </div>
                     </div>
                     
+                    <!-- Filter Section for My Sessions -->
+                    <div class="filter-section">
+                        <div class="filter-header">
+                            <h3>Filter by Status</h3>
+                            <button class="clear-filter-btn" id="clearMySessionFilter">
+                                <i class="fas fa-times"></i> Clear Filter
+                            </button>
+                        </div>
+                        <div class="filter-options">
+                            <button class="filter-btn active" data-status="all">All Sessions</button>
+                            <button class="filter-btn" data-status="upcoming">Upcoming</button>
+                            <button class="filter-btn" data-status="completed">Completed</button>
+                            <button class="filter-btn" data-status="cancelled">Cancelled</button>
+                        </div>
+                    </div>
+                    
                     <div class="table-container">
                         <table id="mySessionsTable">
                             <thead>
@@ -1153,6 +1254,22 @@
                             <button class="btn btn-export" id="exportBtn">
                                 <i class="fas fa-download"></i> Export
                             </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Filter Section for Session Requests -->
+                    <div class="filter-section">
+                        <div class="filter-header">
+                            <h3>Filter by Status</h3>
+                            <button class="clear-filter-btn" id="clearRequestFilter">
+                                <i class="fas fa-times"></i> Clear Filter
+                            </button>
+                        </div>
+                        <div class="filter-options">
+                            <button class="filter-btn active" data-status="all">All Requests</button>
+                            <button class="filter-btn" data-status="pending">Pending</button>
+                            <button class="filter-btn" data-status="approved">Approved</button>
+                            <button class="filter-btn" data-status="rejected">Rejected</button>
                         </div>
                     </div>
                     
@@ -1516,11 +1633,13 @@
         let currentPageMySessions = 1;
         const sessionsPerPage = 8;
         let filteredMySessions = [];
+        let currentMySessionFilter = "all";
 
         // Pagination variables for Session Requests
         let currentPageRequests = 1;
         const requestsPerPage = 8;
         let filteredRequests = [];
+        let currentRequestFilter = "all";
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -1544,24 +1663,74 @@
                 openCreateSessionModal();
             });
             
+            // Filter functionality for My Sessions
+            document.querySelectorAll('#mySessionsCard .filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    document.querySelectorAll('#mySessionsCard .filter-btn').forEach(b => b.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    const status = this.getAttribute('data-status');
+                    applyMySessionFilter(status);
+                });
+            });
+            
+            // Clear filter for My Sessions
+            document.getElementById('clearMySessionFilter').addEventListener('click', function() {
+                // Set active class to "All Sessions" button
+                document.querySelectorAll('#mySessionsCard .filter-btn').forEach(b => b.classList.remove('active'));
+                document.querySelector('#mySessionsCard .filter-btn[data-status="all"]').classList.add('active');
+                
+                applyMySessionFilter('all');
+            });
+            
+            // Filter functionality for Session Requests
+            document.querySelectorAll('#requestsCard .filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    document.querySelectorAll('#requestsCard .filter-btn').forEach(b => b.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    const status = this.getAttribute('data-status');
+                    applyRequestFilter(status);
+                });
+            });
+            
+            // Clear filter for Session Requests
+            document.getElementById('clearRequestFilter').addEventListener('click', function() {
+                // Set active class to "All Requests" button
+                document.querySelectorAll('#requestsCard .filter-btn').forEach(b => b.classList.remove('active'));
+                document.querySelector('#requestsCard .filter-btn[data-status="all"]').classList.add('active');
+                
+                applyRequestFilter('all');
+            });
+            
             // Search functionality for My Sessions
             document.getElementById('searchMySessions').addEventListener('keyup', function() {
                 const searchTerm = this.value.toLowerCase();
                 
                 if (searchTerm.trim() === '') {
-                    filteredMySessions = [...mySessions];
+                    applyMySessionFilter(currentMySessionFilter);
                 } else {
                     filteredMySessions = mySessions.filter(session => {
+                        // First apply status filter
+                        if (currentMySessionFilter !== 'all' && session.status !== currentMySessionFilter) {
+                            return false;
+                        }
+                        
+                        // Then apply search filter
                         return session.name.toLowerCase().includes(searchTerm) ||
                                session.type.toLowerCase().includes(searchTerm) ||
                                session.notes.toLowerCase().includes(searchTerm) ||
                                session.status.toLowerCase().includes(searchTerm);
                     });
+                    
+                    currentPageMySessions = 1;
+                    renderMySessions();
+                    renderMySessionsPagination();
                 }
-                
-                currentPageMySessions = 1;
-                renderMySessions();
-                renderMySessionsPagination();
             });
 
             // Search functionality for Requests
@@ -1569,19 +1738,25 @@
                 const searchTerm = this.value.toLowerCase();
                 
                 if (searchTerm.trim() === '') {
-                    filteredRequests = [...sessionRequests];
+                    applyRequestFilter(currentRequestFilter);
                 } else {
                     filteredRequests = sessionRequests.filter(request => {
+                        // First apply status filter
+                        if (currentRequestFilter !== 'all' && request.status !== currentRequestFilter) {
+                            return false;
+                        }
+                        
+                        // Then apply search filter
                         return request.name.toLowerCase().includes(searchTerm) ||
                                request.student.toLowerCase().includes(searchTerm) ||
                                request.notes.toLowerCase().includes(searchTerm) ||
                                request.status.toLowerCase().includes(searchTerm);
                     });
+                    
+                    currentPageRequests = 1;
+                    renderRequests();
+                    renderRequestsPagination();
                 }
-                
-                currentPageRequests = 1;
-                renderRequests();
-                renderRequestsPagination();
             });
             
             // Export button
@@ -1623,6 +1798,38 @@
             });
         });
 
+        // Apply filter for My Sessions
+        function applyMySessionFilter(status) {
+            currentMySessionFilter = status;
+            
+            if (status === 'all') {
+                filteredMySessions = [...mySessions];
+            } else {
+                filteredMySessions = mySessions.filter(session => session.status === status);
+            }
+            
+            currentPageMySessions = 1;
+            renderMySessions();
+            renderMySessionsPagination();
+            updateStats();
+        }
+
+        // Apply filter for Session Requests
+        function applyRequestFilter(status) {
+            currentRequestFilter = status;
+            
+            if (status === 'all') {
+                filteredRequests = [...sessionRequests];
+            } else {
+                filteredRequests = sessionRequests.filter(request => request.status === status);
+            }
+            
+            currentPageRequests = 1;
+            renderRequests();
+            renderRequestsPagination();
+            updateStats();
+        }
+
         // Render My Sessions for current page
         function renderMySessions() {
             const tbody = document.getElementById('mySessionsTableBody');
@@ -1639,7 +1846,7 @@
                         <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-light);">
                             <i class="fas fa-calendar-times" style="font-size: 32px; margin-bottom: 15px; display: block;"></i>
                             <h3 style="margin-bottom: 10px; color: var(--text-light);">No sessions found</h3>
-                            <p>Try adjusting your search criteria or create a new session</p>
+                            <p>Try adjusting your search or filter criteria</p>
                         </td>
                     </tr>
                 `;
@@ -1834,7 +2041,7 @@
                         <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-light);">
                             <i class="fas fa-calendar-times" style="font-size: 32px; margin-bottom: 15px; display: block;"></i>
                             <h3 style="margin-bottom: 10px; color: var(--text-light);">No session requests found</h3>
-                            <p>Try adjusting your search criteria</p>
+                            <p>Try adjusting your search or filter criteria</p>
                         </td>
                     </tr>
                 `;
@@ -2128,7 +2335,7 @@
             session.notes = document.getElementById('editSessionNotes').value;
             
             // Update UI
-            renderMySessions();
+            applyMySessionFilter(currentMySessionFilter);
             closeEditSessionModal();
             
             alert('Session updated successfully!');
@@ -2140,8 +2347,7 @@
                 const sessionIndex = mySessions.findIndex(s => s.id === sessionId);
                 if (sessionIndex !== -1) {
                     mySessions.splice(sessionIndex, 1);
-                    renderMySessions();
-                    renderMySessionsPagination();
+                    applyMySessionFilter(currentMySessionFilter);
                     updateStats();
                     alert('Session deleted successfully!');
                 }
@@ -2172,8 +2378,7 @@
             const request = sessionRequests.find(r => r.id === sessionId);
             if (request) {
                 request.status = "approved";
-                renderRequests();
-                renderRequestsPagination();
+                applyRequestFilter(currentRequestFilter);
                 updateStats();
                 alert(`Session request #${sessionId} has been approved.`);
             }
@@ -2184,8 +2389,7 @@
             const request = sessionRequests.find(r => r.id === sessionId);
             if (request) {
                 request.status = "rejected";
-                renderRequests();
-                renderRequestsPagination();
+                applyRequestFilter(currentRequestFilter);
                 updateStats();
                 alert(`Session request #${sessionId} has been rejected.`);
             }
