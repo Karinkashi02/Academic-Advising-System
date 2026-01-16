@@ -766,12 +766,12 @@
                     </button>
                 </div>
                 
-                <form id="login-form">
+                <form id="login-form" action="login" method="POST">
                     <div class="form-group">
                         <label for="login-username" class="form-label">Username or Email</label>
                         <div class="input-with-icon">
                             <i class="fas fa-user"></i>
-                            <input type="text" id="login-username" class="form-input" placeholder="Enter username or email" required>
+                            <input type="text" id="login-username" name="email" class="form-input" placeholder="Enter email address" required>
                         </div>
                     </div>
                     
@@ -779,12 +779,14 @@
                         <label for="login-password" class="form-label">Password</label>
                         <div class="input-with-icon">
                             <i class="fas fa-lock"></i>
-                            <input type="password" id="login-password" class="form-input" placeholder="Enter password" required>
+                            <input type="password" id="login-password" name="password" class="form-input" placeholder="Enter password" required>
                             <button type="button" class="password-toggle" id="login-toggle-password">
                                 <i class="fas fa-eye"></i>
                             </button>
                         </div>
                     </div>
+                    
+                    <input type="hidden" id="login-role" name="role" value="student">
                     
                     <div class="form-actions">
                         <div class="remember">
@@ -823,62 +825,43 @@
                 <p class="form-subtitle">Join AcademicTrack to track your academic progress and connect with advisors</p>
                 
                 <form id="register-form">
-                    <div class="name-group">
-                        <div class="form-group">
-                            <label for="first-name" class="form-label">First Name</label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-user"></i>
-                                <input type="text" id="first-name" class="form-input" placeholder="Enter first name" required>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="last-name" class="form-label">Last Name</label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-user"></i>
-                                <input type="text" id="last-name" class="form-input" placeholder="Enter last name" required>
-                            </div>
+                    <div class="form-group">
+                        <label for="student-name" class="form-label">Full Name</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="student-name" name="name" class="form-input" placeholder="Enter full name" required>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
-                        <label for="register-email" class="form-label">Email Address</label>
+                        <label for="student-email" class="form-label">Email Address</label>
                         <div class="input-with-icon">
                             <i class="fas fa-envelope"></i>
-                            <input type="email" id="register-email" class="form-input" placeholder="Enter email address" required>
+                            <input type="email" id="student-email" name="email" class="form-input" placeholder="Enter email address" required>
                         </div>
                     </div>
-                    
-              
-                    
+
                     <div class="form-group">
-                        <label for="register-password" class="form-label">Password</label>
+                        <label for="student-program" class="form-label">Program</label>
                         <div class="input-with-icon">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="register-password" class="form-input" placeholder="Create a strong password" required>
-                            <button type="button" class="password-toggle" id="register-toggle-password">
-                                <i class="fas fa-eye"></i>
-                            </button>
+                            <i class="fas fa-graduation-cap"></i>
+                            <input type="text" id="student-program" name="program" class="form-input" placeholder="e.g., Computer Science" required>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
-                        <label for="confirm-password" class="form-label">Confirm Password</label>
+                        <label for="year-of-study" class="form-label">Year of Study</label>
                         <div class="input-with-icon">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="confirm-password" class="form-input" placeholder="Confirm your password" required>
+                            <i class="fas fa-calendar-alt"></i>
+                            <input type="number" id="year-of-study" name="yearOfStudy" class="form-input" placeholder="e.g., 2" min="1" max="10" required>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
-                        <label for="user-role" class="form-label">Account Type</label>
+                        <label for="semester" class="form-label">Semester</label>
                         <div class="input-with-icon">
-                            <i class="fas fa-user-tag"></i>
-                            <select id="user-role" class="form-select" required>
-                                <option value="" disabled selected>Select your role</option>
-                                <option value="student">Student</option>
-                                <option value="advisor">Academic Advisor</option>
-                            </select>
+                            <i class="fas fa-calendar"></i>
+                            <input type="number" id="semester" name="semester" class="form-input" placeholder="e.g., 3" min="1" max="20" required>
                         </div>
                     </div>
                     
@@ -906,34 +889,66 @@
                     <!-- Advisor-specific fields (only for advisors) -->
                     <div class="role-specific-section" id="advisor-specific-section">
                         <div class="form-group">
+                            <label for="advisor-name" class="form-label">Full Name</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="advisor-name" name="name" class="form-input" placeholder="Enter full name" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="advisor-email" class="form-label">Email Address</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="advisor-email" name="email" class="form-input" placeholder="Enter email address" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="advisor-phone" class="form-label">Phone Number</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-phone"></i>
+                                <input type="tel" id="advisor-phone" name="phoneNum" class="form-input" placeholder="Enter phone number">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label for="advisor-department" class="form-label">Department</label>
                             <div class="input-with-icon">
                                 <i class="fas fa-building"></i>
-                                <select id="advisor-department" class="form-select">
+                                <select id="advisor-department" name="department" class="form-select" required>
                                     <option value="" disabled selected>Select department</option>
-                                    <option value="computer-science">Computer Science</option>
-                                    <option value="engineering">Engineering</option>
-                                    <option value="business">Business Administration</option>
-                                    <option value="biology">Biology</option>
-                                    <option value="psychology">Psychology</option>
-                                    <option value="mathematics">Mathematics</option>
+                                    <option value="Computer Science">Computer Science</option>
+                                    <option value="Engineering">Engineering</option>
+                                    <option value="Business">Business Administration</option>
+                                    <option value="Biology">Biology</option>
+                                    <option value="Psychology">Psychology</option>
+                                    <option value="Mathematics">Mathematics</option>
                                 </select>
                             </div>
                         </div>
-                        
+
                         <div class="form-group">
-                            <label for="advisor-specialization" class="form-label">Specialization</label>
+                            <label for="advisor-expertise" class="form-label">Expertise</label>
                             <div class="input-with-icon">
                                 <i class="fas fa-star"></i>
-                                <input type="text" id="advisor-specialization" class="form-input" placeholder="e.g., Artificial Intelligence, Finance, etc.">
+                                <input type="text" id="advisor-expertise" name="expertise" class="form-input" placeholder="e.g., Artificial Intelligence, Finance, etc.">
                             </div>
                         </div>
-                        
+
                         <div class="form-group">
-                            <label for="advisor-max-students" class="form-label">Maximum Students</label>
+                            <label for="advisor-office-hours" class="form-label">Office Hours</label>
                             <div class="input-with-icon">
-                                <i class="fas fa-users"></i>
-                                <input type="number" id="advisor-max-students" class="form-input" placeholder="e.g., 20" min="1" max="100">
+                                <i class="fas fa-clock"></i>
+                                <input type="text" id="advisor-office-hours" name="officeHours" class="form-input" placeholder="e.g., Mon-Fri 9am-5pm">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="advisor-office-loc" class="form-label">Office Location</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <input type="text" id="advisor-office-loc" name="officeLoc" class="form-input" placeholder="e.g., Building A, Room 205">
                             </div>
                         </div>
                     </div>
@@ -1015,31 +1030,31 @@
         // Sample advisor data
         const advisors = [
             {
-                id: 'advisor-1',
-                firstName: 'Sarah',
-                lastName: 'Johnson',
-                title: 'Prof.',
-                department: 'Computer Science',
-                specialization: 'Artificial Intelligence',
+                advisorID: 'ADV001',  // Added advisorID
+                name: 'Prof. Sarah Johnson',  // Changed from firstName/lastName to name
                 email: 's.johnson@university.edu',
+                department: 'Computer Science',
+                expertise: 'Artificial Intelligence',  // Changed from specialization to expertise
+                phoneNum: '+1-555-1234',
+                officeHours: 'Mon-Wed 10am-4pm',
+                officeLoc: 'Science Building, Room 302',
                 students: 12,
-                maxStudents: 20,
-                rating: 4.8,
-                avatarColor: '#1a5fb4'
-            },
-            {
-                id: 'advisor-2',
-                firstName: 'Michael',
-                lastName: 'Chen',
-                title: 'Dr.',
-                department: 'Engineering',
-                specialization: 'Robotics & Automation',
-                email: 'm.chen@university.edu',
-                students: 8,
-                maxStudents: 15,
-                rating: 4.9,
                 avatarColor: '#26a269'
             },
+            {
+                advisorID: 'ADV002',
+                name: 'Dr. Michael Chen',
+                email: 'm.chen@university.edu',
+                department: 'Engineering',
+                expertise: 'Robotics & Automation',
+                phoneNum: '+1-555-1234',
+                officeHours: 'Mon-Wed 10am-4pm',
+                officeLoc: 'Science Building, Room 302',
+                students: 12,
+                avatarColor: '#26a269'
+            }
+            
+            /* //ADJUST HERE 1
             {
                 id: 'advisor-3',
                 firstName: 'Jessica',
@@ -1092,6 +1107,8 @@
                 rating: 4.9,
                 avatarColor: '#1a5fb4'
             }
+ 
+            */
         ];
         
         // Tab switching functionality
@@ -1139,10 +1156,13 @@
         
         // Role switching functionality for login
         studentBtn.addEventListener('click', () => {
+            e.preventDefault();
             if (currentRole !== 'student') {
                 currentRole = 'student';
                 studentBtn.classList.add('active');
                 advisorBtn.classList.remove('active');
+                
+                document.getElementById('login-role').value = 'student';
                 
                 // Animate the button
                 studentBtn.style.transform = 'scale(0.95)';
@@ -1153,10 +1173,13 @@
         });
         
         advisorBtn.addEventListener('click', () => {
+            e.preventDefault();
             if (currentRole !== 'advisor') {
                 currentRole = 'advisor';
                 advisorBtn.classList.add('active');
                 studentBtn.classList.remove('active');
+                
+                document.getElementById('login-role').value = 'advisor';
                 
                 // Animate the button
                 advisorBtn.style.transform = 'scale(0.95)';
@@ -1328,8 +1351,10 @@
                 // Set credentials
                 if (role === 'student') {
                     loginUsernameInput.value = 'student@university.edu';
+                    document.getElementById('login-role').value = 'student';
                 } else {
                     loginUsernameInput.value = 'advisor@university.edu';
+                    document.getElementById('login-role').value = 'advisor';
                 }
                 
                 loginPasswordInput.value = 'demo123';
@@ -1352,75 +1377,71 @@
         });
         
         // Login form submission
+        // ADJUST HERE 3
         loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
             const username = loginUsernameInput.value;
             const password = loginPasswordInput.value;
-            const rememberMe = document.getElementById('remember-me').checked;
-            
-            // Simple validation
+
+            // Simple front-end validation
             if (!username || !password) {
+                e.preventDefault(); // Stop form submission
                 shakeEmptyFields(loginForm);
-                return;
-            }
-            
-            // Demo validation
-            const studentCredentials = {
-                username: 'student@university.edu',
-                password: 'demo123'
-            };
-            
-            const advisorCredentials = {
-                username: 'advisor@university.edu',
-                password: 'demo123'
-            };
-            
-            let isValidLogin = false;
-            let userRole = currentRole;
-            
-            if (currentRole === 'student' && 
-                (username === studentCredentials.username || username === 'student') && 
-                password === studentCredentials.password) {
-                isValidLogin = true;
-            } else if (currentRole === 'advisor' && 
-                (username === advisorCredentials.username || username === 'advisor') && 
-                password === advisorCredentials.password) {
-                isValidLogin = true;
-            } else if (password === 'demo123') {
-                // Allow any login with "demo123" password for testing
-                isValidLogin = true;
-            }
-            
-            // Show login result
-            if (isValidLogin) {
-                showSuccess(loginButton, `Successfully logged in as ${userRole}!`);
-                if(currentRole === 'student') {
-                    window.location.href="Student/Dashboard.html";
+
+                // Show error
+                const errorDiv = document.createElement('div');
+                errorDiv.style.color = '#f66151';
+                errorDiv.style.padding = '10px';
+                errorDiv.style.marginTop = '10px';
+                errorDiv.style.borderRadius = '5px';
+                errorDiv.style.backgroundColor = '#fee';
+                errorDiv.textContent = 'Please fill in all fields';
+
+                // Remove any existing error
+                const existingError = loginForm.querySelector('.form-error');
+                if (existingError) {
+                    existingError.remove();
                 }
-                else if(currentRole === 'advisor') {
-                    window.location.href="Advisor/advisor_dashboard.html"
-                }
-            } else {
-                showError(loginForm, 'Invalid credentials. Please try again.');
+
+                errorDiv.className = 'form-error';
+                loginForm.appendChild(errorDiv);
+
+                setTimeout(() => {
+                    if (errorDiv.parentNode === loginForm) {
+                        errorDiv.remove();
+                    }
+                }, 3000);
+
+                return false;
             }
+
+            // Let the form submit to the Servlet (default behavior)
+            // The form will POST to /login (LoginServlet)
+            return true;
         });
         
         // Register form submission
         registerForm.addEventListener('submit', (e) => {
             e.preventDefault();
             
-            const firstName = document.getElementById('first-name').value;
-            const lastName = document.getElementById('last-name').value;
-            const email = document.getElementById('register-email').value;
-            const username = document.getElementById('register-username').value;
-            const password = document.getElementById('register-password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-            const userRole = document.getElementById('user-role').value;
-            const termsAccepted = document.getElementById('terms').checked;
+            // Student registration fields
+            const studentName = document.getElementById('student-name').value;
+            const studentEmail = document.getElementById('student-email').value;
+            const program = document.getElementById('student-program').value;
+            const yearOfStudy = document.getElementById('year-of-study').value;
+            const semester = document.getElementById('semester').value;
+
+            // Advisor registration fields  
+            const advisorName = document.getElementById('advisor-name').value;
+            const advisorEmail = document.getElementById('advisor-email').value;
+            const phoneNum = document.getElementById('advisor-phone').value;
+            const department = document.getElementById('advisor-department').value;
+            const expertise = document.getElementById('advisor-expertise').value;
+            const officeHours = document.getElementById('advisor-office-hours').value;
+            const officeLoc = document.getElementById('advisor-office-loc').value;
             
+            //ADJUST HERE 2
             // Validation
-            if (!firstName || !lastName || !email || !username || !password || !confirmPassword || !userRole) {
+            if (!studentName || !studentEmail || !program || !yearOfStudy || !semester || !confirmPassword || !userRole) {
                 shakeEmptyFields(registerForm);
                 return;
             }
