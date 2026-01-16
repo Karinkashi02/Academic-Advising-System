@@ -1395,6 +1395,12 @@
             // Show login result
             if (isValidLogin) {
                 showSuccess(loginButton, `Successfully logged in as ${userRole}!`);
+                if(currentRole === 'student') {
+                    window.location.href="Student/Dashboard.html";
+                }
+                else if(currentRole === 'advisor') {
+                    window.location.href="Advisor/advisor_dashboard.html"
+                }
             } else {
                 showError(loginForm, 'Invalid credentials. Please try again.');
             }
