@@ -21,7 +21,7 @@ public class DBConnection {
             try {
                 // Correct the URL format (Note: replace 24715 with your actual Aiven port)
                 // Added ?useSSL=true which is usually required for cloud providers
-                String url = "jdbc:mysql://mysql-acdm2-amarghazali7135-8a18.h.aivencloud.com:21488/defaultdb?useSSL=true";
+                String url = "jdbc:mysql://mysql-acdm2-amarghazali7135-8a18.h.aivencloud.com:21488/defaultdb?useSSL=true&trustServerCertificate=true";
                 String username = "avnadmin";
                 String password = "AVNS_Jg4MY0Br57oWD46H8Eb"; // Use the real password string
 
