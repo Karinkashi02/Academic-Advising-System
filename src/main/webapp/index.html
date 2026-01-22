@@ -720,8 +720,31 @@
             100% { transform: scale(1); }
         }
         
+        /* XANDER MODIFIED */
         .advisor-option.selected {
             animation: pulse 0.5s ease;
+        }
+        
+        .advisor-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .available {
+            background-color: #e7f7e7;
+        }
+        .unavailable {
+            background-color: #f7e7e7;
+            opacity: 0.7;
+        }
+        .status-available {
+            color: green;
+            font-weight: bold;
+        }
+        .status-full {
+            color: red;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -744,10 +767,10 @@
             <!-- Tab Switcher -->
             <div class="tab-switcher">
                 <div class="tab-indicator" id="tab-indicator"></div>
-                <button class="tab-btn active" id="login-tab" data-tab="login">
+                <button class="tab-btn active" id="login-tab-btn" onclick="switchTab('login')">
                     <i class="fas fa-sign-in-alt"></i> Sign In
                 </button>
-                <button class="tab-btn" id="register-tab" data-tab="register">
+                <button class="tab-btn" id="register-tab-btn" onclick="switchTab('register')">
                     <i class="fas fa-user-plus"></i> Register
                 </button>
             </div>
@@ -766,27 +789,27 @@
                     </button>
                 </div>
                 
-                <form id="login-form" action="login" method="POST">
+                <form id="login-form" action="LoginServlet" method="POST">
+                    <input type="hidden" name="role" id="login-role" value="student">
+                    
                     <div class="form-group">
-                        <label for="login-username" class="form-label">Username or Email</label>
+                        <label class="form-label">Username</label>
                         <div class="input-with-icon">
                             <i class="fas fa-user"></i>
-                            <input type="text" id="login-username" name="email" class="form-input" placeholder="Enter email address" required>
+                            <input type="text" name="username" class="form-input" placeholder="Enter username" required>
                         </div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="login-password" class="form-label">Password</label>
+                        <label class="form-label">Password</label>
                         <div class="input-with-icon">
                             <i class="fas fa-lock"></i>
-                            <input type="password" id="login-password" name="password" class="form-input" placeholder="Enter password" required>
+                            <input type="password" name="password" class="form-input" placeholder="Enter password" required>
                             <button type="button" class="password-toggle" id="login-toggle-password">
                                 <i class="fas fa-eye"></i>
                             </button>
                         </div>
                     </div>
-                    
-                    <input type="hidden" id="login-role" name="role" value="student">
                     
                     <div class="form-actions">
                         <div class="remember">
@@ -824,49 +847,113 @@
                 <h2 class="form-title">Create Account</h2>
                 <p class="form-subtitle">Join AcademicTrack to track your academic progress and connect with advisors</p>
                 
-                <form id="register-form">
-                    <div class="form-group">
-                        <label for="student-name" class="form-label">Full Name</label>
-                        <div class="input-with-icon">
-                            <i class="fas fa-user"></i>
-                            <input type="text" id="student-name" name="name" class="form-input" placeholder="Enter full name" required>
+                <form id="register-form" action="RegisterServlet" method="POST">
+                    <!-- hidden field to optionally carry selected advisor id -->
+                    <input type="hidden" id="selectedAdvisorID" name="advisorID">
+                    
+                    <div class="name-group">
+                        <div class="form-group">
+                            <label class="form-label">First Name</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-user"></i>
+                                <input type="text" name="firstName" class="form-input" placeholder="Enter first name" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Last Name</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-user"></i>
+                                <input type="text" name="lastName" class="form-input" placeholder="Enter last name" required>
+                            </div>
                         </div>
                     </div>
-
+                    
                     <div class="form-group">
-                        <label for="student-email" class="form-label">Email Address</label>
+                        <label class="form-label">Username</label>
                         <div class="input-with-icon">
                             <i class="fas fa-envelope"></i>
-                            <input type="email" id="student-email" name="email" class="form-input" placeholder="Enter email address" required>
+                            <input type="text" name="username" class="form-input" placeholder="Enter username" required>
                         </div>
                     </div>
-
+                    
                     <div class="form-group">
-                        <label for="student-program" class="form-label">Program</label>
+                        <label class="form-label">Email Address</label>
                         <div class="input-with-icon">
-                            <i class="fas fa-graduation-cap"></i>
-                            <input type="text" id="student-program" name="program" class="form-input" placeholder="e.g., Computer Science" required>
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" name="email" class="form-input" placeholder="Enter email address" required>
                         </div>
                     </div>
-
+                    
+              
+                    
                     <div class="form-group">
-                        <label for="year-of-study" class="form-label">Year of Study</label>
+                        <label class="form-label">Password</label>
                         <div class="input-with-icon">
-                            <i class="fas fa-calendar-alt"></i>
-                            <input type="number" id="year-of-study" name="yearOfStudy" class="form-input" placeholder="e.g., 2" min="1" max="10" required>
+                            <i class="fas fa-lock"></i>
+                            <input type="password" name="password" class="form-input" placeholder="Create a strong password" required>
+                            <button type="button" class="password-toggle" id="register-toggle-password">
+                                <i class="fas fa-eye"></i>
+                            </button>
                         </div>
                     </div>
-
+                    
                     <div class="form-group">
-                        <label for="semester" class="form-label">Semester</label>
+                        <label for="confirm-password" class="form-label">Confirm Password</label>
                         <div class="input-with-icon">
-                            <i class="fas fa-calendar"></i>
-                            <input type="number" id="semester" name="semester" class="form-input" placeholder="e.g., 3" min="1" max="20" required>
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="confirm-password" class="form-input" placeholder="Confirm your password" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Account Type</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-user-tag"></i>
+                            <select name="role" id="reg-role" onchange="toggleFields()" class="form-select" required>
+                                <option value="" disabled selected>Select your role</option>
+                                <option value="student">Student</option>
+                                <option value="advisor">Academic Advisor</option>
+                            </select>
                         </div>
                     </div>
                     
                     <!-- Advisor Selection (only for students) -->
                     <div class="role-specific-section" id="student-specific-section">
+                        <div class="form-group">
+                            <label class="form-label">Student ID</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-lock"></i>
+                                <input type="text" class="form-input" name="studentID" placeholder="S12345">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Program</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-lock"></i>
+                                <input type="text" class="form-input" name="program" placeholder="Computer Science">
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <div class="form-group">
+                                <label class="form-label">Year</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="number" class="form-input" name="yearOfStudy" placeholder="1">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Semester</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="number" class="form-input" name="semester" placeholder="1">
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="form-group advisor-selection-group">
                             <label class="form-label">Select Your Academic Advisor</label>
                             <p style="font-size: 14px; color: #64748b; margin-bottom: 15px;">Choose an advisor who will guide you through your academic journey. You can change this later.</p>
@@ -878,77 +965,48 @@
                                 </div>
                             </div>
                             
-                            <div class="advisor-options" id="advisor-options">
-                                <!-- Advisor options will be populated by JavaScript -->
+                            <div id="advisorSelection" style="display:none; margin-top: 20px;">
+                                <h3>Select an Advisor</h3>
+                                <p>Choose an advisor from the available options below:</p>
+                                <div id="advisorsContainer">
+                                    <!-- Advisors will be loaded here -->
+                                </div>
                             </div>
-                            
-                            <input type="hidden" id="selected-advisor" name="selected-advisor">
                         </div>
                     </div>
                     
                     <!-- Advisor-specific fields (only for advisors) -->
                     <div class="role-specific-section" id="advisor-specific-section">
+                        
                         <div class="form-group">
-                            <label for="advisor-name" class="form-label">Full Name</label>
+                            <label>Department</label>
                             <div class="input-with-icon">
-                                <i class="fas fa-user"></i>
-                                <input type="text" id="advisor-name" name="name" class="form-input" placeholder="Enter full name" required>
+                                <i class="fas fa-lock"></i>
+                                <input type="text" class="form-input" name="department" placeholder="Faculty of IT">
                             </div>
                         </div>
-
+                        
                         <div class="form-group">
-                            <label for="advisor-email" class="form-label">Email Address</label>
+                            <label>Phone Number</label>
                             <div class="input-with-icon">
-                                <i class="fas fa-envelope"></i>
-                                <input type="email" id="advisor-email" name="email" class="form-input" placeholder="Enter email address" required>
+                                <i class="fas fa-lock"></i>
+                                <input type="text" class="form-input" name="phoneNum" placeholder="+6012345678">
                             </div>
-                        </div>
-
+                        </div>    
+                        
                         <div class="form-group">
-                            <label for="advisor-phone" class="form-label">Phone Number</label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-phone"></i>
-                                <input type="tel" id="advisor-phone" name="phoneNum" class="form-input" placeholder="Enter phone number">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="advisor-department" class="form-label">Department</label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-building"></i>
-                                <select id="advisor-department" name="department" class="form-select" required>
-                                    <option value="" disabled selected>Select department</option>
-                                    <option value="Computer Science">Computer Science</option>
-                                    <option value="Engineering">Engineering</option>
-                                    <option value="Business">Business Administration</option>
-                                    <option value="Biology">Biology</option>
-                                    <option value="Psychology">Psychology</option>
-                                    <option value="Mathematics">Mathematics</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="advisor-expertise" class="form-label">Expertise</label>
+                            <label class="form-label">Specialization</label>
                             <div class="input-with-icon">
                                 <i class="fas fa-star"></i>
-                                <input type="text" id="advisor-expertise" name="expertise" class="form-input" placeholder="e.g., Artificial Intelligence, Finance, etc.">
+                                <input type="text" class="form-input" name="expertise" class="form-input" placeholder="e.g., Artificial Intelligence, Finance, etc.">
                             </div>
                         </div>
-
+                        
                         <div class="form-group">
-                            <label for="advisor-office-hours" class="form-label">Office Hours</label>
+                            <label class="form-label">Maximum Students</label>
                             <div class="input-with-icon">
-                                <i class="fas fa-clock"></i>
-                                <input type="text" id="advisor-office-hours" name="officeHours" class="form-input" placeholder="e.g., Mon-Fri 9am-5pm">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="advisor-office-loc" class="form-label">Office Location</label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <input type="text" id="advisor-office-loc" name="officeLoc" class="form-input" placeholder="e.g., Building A, Room 205">
+                                <i class="fas fa-users"></i>
+                                <input type="number" class="form-input" name="maxSTD" class="form-input" placeholder="e.g., 20" min="1" max="100">
                             </div>
                         </div>
                     </div>
@@ -994,568 +1052,215 @@
     </div>
 
     <script>
-        // DOM Elements
-        const loginTab = document.getElementById('login-tab');
-        const registerTab = document.getElementById('register-tab');
         const tabIndicator = document.getElementById('tab-indicator');
         const loginFormContent = document.getElementById('login-form-content');
         const registerFormContent = document.getElementById('register-form-content');
+        const loginTabBtn = document.getElementById('login-tab-btn');
+        const registerTabBtn = document.getElementById('register-tab-btn');
         const switchToRegister = document.getElementById('switch-to-register');
         const switchToLogin = document.getElementById('switch-to-login');
-        
-        const studentBtn = document.getElementById('student-btn');
-        const advisorBtn = document.getElementById('advisor-btn');
-        const loginButton = document.getElementById('login-button');
-        const loginForm = document.getElementById('login-form');
-        const registerForm = document.getElementById('register-form');
-        const loginTogglePassword = document.getElementById('login-toggle-password');
-        const registerTogglePassword = document.getElementById('register-toggle-password');
-        const loginPasswordInput = document.getElementById('login-password');
-        const registerPasswordInput = document.getElementById('register-password');
-        const loginUsernameInput = document.getElementById('login-username');
-        
-        // Registration form elements
-        const userRoleSelect = document.getElementById('user-role');
-        const studentSpecificSection = document.getElementById('student-specific-section');
-        const advisorSpecificSection = document.getElementById('advisor-specific-section');
-        const advisorOptionsContainer = document.getElementById('advisor-options');
-        const searchAdvisorInput = document.getElementById('search-advisor');
-        const selectedAdvisorInput = document.getElementById('selected-advisor');
-        
-        // Current state
-        let currentTab = 'login';
-        let currentRole = 'student';
-        let selectedAdvisorId = null;
-        
-        // Sample advisor data
-        const advisors = [
-            {
-                advisorID: 'ADV001',  // Added advisorID
-                name: 'Prof. Sarah Johnson',  // Changed from firstName/lastName to name
-                email: 's.johnson@university.edu',
-                department: 'Computer Science',
-                expertise: 'Artificial Intelligence',  // Changed from specialization to expertise
-                phoneNum: '+1-555-1234',
-                officeHours: 'Mon-Wed 10am-4pm',
-                officeLoc: 'Science Building, Room 302',
-                students: 12,
-                avatarColor: '#26a269'
-            },
-            {
-                advisorID: 'ADV002',
-                name: 'Dr. Michael Chen',
-                email: 'm.chen@university.edu',
-                department: 'Engineering',
-                expertise: 'Robotics & Automation',
-                phoneNum: '+1-555-1234',
-                officeHours: 'Mon-Wed 10am-4pm',
-                officeLoc: 'Science Building, Room 302',
-                students: 12,
-                avatarColor: '#26a269'
-            }
-            
-            /* //ADJUST HERE 1
-            {
-                id: 'advisor-3',
-                firstName: 'Jessica',
-                lastName: 'Williams',
-                title: 'Prof.',
-                department: 'Business Administration',
-                specialization: 'Finance & Strategy',
-                email: 'j.williams@university.edu',
-                students: 18,
-                maxStudents: 25,
-                rating: 4.7,
-                avatarColor: '#c64600'
-            },
-            {
-                id: 'advisor-4',
-                firstName: 'Robert',
-                lastName: 'Davis',
-                title: 'Dr.',
-                department: 'Biology',
-                specialization: 'Molecular Biology',
-                email: 'r.davis@university.edu',
-                students: 10,
-                maxStudents: 15,
-                rating: 4.6,
-                avatarColor: '#613583'
-            },
-            {
-                id: 'advisor-5',
-                firstName: 'Maria',
-                lastName: 'Garcia',
-                title: 'Prof.',
-                department: 'Psychology',
-                specialization: 'Cognitive Psychology',
-                email: 'm.garcia@university.edu',
-                students: 14,
-                maxStudents: 20,
-                rating: 4.8,
-                avatarColor: '#f66151'
-            },
-            {
-                id: 'advisor-6',
-                firstName: 'David',
-                lastName: 'Brown',
-                title: 'Dr.',
-                department: 'Mathematics',
-                specialization: 'Applied Mathematics',
-                email: 'd.brown@university.edu',
-                students: 6,
-                maxStudents: 12,
-                rating: 4.9,
-                avatarColor: '#1a5fb4'
-            }
- 
-            */
-        ];
-        
-        // Tab switching functionality
+
+        // Function to switch between Login and Register tabs
         function switchTab(tab) {
-            if (tab === currentTab) return;
-            
-            currentTab = tab;
-            
-            // Update tab buttons
             if (tab === 'login') {
-                loginTab.classList.add('active');
-                registerTab.classList.remove('active');
+                // Move indicator to left
                 tabIndicator.style.transform = 'translateX(0)';
+                
+                // Show login form, hide register form
                 loginFormContent.style.display = 'block';
                 registerFormContent.style.display = 'none';
+                
+                // Update button active states
+                loginTabBtn.classList.add('active');
+                registerTabBtn.classList.remove('active');
             } else {
-                loginTab.classList.remove('active');
-                registerTab.classList.add('active');
+                // Move indicator to right
                 tabIndicator.style.transform = 'translateX(100%)';
+                
+                // Show register form, hide login form
                 loginFormContent.style.display = 'none';
                 registerFormContent.style.display = 'block';
                 
-                // Initialize advisor options when switching to register tab
-                populateAdvisorOptions();
+                // Update button active states
+                loginTabBtn.classList.remove('active');
+                registerTabBtn.classList.add('active');
             }
-            
-            // Animate form content
-            const activeForm = tab === 'login' ? loginFormContent : registerFormContent;
-            activeForm.style.animation = 'none';
-            setTimeout(() => {
-                activeForm.style.animation = 'fadeIn 0.5s ease-out';
-            }, 10);
         }
-        
-        loginTab.addEventListener('click', () => switchTab('login'));
-        registerTab.addEventListener('click', () => switchTab('register'));
-        switchToRegister.addEventListener('click', (e) => {
-            e.preventDefault();
-            switchTab('register');
-        });
-        switchToLogin.addEventListener('click', (e) => {
-            e.preventDefault();
-            switchTab('login');
-        });
-        
-        // Role switching functionality for login
-        studentBtn.addEventListener('click', () => {
-            e.preventDefault();
-            if (currentRole !== 'student') {
-                currentRole = 'student';
-                studentBtn.classList.add('active');
-                advisorBtn.classList.remove('active');
-                
-                document.getElementById('login-role').value = 'student';
-                
-                // Animate the button
-                studentBtn.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    studentBtn.style.transform = 'scale(1)';
-                }, 150);
-            }
-        });
-        
-        advisorBtn.addEventListener('click', () => {
-            e.preventDefault();
-            if (currentRole !== 'advisor') {
-                currentRole = 'advisor';
-                advisorBtn.classList.add('active');
-                studentBtn.classList.remove('active');
-                
-                document.getElementById('login-role').value = 'advisor';
-                
-                // Animate the button
-                advisorBtn.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    advisorBtn.style.transform = 'scale(1)';
-                }, 150);
-            }
-        });
-        
-        // Role selection for registration
-        userRoleSelect.addEventListener('change', function() {
-            const role = this.value;
+
+        // Function to switch between Student and Advisor in login
+        function switchLoginRole(role) {
+            const studentBtn = document.getElementById('student-btn');
+            const advisorBtn = document.getElementById('advisor-btn');
+            const roleInput = document.getElementById('login-role');
             
             if (role === 'student') {
-                studentSpecificSection.classList.add('active');
-                advisorSpecificSection.classList.remove('active');
+                studentBtn.classList.add('active');
+                advisorBtn.classList.remove('active');
+                if (roleInput) roleInput.value = 'student';
+            } else {
+                studentBtn.classList.remove('active');
+                advisorBtn.classList.add('active');
+                if (roleInput) roleInput.value = 'advisor';
+            }
+        }
+
+        // Function to show/hide fields based on Student or Advisor role in registration
+        function toggleFields() {
+            const roleSelect = document.getElementById('reg-role');
+            if (!roleSelect) return;
+            const role = roleSelect.value;
+            const studentSection = document.getElementById('student-specific-section');
+            const advisorSection = document.getElementById('advisor-specific-section');
+            const advisorSelectionDiv = document.getElementById('advisorSelection');
+
+            if (role === 'student') {
+                studentSection.classList.add('active');
+                advisorSection.classList.remove('active');
+
+                // Show advisor selection area and load advisors
+                if (advisorSelectionDiv) {
+                    advisorSelectionDiv.style.display = 'block';
+                    loadAdvisors();
+                }
             } else if (role === 'advisor') {
-                studentSpecificSection.classList.remove('active');
-                advisorSpecificSection.classList.add('active');
+                studentSection.classList.remove('active');
+                advisorSection.classList.add('active');
+
+                // Hide advisor selection area
+                if (advisorSelectionDiv) advisorSelectionDiv.style.display = 'none';
             } else {
-                studentSpecificSection.classList.remove('active');
-                advisorSpecificSection.classList.remove('active');
-            }
-        });
-        
-        // Populate advisor options
-        function populateAdvisorOptions(filter = '') {
-            advisorOptionsContainer.innerHTML = '';
-            
-            const filteredAdvisors = advisors.filter(advisor => {
-                const fullName = `${advisor.firstName} ${advisor.lastName}`.toLowerCase();
-                const dept = advisor.department.toLowerCase();
-                const specialization = advisor.specialization.toLowerCase();
-                const searchTerm = filter.toLowerCase();
-                
-                return fullName.includes(searchTerm) || 
-                       dept.includes(searchTerm) || 
-                       specialization.includes(searchTerm) ||
-                       filter === '';
-            });
-            
-            if (filteredAdvisors.length === 0) {
-                advisorOptionsContainer.innerHTML = `
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 30px; color: #64748b;">
-                        <i class="fas fa-search" style="font-size: 40px; margin-bottom: 10px; opacity: 0.5;"></i>
-                        <p>No advisors found matching "${filter}"</p>
-                        <p style="font-size: 14px; margin-top: 10px;">Try a different search term</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            filteredAdvisors.forEach(advisor => {
-                const advisorElement = document.createElement('div');
-                advisorElement.className = 'advisor-option';
-                advisorElement.dataset.id = advisor.id;
-                
-                // Calculate availability
-                const availability = advisor.maxStudents - advisor.students;
-                const availabilityText = availability > 0 ? 
-                    `<span style="color: #26a269;">${availability} spots available</span>` : 
-                    `<span style="color: #f66151;">Full</span>`;
-                
-                advisorElement.innerHTML = `
-                    <div class="advisor-avatar" style="background-color: ${advisor.avatarColor}20; color: ${advisor.avatarColor};">
-                        ${advisor.firstName.charAt(0)}${advisor.lastName.charAt(0)}
-                    </div>
-                    <div class="advisor-info">
-                        <div class="advisor-name">${advisor.title} ${advisor.firstName} ${advisor.lastName}</div>
-                        <div class="advisor-department">${advisor.department}</div>
-                        <div class="advisor-specialization">${advisor.specialization}</div>
-                        <div class="advisor-stats">
-                            <div class="advisor-stat">
-                                <i class="fas fa-user-graduate"></i> ${advisor.students} students
-                            </div>
-                            <div class="advisor-stat">
-                                <i class="fas fa-star" style="color: #ffc107;"></i> ${advisor.rating}/5
-                            </div>
-                        </div>
-                        <div style="font-size: 12px; margin-top: 5px;">${availabilityText}</div>
-                    </div>
-                    <div class="advisor-select-indicator">
-                        <i class="fas fa-check-circle" style="color: #1a5fb4; font-size: 20px; display: none;"></i>
-                    </div>
-                `;
-                
-                // Add click event to select advisor
-                advisorElement.addEventListener('click', () => selectAdvisor(advisor.id));
-                
-                // Mark as selected if already selected
-                if (selectedAdvisorId === advisor.id) {
-                    advisorElement.classList.add('selected');
-                    advisorElement.querySelector('.fa-check-circle').style.display = 'block';
-                }
-                
-                advisorOptionsContainer.appendChild(advisorElement);
-            });
-        }
-        
-        // Select advisor function
-        function selectAdvisor(advisorId) {
-            // Update selected advisor
-            selectedAdvisorId = advisorId;
-            selectedAdvisorInput.value = advisorId;
-            
-            // Update UI
-            document.querySelectorAll('.advisor-option').forEach(option => {
-                option.classList.remove('selected');
-                option.querySelector('.fa-check-circle').style.display = 'none';
-            });
-            
-            const selectedOption = document.querySelector(`.advisor-option[data-id="${advisorId}"]`);
-            if (selectedOption) {
-                selectedOption.classList.add('selected');
-                selectedOption.querySelector('.fa-check-circle').style.display = 'block';
-                
-                // Scroll to selected advisor
-                selectedOption.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-            
-            // Find the selected advisor details
-            const selectedAdvisor = advisors.find(a => a.id === advisorId);
-            if (selectedAdvisor) {
-                console.log(`Selected advisor: ${selectedAdvisor.title} ${selectedAdvisor.firstName} ${selectedAdvisor.lastName}`);
+                // If no role selected, hide both
+                studentSection.classList.remove('active');
+                advisorSection.classList.remove('active');
+                if (advisorSelectionDiv) advisorSelectionDiv.style.display = 'none';
             }
         }
-        
-        // Search advisor functionality
-        searchAdvisorInput.addEventListener('input', function() {
-            populateAdvisorOptions(this.value);
-        });
-        
-        // Toggle password visibility
-        function togglePasswordVisibility(toggleBtn, passwordInput) {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
+
+        // Initialize view
+        window.onload = () => {
+            // Set login as default tab
+            switchTab('login');
             
-            // Toggle eye icon
-            const eyeIcon = toggleBtn.querySelector('i');
-            eyeIcon.classList.toggle('fa-eye');
-            eyeIcon.classList.toggle('fa-eye-slash');
+            // Set student as default role in login
+            switchLoginRole('student');
             
-            // Add animation
-            toggleBtn.style.transform = 'scale(1.2)';
-            setTimeout(() => {
-                toggleBtn.style.transform = 'scale(1)';
-            }, 150);
-        }
-        
-        loginTogglePassword.addEventListener('click', () => togglePasswordVisibility(loginTogglePassword, loginPasswordInput));
-        registerTogglePassword.addEventListener('click', () => togglePasswordVisibility(registerTogglePassword, registerPasswordInput));
-        
-        // Demo credentials click
-        document.querySelectorAll('.credential-item[data-role]').forEach(item => {
-            item.addEventListener('click', (e) => {
-                const role = e.currentTarget.getAttribute('data-role');
-                
-                // Switch to login tab if not already there
-                if (currentTab !== 'login') {
-                    switchTab('login');
-                }
-                
-                if (role === 'student' && currentRole !== 'student') {
-                    studentBtn.click();
-                } else if (role === 'advisor' && currentRole !== 'advisor') {
-                    advisorBtn.click();
-                }
-                
-                // Set credentials
-                if (role === 'student') {
-                    loginUsernameInput.value = 'student@university.edu';
-                    document.getElementById('login-role').value = 'student';
-                } else {
-                    loginUsernameInput.value = 'advisor@university.edu';
-                    document.getElementById('login-role').value = 'advisor';
-                }
-                
-                loginPasswordInput.value = 'demo123';
-                
-                // Animate the clicked item
-                e.currentTarget.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    e.currentTarget.style.transform = 'scale(1)';
-                }, 200);
-                
-                // Highlight form fields
-                loginUsernameInput.style.borderColor = '#26a269';
-                loginPasswordInput.style.borderColor = '#26a269';
-                
-                setTimeout(() => {
-                    loginUsernameInput.style.borderColor = '';
-                    loginPasswordInput.style.borderColor = '';
-                }, 1500);
+            // Add event listeners for the "switch to" links
+            switchToRegister.addEventListener('click', function(e) {
+                e.preventDefault();
+                switchTab('register');
             });
-        });
-        
-        // Login form submission
-        // ADJUST HERE 3
-        loginForm.addEventListener('submit', (e) => {
-            const username = loginUsernameInput.value;
-            const password = loginPasswordInput.value;
-
-            // Simple front-end validation
-            if (!username || !password) {
-                e.preventDefault(); // Stop form submission
-                shakeEmptyFields(loginForm);
-
-                // Show error
-                const errorDiv = document.createElement('div');
-                errorDiv.style.color = '#f66151';
-                errorDiv.style.padding = '10px';
-                errorDiv.style.marginTop = '10px';
-                errorDiv.style.borderRadius = '5px';
-                errorDiv.style.backgroundColor = '#fee';
-                errorDiv.textContent = 'Please fill in all fields';
-
-                // Remove any existing error
-                const existingError = loginForm.querySelector('.form-error');
-                if (existingError) {
-                    existingError.remove();
-                }
-
-                errorDiv.className = 'form-error';
-                loginForm.appendChild(errorDiv);
-
-                setTimeout(() => {
-                    if (errorDiv.parentNode === loginForm) {
-                        errorDiv.remove();
-                    }
-                }, 3000);
-
-                return false;
-            }
-
-            // Let the form submit to the Servlet (default behavior)
-            // The form will POST to /login (LoginServlet)
-            return true;
-        });
-        
-        // Register form submission
-        registerForm.addEventListener('submit', (e) => {
-            e.preventDefault();
             
-            // Student registration fields
-            const studentName = document.getElementById('student-name').value;
-            const studentEmail = document.getElementById('student-email').value;
-            const program = document.getElementById('student-program').value;
-            const yearOfStudy = document.getElementById('year-of-study').value;
-            const semester = document.getElementById('semester').value;
-
-            // Advisor registration fields  
-            const advisorName = document.getElementById('advisor-name').value;
-            const advisorEmail = document.getElementById('advisor-email').value;
-            const phoneNum = document.getElementById('advisor-phone').value;
-            const department = document.getElementById('advisor-department').value;
-            const expertise = document.getElementById('advisor-expertise').value;
-            const officeHours = document.getElementById('advisor-office-hours').value;
-            const officeLoc = document.getElementById('advisor-office-loc').value;
-            
-            //ADJUST HERE 2
-            // Validation
-            if (!studentName || !studentEmail || !program || !yearOfStudy || !semester || !confirmPassword || !userRole) {
-                shakeEmptyFields(registerForm);
-                return;
-            }
-            
-            if (password !== confirmPassword) {
-                showError(registerForm, 'Passwords do not match!');
-                return;
-            }
-            
-            if (!termsAccepted) {
-                showError(registerForm, 'Please accept the Terms of Service and Privacy Policy.');
-                return;
-            }
-            
-            // Additional validation for students
-            if (userRole === 'student' && !selectedAdvisorId) {
-                showError(registerForm, 'Please select an academic advisor.');
-                return;
-            }
-            
-            // Additional validation for advisors
-            if (userRole === 'advisor') {
-                const department = document.getElementById('advisor-department').value;
-                if (!department) {
-                    showError(registerForm, 'Please select your department.');
-                    return;
-                }
-            }
-            
-            // For demo purposes, simulate successful registration
-            let successMessage = `Account created successfully for ${firstName} ${lastName}!`;
-            
-            if (userRole === 'student') {
-                const selectedAdvisor = advisors.find(a => a.id === selectedAdvisorId);
-                successMessage += `\n\nYou have been assigned to ${selectedAdvisor.title} ${selectedAdvisor.firstName} ${selectedAdvisor.lastName} (${selectedAdvisor.department}).`;
-                successMessage += `\nCheck your email to verify your account.`;
-            } else {
-                successMessage += `\n\nYour advisor account has been created.`;
-                successMessage += `\nCheck your email to verify your account and set up your availability.`;
-            }
-            
-            showSuccess(registerButton, successMessage);
-            
-            // Reset form after successful registration
-            setTimeout(() => {
-                registerForm.reset();
-                selectedAdvisorId = null;
-                selectedAdvisorInput.value = '';
-                studentSpecificSection.classList.remove('active');
-                advisorSpecificSection.classList.remove('active');
-                populateAdvisorOptions();
+            switchToLogin.addEventListener('click', function(e) {
+                e.preventDefault();
                 switchTab('login');
-            }, 2000);
-        });
-        
-        // Helper functions
-        function shakeEmptyFields(form) {
-            const inputs = form.querySelectorAll('input[required], select[required]');
-            inputs.forEach(input => {
-                if (!input.value) {
-                    input.style.borderColor = '#f66151';
-                    input.style.animation = 'shake 0.5s';
-                    
-                    setTimeout(() => {
-                        input.style.borderColor = '';
-                        input.style.animation = '';
-                    }, 500);
-                }
             });
-        }
+            
+            // Add event listeners for role buttons in login
+            document.getElementById('student-btn').addEventListener('click', function() {
+                switchLoginRole('student');
+            });
+            
+            document.getElementById('advisor-btn').addEventListener('click', function() {
+                switchLoginRole('advisor');
+            });
+            
+            // Initialize registration role fields
+            toggleFields();
+            
+            // Add change event listener to registration role dropdown
+            const regRoleEl = document.getElementById('reg-role');
+            if (regRoleEl) regRoleEl.addEventListener('change', toggleFields);
+            
+            // Add event listener for demo credentials
+            document.querySelectorAll('.credential-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const role = this.getAttribute('data-role');
+                    switchLoginRole(role);
+                    
+                    // Autofill credentials based on role
+                    const usernameField = document.querySelector('#login-form input[name="username"]');
+                    const passwordField = document.querySelector('#login-form input[name="password"]');
+                    
+                    if (role === 'student') {
+                        usernameField.value = 'student@university.edu';
+                        passwordField.value = 'demo123';
+                    } else {
+                        usernameField.value = 'advisor@university.edu';
+                        passwordField.value = 'demo123';
+                    }
+                });
+            });
+        };
         
-        function showSuccess(button, message) {
-            const originalContent = button.innerHTML;
-            const originalBgColor = button.style.backgroundColor;
-            
-            button.style.backgroundColor = '#26a269';
-            button.innerHTML = '<i class="fas fa-check"></i> Success!';
-            button.disabled = true;
-            
-            setTimeout(() => {
-                alert(message);
-                button.style.backgroundColor = originalBgColor;
-                button.innerHTML = originalContent;
-                button.disabled = false;
-                
-                // Reset login form after successful login
-                if (button.id === 'login-button') {
-                    loginForm.reset();
+        async function loadAdvisors() {
+            try {
+                // Build a robust base path in case the app is deployed under a context path.
+                // e.g. /Academic_Advising/index.html -> base = /Academic_Advising
+                const base = window.location.pathname.replace(/\/[^\/]*$/, '') || '';
+                const url = `${base}/api/advisors/available`;
+                const response = await fetch(url, { cache: 'no-store' });
+                if (!response.ok) {
+                    throw new Error('Failed to load advisors: ' + response.status);
                 }
-            }, 1000);
-        }
-        
-        function showError(form, message) {
-            form.style.animation = 'shake 0.5s';
-            setTimeout(() => {
-                form.style.animation = '';
-            }, 500);
-            
-            alert(message + '\n\nFor demo login, use:\nStudent: student@university.edu / demo123\nAdvisor: advisor@university.edu / demo123\nOr any username with password: demo123');
-        }
-        
-        // Add shake animation CSS
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes shake {
-                0%, 100% { transform: translateX(0); }
-                10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-                20%, 40%, 60%, 80% { transform: translateX(5px); }
+                const data = await response.json();
+                const container = document.getElementById('advisorsContainer');
+                container.innerHTML = '';
+                
+                // If search input exists, capture search term for simple client-side filtering
+                const searchInput = document.getElementById('search-advisor');
+                const searchTerm = searchInput ? searchInput.value.trim().toLowerCase() : '';
+
+                (data.advisors || []).forEach(advisor => {
+                    // Basic client-side filter by name or department if search term present
+                    const matchesSearch = !searchTerm ||
+                        (advisor.name && advisor.name.toLowerCase().includes(searchTerm)) ||
+                        (advisor.department && advisor.department.toLowerCase().includes(searchTerm));
+                    if (!matchesSearch) return;
+
+                    const card = document.createElement('div');
+                    card.className = `advisor-card ${advisor.available ? 'available' : 'unavailable'}`;
+                    
+                    // Use the exact properties the servlet provides (officeLocation vs officeLoc mapping)
+                    const officeLocation = advisor.officeLocation || advisor.officeLoc || '';
+                    const numStudents = advisor.numStudents != null ? advisor.numStudents : advisor.numSTD;
+                    const maxStudents = advisor.maxStudents != null ? advisor.maxStudents : advisor.maxSTD;
+                    
+                    card.innerHTML = `
+                        <h4>${advisor.name}</h4>
+                        <p><strong>Department:</strong> ${advisor.department || ''}</p>
+                        <p><strong>Expertise:</strong> ${advisor.expertise || ''}</p>
+                        <p><strong>Office Hours:</strong> ${advisor.officeHours || ''}</p>
+                        <p><strong>Location:</strong> ${officeLocation}</p>
+                        <p><strong>Current Students:</strong> ${numStudents}/${maxStudents}</p>
+                        <p class="${advisor.available ? 'status-available' : 'status-full'}">
+                            ${advisor.status || (advisor.available ? 'Available' : 'Full')} ${advisor.available ? `(${advisor.availableSlots} slots remaining)` : ''}
+                        </p>
+                        ${advisor.available ? 
+                            `<div style="margin-top:8px"><label><input type="radio" name="advisorID" value="${advisor.advisorID}" onchange="selectAdvisor(${advisor.advisorID})"> Select this advisor</label></div>` : 
+                            '<em>Currently unavailable</em>'}
+                    `;
+                    
+                    container.appendChild(card);
+                });
+
+                // If a search box exists, wire it to refilter advisors client-side
+                const searchInputEl = document.getElementById('search-advisor');
+                if (searchInputEl) {
+                    searchInputEl.oninput = () => loadAdvisors();
+                }
+            } catch (error) {
+                console.error('Error loading advisors:', error);
+                const container = document.getElementById('advisorsContainer');
+                if (container) container.innerHTML = '<p style="color: #b00020;">Unable to load advisors at this time.</p>';
             }
-        `;
-        document.head.appendChild(style);
+        }
         
-        // Initialize tab indicator position
-        tabIndicator.style.transform = 'translateX(0)';
+        function selectAdvisor(advisorID) {
+            const hidden = document.getElementById('selectedAdvisorID');
+            if (hidden) hidden.value = advisorID;
+            // Optionally mark selected visually (for custom UI)
+            // highlight the selected card (not strictly necessary)
+        }
     </script>
 </body>
 </html>

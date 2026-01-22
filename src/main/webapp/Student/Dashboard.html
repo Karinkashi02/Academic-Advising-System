@@ -992,19 +992,20 @@
                     <i class="fas fa-bell"></i>
                     <span class="notification-badge">3</span>
                 </div>
-                <div class="profile-dropdown">
-                    <div class="profile-btn" id="profileBtn">
-                        <div class="profile-pic">MA</div>
-                        <div class="profile-info">
-                            <div class="profile-name">M. Amar Ghazali</div>
-                            <div class="profile-role">Student</div>
-                        </div>
-                        <i class="fas fa-chevron-down dropdown-icon"></i>
+                <div class="profile-dropdown" id="profileDropdown">
+                  <div class="profile-btn" id="profileBtn">
+                    <div class="profile-pic" id="profilePic">MA</div>
+                    <div class="profile-info">
+                      <div class="profile-name" id="profileName">M. Amar Ghazali</div>
+                      <div class="profile-role" id="profileRole">Student</div>
                     </div>
-                    <div class="dropdown-menu" id="dropdownMenu">
-                        <a href="Profile.html" class="dropdown-item"><i class="fas fa-user-circle"></i> My Profile</a>
-                        <a href="#" class="dropdown-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                    </div>
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                  </div>
+
+                  <div class="dropdown-menu" id="dropdownMenu">
+                    <a href="Profile.html" class="dropdown-item"><i class="fas fa-user-circle"></i> My Profile</a>
+                    <a href="#" class="dropdown-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                  </div>
                 </div>
             </div>
         </header>
@@ -1293,6 +1294,118 @@
                 });
             });
         });
+        
+        (function() {
+            // Determine webapp context path (like earlier scripts)
+            function getContextPath() {
+              const p = window.location.pathname.split('/').filter(Boolean);
+              return p.length ? '/' + p[0] : '';
+            }
+            const ctx = getContextPath();
+
+            const dropdown = document.getElementById('profileDropdown');
+            const profileBtn = document.getElementById('profileBtn');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const profileNameEl = document.getElementById('profileName');
+            const profilePicEl = document.getElementById('profilePic');
+            const profileRoleEl = document.getElementById('profileRole');
+
+            // Ensure backdrop exists (create if needed)
+            let backdrop = document.getElementById('dropdownBackdrop');
+            if (!backdrop) {
+              backdrop = document.createElement('div');
+              backdrop.id = 'dropdownBackdrop';
+              backdrop.className = 'dropdown-backdrop';
+              document.body.appendChild(backdrop);
+            }
+
+            function openMenu() {
+              dropdownMenu.classList.add('show');
+              profileBtn.classList.add('active');
+              backdrop.classList.add('active');
+              dropdown.classList.add('active');
+            }
+            function closeMenu() {
+              dropdownMenu.classList.remove('show');
+              profileBtn.classList.remove('active');
+              backdrop.classList.remove('active');
+              dropdown.classList.remove('active');
+            }
+            function toggleMenu() {
+              if (dropdownMenu.classList.contains('show')) closeMenu(); else openMenu();
+            }
+
+            // Toggle when clicking profile button
+            if (profileBtn) {
+              profileBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleMenu();
+              });
+            }
+
+            // Close when clicking outside or on backdrop
+            backdrop.addEventListener('click', function() {
+              closeMenu();
+            });
+            document.addEventListener('click', function(e) {
+              if (!dropdown.contains(e.target)) {
+                closeMenu();
+              }
+            });
+
+            // Close on Escape
+            document.addEventListener('keydown', function(e) {
+              if (e.key === 'Escape') closeMenu();
+            });
+
+            // Logout handler - calls existing logout path
+            if (logoutBtn) {
+              logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                // Confirm optionally
+                if (!confirm('Are you sure you want to log out?')) return;
+                // Use context path so it works under /Academic-Advising or root
+                const url = ctx + '/logout';
+                // Use location.href to trigger servlet and redirect
+                window.location.href = url;
+              });
+            }
+
+            // Fill profile name and initials by calling /api/student/me if role is student
+            async function loadProfile() {
+              try {
+                const res = await fetch(ctx + '/api/student/me', { cache: 'no-store' });
+                if (!res.ok) {
+                  // not logged in or not student; leave static values
+                  return;
+                }
+                const json = await res.json();
+                const name = json.name || json.firstName || profileNameEl.textContent;
+                profileNameEl.textContent = name;
+                profileRoleEl.textContent = 'Student';
+
+                // create initials for avatar
+                let initials = '';
+                if (json.firstName || json.lastName) {
+                  const f = (json.firstName || '').trim();
+                  const l = (json.lastName || '').trim();
+                  initials = (f ? f.charAt(0) : '') + (l ? l.charAt(0) : '');
+                } else if (name) {
+                  const parts = name.trim().split(/\s+/);
+                  initials = parts[0].charAt(0) + (parts.length > 1 ? parts[parts.length-1].charAt(0) : '');
+                }
+                initials = initials.toUpperCase() || 'ME';
+                if (profilePicEl) profilePicEl.textContent = initials;
+              } catch (err) {
+                // ignore, show default
+                console.warn('Could not load profile info', err);
+              }
+            }
+
+            // Call once
+            loadProfile();
+          })();
     </script>
 </body>
 </html>

@@ -715,7 +715,7 @@
 
         .date-cell {
             aspect-ratio: 1;
-            padding: 8px;
+            padding: 20px;
             border: 2px solid transparent;
             border-radius: 8px;
             display: flex;
@@ -741,8 +741,8 @@
             content: '';
             position: absolute;
             bottom: 5px;
-            width: 5px;
-            height: 5px;
+            width: 6px;
+            height: 6px;
             background: var(--success-green);
             border-radius: 50%;
         }
@@ -1053,19 +1053,20 @@
                 <span>Advising Sessions</span>
             </div>
             <div class="profile-area">
-                <div class="profile-dropdown">
-                    <div class="profile-btn" id="profileBtn">
-                        <div class="profile-pic">MA</div>
-                        <div class="profile-info">
-                            <div class="profile-name">M. Amar Ghazali</div>
-                            <div class="profile-role">Student</div>
-                        </div>
-                        <i class="fas fa-chevron-down dropdown-icon"></i>
+                <div class="profile-dropdown" id="profileDropdown">
+                  <div class="profile-btn" id="profileBtn">
+                    <div class="profile-pic" id="profilePic">MA</div>
+                    <div class="profile-info">
+                      <div class="profile-name" id="profileName">M. Amar Ghazali</div>
+                      <div class="profile-role" id="profileRole">Student</div>
                     </div>
-                    <div class="dropdown-menu" id="dropdownMenu">
-                        <a href="Profile.html" class="dropdown-item"><i class="fas fa-user-circle"></i> My Profile</a>
-                        <a href="#" class="dropdown-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                    </div>
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                  </div>
+
+                  <div class="dropdown-menu" id="dropdownMenu">
+                    <a href="Profile.html" class="dropdown-item"><i class="fas fa-user-circle"></i> My Profile</a>
+                    <a href="#" class="dropdown-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                  </div>
                 </div>
             </div>
         </header>
@@ -1220,21 +1221,30 @@
                     </div>
                     
                     <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="sessionDate">
-                                <i class="fas fa-calendar"></i> Session Date
-                            </label>
-                            <input type="date" class="form-control" id="sessionDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="advisorID">
-                                <i class="fas fa-user-tie"></i> Advisor
-                            </label>
-                            <select class="form-control" id="advisorID" required>
-                                <option value="">Select advisor</option>
-                                <!-- Advisors will be populated by JavaScript -->
-                            </select>
-                        </div>
+                      <div class="form-group">
+                        <label class="form-label" for="sessionDateTime"><i class="fas fa-calendar"></i> Session Date & Time</label>
+                        <input type="datetime-local" class="form-control" id="sessionDateTime" required>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="form-label" for="sessionType"><i class="fas fa-tag"></i> Session Type</label>
+                        <select class="form-control" id="sessionType" required>
+                          <option value="academic">Academic Planning</option>
+                          <option value="course">Course Selection</option>
+                          <option value="career">Career Guidance</option>
+                          <option value="personal">Personal Issues</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="form-row" style="margin-top:12px;">
+                      <div class="form-group" style="flex:1;">
+                        <label class="form-label" for="advisorID"><i class="fas fa-user-tie"></i> Advisor (optional)</label>
+                        <select class="form-control" id="advisorID">
+                          <option value="">Select advisor</option>
+                          <!-- advisors populated by JS -->
+                        </select>
+                      </div>
                     </div>
                     
                     <div class="form-group">
@@ -1269,735 +1279,547 @@
             </div>
         </div>
     </div>
+    
+    <div class="modal" id="daySessionsModal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title"><i class="fas fa-calendar-day"></i> Sessions on <span id="dayModalDateLabel"></span></h3>
+            <button class="modal-close" id="dayModalClose">&times;</button>
+          </div>
+          <div class="modal-body" id="daySessionsBody">
+            <!-- JS will populate the list of sessions for the clicked day -->
+          </div>
+        </div>
+    </div>
 
     <script>
-        // Database structure from ERD
-        const database = {
-            // From ADVISOR table
-            advisors: [
-                {
-                    advisorID: 1,
-                    name: "Dr. Siti Zulaikha",
-                    email: "zulaikha@uitm.edu.my",
-                    password: "******",
-                    phoneNum: "012-3456789"
-                },
-                {
-                    advisorID: 2,
-                    name: "Dr. Ahmad Faiz",
-                    email: "ahmad.faiz@uitm.edu.my",
-                    password: "******",
-                    phoneNum: "013-4567890"
-                },
-                {
-                    advisorID: 3,
-                    name: "Dr. Norhayati",
-                    email: "norhayati@uitm.edu.my",
-                    password: "******",
-                    phoneNum: "014-5678901"
-                },
-                {
-                    advisorID: 4,
-                    name: "Dr. Rahmah",
-                    email: "rahmah@uitm.edu.my",
-                    password: "******",
-                    phoneNum: "015-6789012"
-                }
-            ],
-            
-            // From STUDENT table
-            students: [
-                {
-                    studentID: 1,
-                    name: "M. Amar Ghazali",
-                    email: "amar@student.uitm.edu.my",
-                    password: "******",
-                    program: "Computer Science",
-                    yearOfStudy: 3,
-                    advisorID: 1
-                },
-                {
-                    studentID: 2,
-                    name: "Ali bin Ahmad",
-                    email: "ali@student.uitm.edu.my",
-                    password: "******",
-                    program: "Information Technology",
-                    yearOfStudy: 2,
-                    advisorID: 2
-                }
-            ],
-            
-            // From ADVISING_SESSION table
-            advisingSessions: [
-                {
-                    sessionID: 1,
-                    title: "Final Year Project Discussion",
-                    sessionDate: "2025-12-20T10:00:00",
-                    notes: "Discussed project timeline and requirements. Student needs to submit proposal by next week.",
-                    advisorID: 1,
-                    studentID: 1,
-                    status: "confirmed"
-                },
-                {
-                    sessionID: 2,
-                    title: "Semester 3 Course Planning",
-                    sessionDate: "2026-01-15T14:30:00",
-                    notes: "Planning courses for next semester. Recommended CSC567 and ITT569.",
-                    advisorID: 2,
-                    studentID: 1,
-                    status: "pending"
-                },
-                {
-                    sessionID: 3,
-                    title: "Semester 2 Course Planning",
-                    sessionDate: "2025-11-15T10:00:00",
-                    notes: "Discussed course selection for next semester. Recommended CSC567 and ITT569.",
-                    advisorID: 1,
-                    studentID: 1,
-                    status: "completed"
-                },
-                {
-                    sessionID: 4,
-                    title: "Database Project Guidance",
-                    sessionDate: "2025-10-28T14:00:00",
-                    notes: "Reviewed database design. Suggested improvements for normalization.",
-                    advisorID: 2,
-                    studentID: 1,
-                    status: "completed"
-                },
-                {
-                    sessionID: 5,
-                    title: "Academic Progress Review",
-                    sessionDate: "2025-09-10T11:30:00",
-                    notes: "Good academic performance. Maintain CGPA above 3.5 for Dean's List.",
-                    advisorID: 1,
-                    studentID: 1,
-                    status: "completed"
-                },
-                {
-                    sessionID: 6,
-                    title: "Internship Opportunities",
-                    sessionDate: "2025-08-22T09:00:00",
-                    notes: "Discussed available internship positions for next summer.",
-                    advisorID: 3,
-                    studentID: 1,
-                    status: "completed"
-                },
-                {
-                    sessionID: 7,
-                    title: "Web Development Career Path",
-                    sessionDate: "2025-07-15T15:00:00",
-                    notes: "Explored different career paths in web development.",
-                    advisorID: 4,
-                    studentID: 1,
-                    status: "completed"
-                }
-            ]
-        };
+    document.addEventListener('DOMContentLoaded', function() {
+      // context path helper (keeps same behavior as other pages)
+      const ctx = (function(){ const p = window.location.pathname.split('/').filter(Boolean); return p.length ? '/' + p[0] : ''; })();
 
-        // Current user (assuming logged in as first student)
-        const currentStudent = database.students[0];
+      // Elements
+      const upcomingContainer = document.getElementById('upcomingSessions');
+      const pastTableBody = document.getElementById('pastSessionsTable');
+      const upcomingCountEl = document.getElementById('upcomingCount');
+      const completedCountEl = document.getElementById('completedCount');
+      const pendingCountEl = document.getElementById('pendingCount');
+      const cancelledCountEl = document.getElementById('cancelledCount');
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize the page with data from ERD
-            initializePage();
-            
-            // Profile dropdown functionality
-            const profileBtn = document.getElementById('profileBtn');
-            const dropdownMenu = document.getElementById('dropdownMenu');
-            const dropdownBackdrop = document.getElementById('dropdownBackdrop');
-            const logoutBtn = document.getElementById('logoutBtn');
-            
-            let isDropdownOpen = false;
-            
-            profileBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                toggleDropdown();
-            });
-            
-            dropdownBackdrop.addEventListener('click', function() {
-                closeDropdown();
-            });
-            
-            document.addEventListener('click', function(e) {
-                if (isDropdownOpen && 
-                    !profileBtn.contains(e.target) && 
-                    !dropdownMenu.contains(e.target)) {
-                    closeDropdown();
-                }
-            });
-            
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && isDropdownOpen) {
-                    closeDropdown();
-                }
-            });
-            
-            function toggleDropdown() {
-                if (isDropdownOpen) {
-                    closeDropdown();
-                } else {
-                    openDropdown();
-                }
-            }
-            
-            function openDropdown() {
-                dropdownMenu.classList.add('show');
-                dropdownBackdrop.classList.add('active');
-                profileBtn.classList.add('active');
-                isDropdownOpen = true;
-            }
-            
-            function closeDropdown() {
-                dropdownMenu.classList.remove('show');
-                dropdownBackdrop.classList.remove('active');
-                profileBtn.classList.remove('active');
-                isDropdownOpen = false;
-            }
-            
-            // FIXED: Only handle logout button click
-            logoutBtn.addEventListener('click', function(e) {
-                e.preventDefault(); // Only prevent default for logout
-                closeDropdown();
-                
-                if (confirm('Are you sure you want to logout?')) {
-                    alert('Logging out...');
-                    // In a real app: window.location.href = '/logout';
-                }
-            });
+      const newSessionModal = document.getElementById('newSessionModal');
+      const dropdownBackdrop = document.getElementById('dropdownBackdrop');
+      const newSessionBtn = document.getElementById('newSessionBtn');
+      const modalClose = document.getElementById('modalClose');
+      const cancelRequestBtn = document.getElementById('cancelRequest');
+      const sessionRequestForm = document.getElementById('sessionRequestForm');
 
-            // Profile link will work automatically because href="profile.html" is set
-            // and we're NOT preventing its default behavior
+      const advisorSelect = document.getElementById('advisorID');
+      const sessionTypeSelect = document.getElementById('sessionType');
+      const sessionDateTimeEl = document.getElementById('sessionDateTime');
 
-            // Initialize page with data
-            function initializePage() {
-                // Update student info in header
-                document.querySelector('.profile-name').textContent = currentStudent.name;
-                
-                // Count sessions by status
-                const upcomingCount = database.advisingSessions.filter(session => 
-                    session.status === 'confirmed' && 
-                    new Date(session.sessionDate) > new Date()
-                ).length;
-                
-                const completedCount = database.advisingSessions.filter(session => 
-                    session.status === 'completed'
-                ).length;
-                
-                const pendingCount = database.advisingSessions.filter(session => 
-                    session.status === 'pending'
-                ).length;
-                
-                const cancelledCount = database.advisingSessions.filter(session => 
-                    session.status === 'cancelled'
-                ).length;
-                
-                // Update stats
-                document.getElementById('upcomingCount').textContent = upcomingCount;
-                document.getElementById('completedCount').textContent = completedCount;
-                document.getElementById('pendingCount').textContent = pendingCount;
-                document.getElementById('cancelledCount').textContent = cancelledCount;
-                
-                // Display upcoming sessions
-                displayUpcomingSessions();
-                
-                // Display past sessions
-                displayPastSessions();
-                
-                // Initialize calendar
-                initializeCalendar();
-                
-                // Populate advisor dropdown in modal
-                populateAdvisorDropdown();
-            }
-            
-            function displayUpcomingSessions() {
-                const upcomingSessionsContainer = document.getElementById('upcomingSessions');
-                upcomingSessionsContainer.innerHTML = '';
-                
-                const upcomingSessions = database.advisingSessions.filter(session => 
-                    (session.status === 'confirmed' || session.status === 'pending') && 
-                    new Date(session.sessionDate) > new Date() &&
-                    session.studentID === currentStudent.studentID
-                ).sort((a, b) => new Date(a.sessionDate) - new Date(b.sessionDate));
-                
-                if (upcomingSessions.length === 0) {
-                    upcomingSessionsContainer.innerHTML = `
-                        <div class="session-card" style="text-align: center; padding: 40px;">
-                            <i class="fas fa-calendar-times" style="font-size: 3rem; color: var(--light-blue); margin-bottom: 15px;"></i>
-                            <h3 style="color: var(--primary-blue); margin-bottom: 10px;">No Upcoming Sessions</h3>
-                            <p style="color: var(--dark-text); opacity: 0.7;">You don't have any upcoming advising sessions.</p>
-                            <button class="btn btn-primary" id="requestFirstSession" style="margin-top: 20px;">
-                                <i class="fas fa-plus-circle"></i> Request Your First Session
-                            </button>
-                        </div>
-                    `;
-                    
-                    document.getElementById('requestFirstSession')?.addEventListener('click', function() {
-                        document.getElementById('newSessionModal').classList.add('show');
-                        dropdownBackdrop.classList.add('active');
-                    });
-                    
-                    return;
-                }
-                
-                upcomingSessions.forEach(session => {
-                    const advisor = database.advisors.find(a => a.advisorID === session.advisorID);
-                    const sessionDate = new Date(session.sessionDate);
-                    const formattedDate = sessionDate.toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                    });
-                    const formattedTime = sessionDate.toLocaleTimeString('en-US', { 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
-                    });
-                    
-                    const sessionCard = document.createElement('div');
-                    sessionCard.className = `session-card ${session.status}`;
-                    sessionCard.dataset.sessionId = session.sessionID;
-                    
-                    sessionCard.innerHTML = `
-                        <div class="session-header">
-                            <div>
-                                <div class="session-title">${session.title}</div>
-                                <span class="session-status status-${session.status}">
-                                    ${session.status.charAt(0).toUpperCase() + session.status.slice(1)}
-                                </span>
-                            </div>
-                            <div class="session-time">
-                                <div style="font-weight: 600; color: var(--primary-blue);">${formattedDate}</div>
-                                <div style="color: var(--dark-text); opacity: 0.8;">${formattedTime}</div>
-                            </div>
-                        </div>
-                        <div class="session-details">
-                            <div class="detail-item">
-                                <div class="detail-icon">
-                                    <i class="fas fa-user-tie"></i>
-                                </div>
-                                <div class="detail-content">
-                                    <h4>Advisor</h4>
-                                    <p>${advisor.name}</p>
-                                </div>
-                            </div>
-                            <div class="detail-item">
-                                <div class="detail-icon">
-                                    <i class="fas fa-calendar"></i>
-                                </div>
-                                <div class="detail-content">
-                                    <h4>Date</h4>
-                                    <p>${formattedDate}</p>
-                                </div>
-                            </div>
-                            <div class="detail-item">
-                                <div class="detail-icon">
-                                    <i class="fas fa-clock"></i>
-                                </div>
-                                <div class="detail-content">
-                                    <h4>Time</h4>
-                                    <p>${formattedTime}</p>
-                                </div>
-                            </div>
-                            <div class="detail-item">
-                                <div class="detail-icon">
-                                    <i class="fas fa-sticky-note"></i>
-                                </div>
-                                <div class="detail-content">
-                                    <h4>Notes Preview</h4>
-                                    <p class="notes-preview">${session.notes.substring(0, 30)}${session.notes.length > 30 ? '...' : ''}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="session-actions">
-                            ${session.status === 'confirmed' ? `
-                                <button class="btn btn-sm btn-success join-session" data-session="${session.sessionID}">
-                                    <i class="fas fa-video"></i> Join Session
-                                </button>
-                            ` : ''}
-                            <button class="btn btn-sm btn-outline view-details" data-session="${session.sessionID}">
-                                <i class="fas fa-eye"></i> View Details
-                            </button>
-                            ${session.status === 'pending' ? `
-                                <button class="btn btn-sm btn-outline cancel-session" data-session="${session.sessionID}">
-                                    <i class="fas fa-times"></i> Cancel Request
-                                </button>
-                            ` : ''}
-                        </div>
-                    `;
-                    
-                    upcomingSessionsContainer.appendChild(sessionCard);
-                });
-                
-                // Add event listeners to buttons
-                document.querySelectorAll('.join-session').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const sessionId = this.dataset.session;
-                        const session = database.advisingSessions.find(s => s.sessionID == sessionId);
-                        alert(`Joining session: ${session.title}\n\nThis would open the meeting link in a real application.`);
-                    });
-                });
-                
-                document.querySelectorAll('.view-details').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const sessionId = this.dataset.session;
-                        showSessionDetails(sessionId);
-                    });
-                });
-                
-                document.querySelectorAll('.cancel-session').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const sessionId = this.dataset.session;
-                        if (confirm('Are you sure you want to cancel this session request?')) {
-                            // In a real app, this would update the database
-                            const session = database.advisingSessions.find(s => s.sessionID == sessionId);
-                            session.status = 'cancelled';
-                            alert('Session request cancelled successfully.');
-                            initializePage(); // Refresh the page
-                        }
-                    });
-                });
-            }
-            
-            function displayPastSessions() {
-                const pastSessionsTable = document.getElementById('pastSessionsTable');
-                pastSessionsTable.innerHTML = '';
-                
-                const pastSessions = database.advisingSessions.filter(session => 
-                    session.status === 'completed' &&
-                    session.studentID === currentStudent.studentID
-                ).sort((a, b) => new Date(b.sessionDate) - new Date(a.sessionDate));
-                
-                pastSessions.forEach(session => {
-                    const advisor = database.advisors.find(a => a.advisorID === session.advisorID);
-                    const sessionDate = new Date(session.sessionDate);
-                    const formattedDate = sessionDate.toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'short', 
-                        day: 'numeric' 
-                    });
-                    const formattedTime = sessionDate.toLocaleTimeString('en-US', { 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
-                    });
-                    
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td><strong>${formattedDate}</strong><br>${formattedTime}</td>
-                        <td>${advisor.name}</td>
-                        <td>${session.title}</td>
-                        <td class="notes-preview">${session.notes.substring(0, 50)}${session.notes.length > 50 ? '...' : ''}</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline view-notes" data-session="${session.sessionID}">
-                                <i class="fas fa-eye"></i> View Notes
-                            </button>
-                        </td>
-                    `;
-                    
-                    pastSessionsTable.appendChild(row);
-                });
-                
-                // Add event listeners to view notes buttons
-                document.querySelectorAll('.view-notes').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const sessionId = this.dataset.session;
-                        showSessionDetails(sessionId);
-                    });
-                });
-            }
-            
-            function showSessionDetails(sessionId) {
-                const session = database.advisingSessions.find(s => s.sessionID == sessionId);
-                const advisor = database.advisors.find(a => a.advisorID === session.advisorID);
-                const student = database.students.find(s => s.studentID === session.studentID);
-                
-                const sessionDate = new Date(session.sessionDate);
-                const formattedDate = sessionDate.toLocaleDateString('en-US', { 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric',
-                    weekday: 'long'
-                });
-                const formattedTime = sessionDate.toLocaleTimeString('en-US', { 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
-                });
-                
-                document.getElementById('notesModalBody').innerHTML = `
-                    <div style="margin-bottom: 25px;">
-                        <h4 style="color: var(--primary-blue); margin-bottom: 10px;">${session.title}</h4>
-                        <div style="display: flex; align-items: center; gap: 20px; color: var(--dark-text); opacity: 0.8; font-size: 0.95rem;">
-                            <div><i class="fas fa-calendar"></i> ${formattedDate}</div>
-                            <div><i class="fas fa-clock"></i> ${formattedTime}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row" style="margin-bottom: 25px;">
-                        <div class="form-group">
-                            <label class="form-label">
-                                <i class="fas fa-user-tie"></i> Advisor
-                            </label>
-                            <div style="padding: 10px 0; font-weight: 500;">${advisor.name}</div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">
-                                <i class="fas fa-user-graduate"></i> Student
-                            </label>
-                            <div style="padding: 10px 0; font-weight: 500;">${student.name}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="fas fa-sticky-note"></i> Session Notes
-                        </label>
-                        <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-top: 5px;">
-                            ${session.notes}
-                        </div>
-                    </div>
-                    
-                    <div style="margin-top: 25px;">
-                        <button class="btn btn-primary" onclick="window.print()" style="width: 100%;">
-                            <i class="fas fa-print"></i> Print Session Details
-                        </button>
-                    </div>
-                `;
-                
-                document.getElementById('notesModal').classList.add('show');
-                dropdownBackdrop.classList.add('active');
-            }
-            
-            function initializeCalendar() {
-                const now = new Date();
-                const currentMonth = now.getMonth();
-                const currentYear = now.getFullYear();
-                
-                // Set current month/year display
-                const monthNames = ["January", "February", "March", "April", "May", "June",
-                                   "July", "August", "September", "October", "November", "December"];
-                document.getElementById('currentMonthYear').textContent = `${monthNames[currentMonth]} ${currentYear}`;
-                
-                // Generate calendar
-                generateCalendar(currentMonth, currentYear);
-                
-                // Add event listeners to calendar navigation
-                document.getElementById('prevMonth').addEventListener('click', function() {
-                    // In a real app, this would navigate to previous month
-                    alert('Previous month - would update calendar in real application');
-                });
-                
-                document.getElementById('nextMonth').addEventListener('click', function() {
-                    // In a real app, this would navigate to next month
-                    alert('Next month - would update calendar in real application');
-                });
-            }
-            
-            function generateCalendar(month, year) {
-                const calendarDates = document.getElementById('calendarDates');
-                calendarDates.innerHTML = '';
-                
-                const firstDay = new Date(year, month, 1);
-                const lastDay = new Date(year, month + 1, 0);
-                const daysInMonth = lastDay.getDate();
-                const startDay = firstDay.getDay();
-                
-                // Add empty cells for days before first day of month
-                for (let i = 0; i < startDay; i++) {
-                    const emptyCell = document.createElement('div');
-                    emptyCell.className = 'date-cell';
-                    emptyCell.style.visibility = 'hidden';
-                    calendarDates.appendChild(emptyCell);
-                }
-                
-                // Add cells for each day
-                for (let day = 1; day <= daysInMonth; day++) {
-                    const dateCell = document.createElement('div');
-                    dateCell.className = 'date-cell';
-                    dateCell.textContent = day;
-                    
-                    // Mark current day
-                    const today = new Date();
-                    if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-                        dateCell.classList.add('active');
-                    }
-                    
-                    // Check if this date has any sessions
-                    const hasSession = database.advisingSessions.some(session => {
-                        const sessionDate = new Date(session.sessionDate);
-                        return sessionDate.getDate() === day && 
-                               sessionDate.getMonth() === month && 
-                               sessionDate.getFullYear() === year &&
-                               session.studentID === currentStudent.studentID;
-                    });
-                    
-                    if (hasSession) {
-                        dateCell.classList.add('has-session');
-                    }
-                    
-                    calendarDates.appendChild(dateCell);
-                }
-            }
-            
-            function populateAdvisorDropdown() {
-                const advisorSelect = document.getElementById('advisorID');
-                advisorSelect.innerHTML = '<option value="">Select advisor</option>';
-                
-                database.advisors.forEach(advisor => {
-                    const option = document.createElement('option');
-                    option.value = advisor.advisorID;
-                    option.textContent = advisor.name;
-                    advisorSelect.appendChild(option);
-                });
-            }
-            
-            // Session filtering
-            const sessionTypeFilter = document.getElementById('sessionTypeFilter');
-            const statusFilter = document.getElementById('statusFilter');
-            const sessionSearch = document.getElementById('sessionSearch');
-            
-            function filterSessions() {
-                const searchValue = sessionSearch.value.toLowerCase();
-                
-                // Filter upcoming sessions
-                const upcomingSessions = database.advisingSessions.filter(session => 
-                    (session.status === 'confirmed' || session.status === 'pending') && 
-                    new Date(session.sessionDate) > new Date() &&
-                    session.studentID === currentStudent.studentID
-                );
-                
-                const filteredUpcoming = upcomingSessions.filter(session => {
-                    const advisor = database.advisors.find(a => a.advisorID === session.advisorID);
-                    const matchesSearch = searchValue === '' || 
-                        session.title.toLowerCase().includes(searchValue) ||
-                        advisor.name.toLowerCase().includes(searchValue);
-                    
-                    return matchesSearch;
-                });
-                
-                // Re-render upcoming sessions with filtered results
-                const upcomingSessionsContainer = document.getElementById('upcomingSessions');
-                if (filteredUpcoming.length === 0) {
-                    upcomingSessionsContainer.innerHTML = `
-                        <div class="session-card" style="text-align: center; padding: 40px;">
-                            <i class="fas fa-search" style="font-size: 3rem; color: var(--light-blue); margin-bottom: 15px;"></i>
-                            <h3 style="color: var(--primary-blue); margin-bottom: 10px;">No Matching Sessions</h3>
-                            <p style="color: var(--dark-text); opacity: 0.7;">No upcoming sessions match your search criteria.</p>
-                        </div>
-                    `;
-                } else {
-                    // In a real app, you would re-render the filtered sessions
-                    // For simplicity, we're just showing an alert
-                    alert(`Found ${filteredUpcoming.length} session(s) matching your search.`);
-                }
-                
-                // Filter past sessions
-                const pastSessions = database.advisingSessions.filter(session => 
-                    session.status === 'completed' &&
-                    session.studentID === currentStudent.studentID
-                );
-                
-                const filteredPast = pastSessions.filter(session => {
-                    const advisor = database.advisors.find(a => a.advisorID === session.advisorID);
-                    const matchesSearch = searchValue === '' || 
-                        session.title.toLowerCase().includes(searchValue) ||
-                        advisor.name.toLowerCase().includes(searchValue);
-                    
-                    return matchesSearch;
-                });
-                
-                // Update past sessions table
-                const tableRows = document.querySelectorAll('#pastSessionsTable tr');
-                tableRows.forEach(row => {
-                    const rowText = row.textContent.toLowerCase();
-                    const shouldShow = searchValue === '' || rowText.includes(searchValue);
-                    row.style.display = shouldShow ? 'table-row' : 'none';
-                });
-            }
-            
-            sessionTypeFilter.addEventListener('change', filterSessions);
-            statusFilter.addEventListener('change', filterSessions);
-            sessionSearch.addEventListener('input', filterSessions);
-            
-            // New Session Modal
-            const newSessionModal = document.getElementById('newSessionModal');
-            const newSessionBtn = document.getElementById('newSessionBtn');
-            const modalClose = document.getElementById('modalClose');
-            const cancelRequest = document.getElementById('cancelRequest');
-            const sessionRequestForm = document.getElementById('sessionRequestForm');
-            
-            // Set minimum date to today
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('sessionDate').min = today;
-            
-            newSessionBtn.addEventListener('click', function() {
-                newSessionModal.classList.add('show');
-                dropdownBackdrop.classList.add('active');
-            });
-            
-            modalClose.addEventListener('click', function() {
-                newSessionModal.classList.remove('show');
-                dropdownBackdrop.classList.remove('active');
-            });
-            
-            cancelRequest.addEventListener('click', function() {
-                newSessionModal.classList.remove('show');
-                dropdownBackdrop.classList.remove('active');
-            });
-            
-            dropdownBackdrop.addEventListener('click', function() {
-                newSessionModal.classList.remove('show');
-                notesModal.classList.remove('show');
-                this.classList.remove('active');
-            });
-            
-            // Form submission
-            sessionRequestForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const newSession = {
-                    sessionID: database.advisingSessions.length + 1,
-                    title: document.getElementById('sessionTitle').value,
-                    sessionDate: document.getElementById('sessionDate').value + 'T10:00:00', // Default time
-                    notes: document.getElementById('sessionNotes').value,
-                    advisorID: parseInt(document.getElementById('advisorID').value),
-                    studentID: currentStudent.studentID,
-                    status: 'pending'
-                };
-                
-                // Add to database
-                database.advisingSessions.push(newSession);
-                
-                alert(`Session request submitted successfully!\n\nTitle: ${newSession.title}\nDate: ${newSession.sessionDate.split('T')[0]}\nStatus: Pending\n\nYou will receive a confirmation once your advisor approves the request.`);
-                
-                // Reset form and close modal
-                sessionRequestForm.reset();
-                newSessionModal.classList.remove('show');
-                dropdownBackdrop.classList.remove('active');
-                
-                // Refresh the page to show new session
-                initializePage();
-            });
-            
-            // Session Notes Modal close
-            document.getElementById('notesModalClose').addEventListener('click', function() {
-                document.getElementById('notesModal').classList.remove('show');
-                dropdownBackdrop.classList.remove('active');
-            });
-            
-            // Close modals with Escape key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    if (newSessionModal.classList.contains('show')) {
-                        newSessionModal.classList.remove('show');
-                        dropdownBackdrop.classList.remove('active');
-                    }
-                    if (notesModal.classList.contains('show')) {
-                        notesModal.classList.remove('show');
-                        dropdownBackdrop.classList.remove('active');
-                    }
-                }
-            });
+      const daySessionsModal = document.getElementById('daySessionsModal');
+      const dayModalClose = document.getElementById('dayModalClose');
+      const dayModalDateLabel = document.getElementById('dayModalDateLabel');
+      const daySessionsBody = document.getElementById('daySessionsBody');
+
+      const notesModalClose = document.getElementById('notesModalClose');
+
+      // filters
+      const sessionTypeFilter = document.getElementById('sessionTypeFilter');
+      const statusFilter = document.getElementById('statusFilter');
+      const sessionSearch = document.getElementById('sessionSearch');
+
+      // profile dropdown
+      const profileBtn = document.getElementById('profileBtn');
+      const dropdownMenu = document.getElementById('dropdownMenu');
+      const logoutBtn = document.getElementById('logoutBtn');
+      const profileNameEl = document.getElementById('profileName');
+      const profilePicEl = document.getElementById('profilePic');
+      const profileRoleEl = document.getElementById('profileRole');
+
+      // state
+      let allSessions = [];
+      let currentCalendarMonth = (new Date()).getMonth();
+      let currentCalendarYear = (new Date()).getFullYear();
+
+      // --- network helpers ---
+      async function apiGet(path) {
+        const res = await fetch(ctx + path, { cache: 'no-store' });
+        if (!res.ok) throw new Error('GET ' + path + ' returned ' + res.status);
+        return res.json();
+      }
+      async function apiPost(path, body) {
+        const res = await fetch(ctx + path, { method: 'POST', body: body, headers: { 'Content-Type':'application/x-www-form-urlencoded' }});
+        if (!res.ok) {
+          const txt = await res.text().catch(()=>null);
+          throw new Error('POST ' + path + ' returned ' + res.status + ' ' + txt);
+        }
+        return res.json();
+      }
+
+      // --- profile load & dropdown ---
+      async function loadProfile() {
+        try {
+          const res = await fetch(ctx + '/api/student/me', { cache: 'no-store' });
+          if (!res.ok) return; // not logged or not student
+          const json = await res.json();
+          const name = json.name || (json.firstName ? (json.firstName + (json.lastName ? ' ' + json.lastName : '')) : profileNameEl.textContent);
+          profileNameEl.textContent = name;
+          profileRoleEl.textContent = 'Student';
+          // initials
+          let initials = '';
+          if (json.firstName || json.lastName) {
+            initials = (json.firstName || '').charAt(0) + (json.lastName || '').charAt(0);
+          } else if (name) {
+            const parts = name.trim().split(/\s+/);
+            initials = parts[0].charAt(0) + (parts.length > 1 ? parts[parts.length-1].charAt(0) : '');
+          }
+          profilePicEl.textContent = (initials || 'ME').toUpperCase();
+        } catch (e) {
+          // ignore
+          console.warn('Could not load profile', e);
+        }
+      }
+
+      if (profileBtn && dropdownMenu) {
+        profileBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          dropdownMenu.classList.toggle('show');
+          profileBtn.classList.toggle('active');
         });
+        document.addEventListener('click', function(e) {
+          if (!profileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+            dropdownMenu.classList.remove('show');
+            profileBtn.classList.remove('active');
+          }
+        });
+      }
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          if (!confirm('Are you sure you want to log out?')) return;
+          window.location.href = ctx + '/logout';
+        });
+      }
+
+      // --- advisors ---
+      async function loadAdvisors() {
+        try {
+          const res = await fetch(ctx + '/api/advisors/available');
+          if (!res.ok) throw new Error('Failed to load advisors');
+          const data = await res.json();
+          if (!advisorSelect) return;
+          advisorSelect.innerHTML = '<option value="">Select advisor</option>';
+          data.advisors.forEach(a => {
+            const opt = document.createElement('option');
+            opt.value = a.advisorID;
+            opt.textContent = a.name + (a.department ? ' — ' + a.department : '');
+            advisorSelect.appendChild(opt);
+          });
+        } catch (e) {
+          console.warn('Could not load advisors', e);
+        }
+      }
+
+      // --- sessions load & filtering ---
+      async function loadSessions() {
+        try {
+          const data = await apiGet('/api/student/sessions');
+          allSessions = data.sessions || [];
+          applyFiltersAndRender();
+          initializeCalendar(currentCalendarMonth, currentCalendarYear);
+        } catch (e) {
+          console.error(e);
+          upcomingContainer.innerHTML = '<div style="padding:20px;color:#666">Unable to load sessions.</div>';
+        }
+      }
+
+      function filterSessionsForDisplay(sourceSessions) {
+        const stFilter = (sessionTypeFilter && sessionTypeFilter.value ? sessionTypeFilter.value : 'all').toLowerCase();
+        const stStatus = (statusFilter && statusFilter.value ? statusFilter.value : 'all').toLowerCase();
+        const q = (sessionSearch && sessionSearch.value ? sessionSearch.value.toLowerCase().trim() : '');
+
+        return sourceSessions.filter(s => {
+          if (stFilter !== 'all' && ((s.sessionType||'').toLowerCase() !== stFilter)) return false;
+          if (stStatus !== 'all' && ((s.status||'').toLowerCase() !== stStatus)) return false;
+          if (q) {
+            const inTitle = (s.title||'').toLowerCase().includes(q);
+            const inAdvisor = (s.advisorName||'').toLowerCase().includes(q);
+            const inNotes = (s.notes||'').toLowerCase().includes(q);
+            if (!(inTitle || inAdvisor || inNotes)) return false;
+          }
+          return true;
+        });
+      }
+
+      function applyFiltersAndRender() {
+        const sessions = filterSessionsForDisplay(allSessions);
+        renderSessions(sessions);
+      }
+
+      // --- render function (revised, no nested template literal issues) ---
+      function renderSessions(sessions) {
+        // counts computed from allSessions (not from filtered sessions)
+        const all = allSessions || [];
+        let upcoming = 0, completed = 0, pending = 0, cancelled = 0;
+        const now = new Date();
+
+        all.forEach(s => {
+          const st = (s.status || '').toLowerCase();
+          if (st === 'completed') completed++;
+          else if (st === 'pending') pending++;
+          else if (st === 'cancelled') cancelled++;
+          else if (st === 'cancel_requested') pending++;
+          const tsAll = s.sessionDateTime ? new Date(String(s.sessionDateTime).replace(' ', 'T')) : null;
+          if (tsAll && tsAll > now && (st === 'confirmed' || st === 'pending' || st === 'cancel_requested')) {
+            upcoming++;
+          }
+        });
+
+        // render upcoming list from filtered sessions
+        upcomingContainer.innerHTML = '';
+        sessions.forEach(s => {
+          const status = (s.status || '').toLowerCase();
+          const ts = s.sessionDateTime ? new Date(String(s.sessionDateTime).replace(' ', 'T')) : null;
+          const isUpcoming = ts && ts > now && (status === 'confirmed' || status === 'pending' || status === 'cancel_requested');
+
+          if (!isUpcoming) return;
+
+          const card = document.createElement('div');
+          card.className = 'session-card ' + (s.status || '');
+          card.dataset.sessionId = s.sessionID;
+          const dateStr = ts ? ts.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }) : '';
+          const timeStr = ts ? ts.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' }) : '';
+
+          // use single-quoted inner HTML for conditional parts
+          const joinBtn = (s.status || '').toLowerCase() === 'confirmed' ? '<button class="btn btn-sm btn-success join-session" data-session="'+s.sessionID+'"><i class="fas fa-video"></i> Join Session</button>' : '';
+          const cancelBtn = (s.status || '').toLowerCase() === 'pending' ? '<button class="btn btn-sm btn-outline cancel-session" data-session="'+s.sessionID+'"><i class="fas fa-times"></i> Cancel Request</button>' : '';
+          const reqCancelBtn = (s.status || '').toLowerCase() === 'confirmed' ? '<button class="btn btn-sm btn-outline request-cancel" data-session="'+s.sessionID+'"><i class="fas fa-ban"></i> Request Cancel</button>' : '';
+
+          card.innerHTML = `
+            <div class="session-header">
+              <div>
+                <div class="session-title">${escapeHtml(s.title)}</div>
+                <span class="session-status">${capitalize(s.status)} ${s.sessionType? ' • '+escapeHtml(s.sessionType):''}</span>
+              </div>
+              <div class="session-time">
+                <div style="font-weight:600;color:#1e3a8a">${dateStr}</div>
+                <div style="color:#475569;opacity:0.8">${timeStr}</div>
+              </div>
+            </div>
+            <div class="session-details">
+              <div class="detail-item">
+                <div class="detail-icon"><i class="fas fa-user-tie"></i></div>
+                <div class="detail-content"><h4>Advisor</h4><p>${escapeHtml(s.advisorName||'')}</p></div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon"><i class="fas fa-sticky-note"></i></div>
+                <div class="detail-content"><h4>Notes Preview</h4><p class="notes-preview">${escapeHtml((s.notes||'').substring(0,40))}${(s.notes||'').length>40?'...':''}</p></div>
+              </div>
+            </div>
+            <div class="session-actions">
+              ${joinBtn}
+              <button class="btn btn-sm btn-outline view-details" data-session="${s.sessionID}"><i class="fas fa-eye"></i> View Details</button>
+              ${cancelBtn}
+              ${reqCancelBtn}
+            </div>
+          `;
+          upcomingContainer.appendChild(card);
+        });
+
+        // past completed sessions
+        pastTableBody.innerHTML = '';
+        const pastSessions = sessions.filter(s => (s.status||'').toLowerCase() === 'completed')
+          .sort((a,b) => {
+            const ta = a.sessionDateTime ? new Date(String(a.sessionDateTime).replace(' ', 'T')).getTime() : 0;
+            const tb = b.sessionDateTime ? new Date(String(b.sessionDateTime).replace(' ', 'T')).getTime() : 0;
+            return tb - ta;
+          });
+
+        pastSessions.forEach(s => {
+          const ts = s.sessionDateTime ? new Date(String(s.sessionDateTime).replace(' ', 'T')) : null;
+          const formattedDate = ts ? ts.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : '';
+          const formattedTime = ts ? ts.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' }) : '';
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>${formattedDate}</strong><br>${formattedTime}</td>
+            <td>${escapeHtml(s.advisorName||'')}</td>
+            <td>${escapeHtml(s.title)}</td>
+            <td class="notes-preview">${escapeHtml((s.notes||'').substring(0,50))}${(s.notes||'').length>50?'...':''}</td>
+            <td><button class="btn btn-sm btn-outline view-notes" data-session="${s.sessionID}"><i class="fas fa-eye"></i> View Notes</button></td>
+          `;
+          pastTableBody.appendChild(tr);
+        });
+
+        // update counts
+        upcomingCountEl.textContent = upcoming;
+        completedCountEl.textContent = completed;
+        pendingCountEl.textContent = pending;
+        cancelledCountEl.textContent = cancelled;
+
+        // bind actions
+        document.querySelectorAll('.view-details').forEach(btn => btn.addEventListener('click', function() { showSessionDetails(this.dataset.session); }));
+        document.querySelectorAll('.view-notes').forEach(btn => btn.addEventListener('click', function() { showSessionDetails(this.dataset.session); }));
+        document.querySelectorAll('.cancel-session').forEach(btn => btn.addEventListener('click', async function() {
+          if (!confirm('Cancel this pending request?')) return;
+          await cancelSession(this.dataset.session, null);
+        }));
+        document.querySelectorAll('.request-cancel').forEach(btn => btn.addEventListener('click', async function() {
+          const reason = prompt('Reason for requesting cancel (optional):');
+          if (reason === null) return;
+          await cancelSession(this.dataset.session, reason);
+        }));
+        document.querySelectorAll('.join-session').forEach(btn => btn.addEventListener('click', function(){ alert('Join placeholder'); }));
+      }
+
+      // show details modal
+      function showSessionDetails(sessionId) {
+        const s = (allSessions || []).find(x => String(x.sessionID) === String(sessionId));
+        if (!s) { alert('Session not found'); return; }
+        const ts = s.sessionDateTime ? new Date(String(s.sessionDateTime).replace(' ', 'T')) : null;
+        const dateStr = ts ? ts.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric', weekday:'long' }) : '';
+        const timeStr = ts ? ts.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' }) : '';
+        document.getElementById('notesModalBody').innerHTML = `
+          <div style="margin-bottom:25px;">
+            <h4 style="color:#1e3a8a;margin-bottom:10px;">${escapeHtml(s.title)}</h4>
+            <div style="display:flex;gap:15px;color:#475569;opacity:0.9">
+              <div><i class="fas fa-calendar"></i> ${dateStr}</div>
+              <div><i class="fas fa-clock"></i> ${timeStr}</div>
+              <div><i class="fas fa-info-circle"></i> ${escapeHtml(s.status || '')}</div>
+              <div>${s.sessionType? ' • ' + escapeHtml(s.sessionType) : ''}</div>
+            </div>
+          </div>
+          <div class="form-row" style="margin-bottom:25px;">
+            <div class="form-group"><label class="form-label"><i class="fas fa-user-tie"></i> Advisor</label><div style="padding:10px 0;font-weight:500;">${escapeHtml(s.advisorName||'')}</div></div>
+            <div class="form-group"><label class="form-label"><i class="fas fa-user-graduate"></i> Student</label><div style="padding:10px 0;font-weight:500;">You</div></div>
+          </div>
+          <div class="form-group"><label class="form-label"><i class="fas fa-sticky-note"></i> Session Notes</label><div style="background:#f8fafc;padding:15px;border-radius:8px;margin-top:5px;">${escapeHtml(s.notes||'')}</div></div>
+          <div style="margin-top:25px;"><button class="btn btn-primary" onclick="window.print()" style="width:100%"><i class="fas fa-print"></i> Print Session Details</button></div>
+        `;
+        document.getElementById('notesModal').classList.add('show');
+        dropdownBackdrop.classList.add('active');
+      }
+
+      // cancel session
+      async function cancelSession(sessionID, reason) {
+        try {
+          const body = new URLSearchParams();
+          body.append('sessionID', sessionID);
+          if (reason) body.append('reason', reason);
+          const res = await apiPost('/api/student/sessions/cancel', body);
+          if (res.success) {
+            alert(res.message || 'Cancelled');
+            await loadSessions();
+          } else {
+            alert(res.error || 'Cancel failed');
+          }
+        } catch (e) {
+          console.error(e);
+          alert('Error while cancelling session. See console');
+        }
+      }
+
+      // calendar
+      function initializeCalendar(month, year) {
+        currentCalendarMonth = month;
+        currentCalendarYear = year;
+        const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+        document.getElementById('currentMonthYear').textContent = `${monthNames[month]} ${year}`;
+        generateCalendar(month, year);
+      }
+
+      function generateCalendar(month, year) {
+        const calendarDates = document.getElementById('calendarDates');
+        calendarDates.innerHTML = '';
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const daysInMonth = lastDay.getDate();
+        const startDay = firstDay.getDay();
+
+        for (let i = 0; i < startDay; i++) {
+          const emptyCell = document.createElement('div');
+          emptyCell.className = 'date-cell';
+          emptyCell.style.visibility = 'hidden';
+          calendarDates.appendChild(emptyCell);
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+          const dateCell = document.createElement('div');
+          dateCell.className = 'date-cell';
+          dateCell.textContent = day;
+          const dateObj = new Date(year, month, day);
+
+          const sessionsOnDay = (allSessions || []).filter(s => {
+            if (!s.sessionDateTime) return false;
+            const ts = new Date(String(s.sessionDateTime).replace(' ', 'T'));
+            if (ts.getFullYear() !== year || ts.getMonth() !== month || ts.getDate() !== day) return false;
+            // apply current UI filters
+            return filterSessionsForDisplay([s]).length > 0;
+          });
+
+          if (sessionsOnDay.length > 0) {
+            dateCell.classList.add('has-session');
+            const badge = document.createElement('div');
+            badge.style.position = 'absolute';
+            badge.style.bottom = '6px';
+            badge.style.right = '6px';
+            badge.style.background = '#1e3a8a';
+            badge.style.color = 'white';
+            badge.style.borderRadius = '10px';
+            badge.style.padding = '2px 6px';
+            badge.style.fontSize = '0.75rem';
+            badge.textContent = sessionsOnDay.length;
+            dateCell.style.position = 'relative';
+            dateCell.appendChild(badge);
+          }
+
+          dateCell.addEventListener('click', function() {
+            showSessionsForDate(dateObj);
+          });
+
+          calendarDates.appendChild(dateCell);
+        }
+      }
+
+      function showSessionsForDate(dateObj) {
+        const y = dateObj.getFullYear(), m = dateObj.getMonth(), d = dateObj.getDate();
+        const sessionsOnDay = filterSessionsForDisplay(allSessions).filter(s => {
+          if (!s.sessionDateTime) return false;
+          const ts = new Date(String(s.sessionDateTime).replace(' ', 'T'));
+          return ts.getFullYear() === y && ts.getMonth() === m && ts.getDate() === d;
+        });
+
+        dayModalDateLabel.textContent = dateObj.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+
+        if (sessionsOnDay.length === 0) {
+          daySessionsBody.innerHTML = `<div style="padding:20px;color:#666">No sessions for this day (with current filters).</div>`;
+        } else {
+          const list = document.createElement('div');
+          list.style.display = 'flex';
+          list.style.flexDirection = 'column';
+          list.style.gap = '12px';
+          sessionsOnDay.sort((a,b) => new Date(String(a.sessionDateTime).replace(' ', 'T')) - new Date(String(b.sessionDateTime).replace(' ', 'T')));
+          sessionsOnDay.forEach(s => {
+            const ts = new Date(String(s.sessionDateTime).replace(' ', 'T'));
+            const timeStr = ts ? ts.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' }) : '';
+            const item = document.createElement('div');
+            item.style.padding = '10px';
+            item.style.border = '1px solid #e6eefb';
+            item.style.borderRadius = '8px';
+            item.innerHTML = `
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div style="font-weight:700;color:#1e3a8a">${escapeHtml(s.title)}</div>
+                <div style="color:#475569">${timeStr}</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;gap:10px;margin-top:6px;align-items:center;">
+                <div style="color:#64748b">${escapeHtml(s.advisorName||'')} ${s.sessionType? ' • '+escapeHtml(s.sessionType):''}</div>
+                <div style="display:flex;gap:8px;">
+                  <button class="btn btn-sm btn-outline view-day-session" data-session="${s.sessionID}"><i class="fas fa-eye"></i> Details</button>
+                  ${ (s.status||'').toLowerCase() === 'pending' ? '<button class="btn btn-sm btn-outline cancel-day-session" data-session="'+s.sessionID+'"><i class="fas fa-times"></i> Cancel</button>' : '' }
+                </div>
+              </div>
+            `;
+            list.appendChild(item);
+          });
+          daySessionsBody.innerHTML = '';
+          daySessionsBody.appendChild(list);
+
+          // bind
+          daySessionsBody.querySelectorAll('.view-day-session').forEach(btn => btn.addEventListener('click', function() {
+            const id = this.dataset.session;
+            daySessionsModal.classList.remove('show');
+            dropdownBackdrop.classList.remove('active');
+            showSessionDetails(id);
+          }));
+          daySessionsBody.querySelectorAll('.cancel-day-session').forEach(btn => btn.addEventListener('click', async function() {
+            if (!confirm('Cancel this pending request?')) return;
+            await cancelSession(this.dataset.session, null);
+            daySessionsModal.classList.remove('show'); dropdownBackdrop.classList.remove('active');
+          }));
+        }
+
+        daySessionsModal.classList.add('show');
+        dropdownBackdrop.classList.add('active');
+      }
+
+      // navigation handlers
+      const prevMonthBtn = document.getElementById('prevMonth');
+      const nextMonthBtn = document.getElementById('nextMonth');
+      if (prevMonthBtn) prevMonthBtn.addEventListener('click', function(){ const d = new Date(currentCalendarYear, currentCalendarMonth-1, 1); initializeCalendar(d.getMonth(), d.getFullYear()); });
+      if (nextMonthBtn) nextMonthBtn.addEventListener('click', function(){ const d = new Date(currentCalendarYear, currentCalendarMonth+1, 1); initializeCalendar(d.getMonth(), d.getFullYear()); });
+
+      // modal close bindings
+      if (modalClose) modalClose.addEventListener('click', ()=>{ newSessionModal.classList.remove('show'); dropdownBackdrop.classList.remove('active'); });
+      if (cancelRequestBtn) cancelRequestBtn.addEventListener('click', ()=>{ newSessionModal.classList.remove('show'); dropdownBackdrop.classList.remove('active'); });
+      if (dayModalClose) dayModalClose.addEventListener('click', ()=>{ daySessionsModal.classList.remove('show'); dropdownBackdrop.classList.remove('active'); });
+      if (notesModalClose) notesModalClose.addEventListener('click', ()=>{ document.getElementById('notesModal').classList.remove('show'); dropdownBackdrop.classList.remove('active'); });
+
+      dropdownBackdrop.addEventListener('click', function(){
+        newSessionModal.classList.remove('show');
+        daySessionsModal.classList.remove('show');
+        document.getElementById('notesModal').classList.remove('show');
+        this.classList.remove('active');
+      });
+
+      // submit new session
+      if (sessionRequestForm) {
+        sessionRequestForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          const title = document.getElementById('sessionTitle').value.trim();
+          const dt = (sessionDateTimeEl ? sessionDateTimeEl.value : '').trim(); // datetime-local string
+          const advisor = (advisorSelect ? advisorSelect.value : '');
+          const notes = document.getElementById('sessionNotes').value;
+          const sessionType = (sessionTypeSelect ? sessionTypeSelect.value : '');
+          if (!title || !dt) { alert('Title and date/time required'); return; }
+
+          try {
+            const body = new URLSearchParams();
+            body.append('title', title);
+            body.append('sessionDateTime', dt);
+            if (advisor) body.append('advisorID', advisor);
+            body.append('notes', notes || '');
+            if (sessionType) body.append('sessionType', sessionType);
+
+            console.log('Submitting session request:', Object.fromEntries(body.entries()));
+            const res = await apiPost('/api/student/sessions', body);
+            console.log('Server response:', res);
+            if (res.success) {
+              alert('Session request submitted. Status: pending');
+              sessionRequestForm.reset();
+              newSessionModal.classList.remove('show'); dropdownBackdrop.classList.remove('active');
+              await loadSessions();
+            } else {
+              alert(res.error || 'Request failed');
+            }
+          } catch (err) {
+            console.error('submit error', err);
+            alert('Error submitting request — see console for details');
+          }
+        });
+      }
+
+      // filters
+      if (sessionTypeFilter) sessionTypeFilter.addEventListener('change', function(){ applyFiltersAndRender(); initializeCalendar(currentCalendarMonth, currentCalendarYear); });
+      if (statusFilter) statusFilter.addEventListener('change', function(){ applyFiltersAndRender(); initializeCalendar(currentCalendarMonth, currentCalendarYear); });
+      if (sessionSearch) {
+        let searchTimeout;
+        sessionSearch.addEventListener('input', function() {
+          clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(()=> { applyFiltersAndRender(); initializeCalendar(currentCalendarMonth, currentCalendarYear); }, 250);
+        });
+      }
+
+      // new session button
+      if (newSessionBtn) newSessionBtn.addEventListener('click', function(){ newSessionModal.classList.add('show'); dropdownBackdrop.classList.add('active'); loadAdvisors(); });
+
+      // initial load
+      loadProfile();
+      loadSessions();
+
+      // utilities
+      function capitalize(s) { if (!s) return ''; s = String(s); return s.charAt(0).toUpperCase() + s.slice(1); }
+      function escapeHtml(t) { if (!t) return ''; return String(t).replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]); }); }
+
+    });
     </script>
 </body>
 </html>

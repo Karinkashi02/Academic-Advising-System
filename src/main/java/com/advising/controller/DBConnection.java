@@ -14,39 +14,17 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBConnection {
-    private static Connection connection = null;
-    
-    public static Connection getConnection() {
-        if (connection == null) {
-            try {
-                // Correct the URL format (Note: replace 24715 with your actual Aiven port)
-                // Added ?useSSL=true which is usually required for cloud providers
-                String url = "jdbc:mysql://mysql-acdm2-amarghazali7135-8a18.h.aivencloud.com:21488/defaultdb?useSSL=true&trustServerCertificate=true";
-                String username = "avnadmin";
-                String password = "AVNS_Jg4MY0Br57oWD46H8Eb"; // Use the real password string
+    // Standard Derby URL for NetBeans
+    private static final String URL = "jdbc:derby://localhost:1527/Academic_Advising";
+    private static final String USER = "app"; // Default Derby user
+    private static final String PASS = "app"; // Default Derby password
 
-                Class.forName("com.mysql.cj.jdbc.Driver");
-                connection = DriverManager.getConnection(url, username, password);
-                System.out.println("Database connected successfully!");
-
-            } catch (ClassNotFoundException | SQLException e) {
-                // This will print the exact reason (e.g., "Access denied" or "Communications link failure")
-                System.err.println("CRITICAL ERROR: " + e.getMessage()); 
-                e.printStackTrace();
-                connection = null; 
-            }
-        }
-        return connection;
-    }
-    
-    public static void closeConnection() {
-        if (connection != null) {
-            try {
-                connection.close();
-                connection = null;
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+    public static Connection getConnection() throws SQLException {
+        try {
+            Class.forName("org.apache.derby.jdbc.ClientDriver");
+            return DriverManager.getConnection(URL, USER, PASS);
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("Derby Driver not found", e);
         }
     }
 }

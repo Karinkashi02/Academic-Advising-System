@@ -11,22 +11,40 @@ package com.advising.model;
 
 public class Student {
     private String studentID;
-    private String name;
+    private String username;
+    private String firstName;
+    private String lastName;
     private String email;
     private String password;
     private String program;
     private String remark;
     private int yearOfStudy;
     private int semester;
-    private String advisorID;
+    private int advisorID;
+    private String phoneNum;
+    private double cgpa;
+    private int creditsCompleted;
 
     public Student() {}
 
-    // Getters and Setters
     public String getStudentID() { return studentID; }
     public void setStudentID(String studentID) { this.studentID = studentID; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+
+    public String getUsername() { return username; }
+    public void setName(String uname) { this.username = uname; }
+
+    public String getName() { 
+        String f = firstName == null ? "" : firstName;
+        String l = lastName == null ? "" : lastName;
+        return (f + " " + l).trim();
+    }
+
+    public String getfirstName() { return firstName; }
+    public void setfirstName(String fname) { this.firstName = fname; }
+
+    public String getlastName() { return lastName; }
+    public void setlastName(String lname) { this.lastName = lname; }
+
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
     public String getPassword() { return password; }
@@ -39,6 +57,15 @@ public class Student {
     public void setYearOfStudy(int yearOfStudy) { this.yearOfStudy = yearOfStudy; }
     public int getSemester() { return semester; }
     public void setSemester(int semester) { this.semester = semester; }
-    public String getAdvisorID() { return advisorID; }
-    public void setAdvisorID(String advisorID) { this.advisorID = advisorID; }
+    public int getAdvisorID() { return advisorID; }
+    public void setAdvisorID(int advisorID) { this.advisorID = advisorID; }
+
+    public String getPhoneNum() { return phoneNum; }
+    public void setPhoneNum(String phoneNum) { this.phoneNum = phoneNum; }
+
+    public double getCgpa() { return cgpa; }
+    public void setCgpa(double cgpa) { this.cgpa = cgpa; }
+
+    public int getCreditsCompleted() { return creditsCompleted; }
+    public void setCreditsCompleted(int creditsCompleted) { this.creditsCompleted = creditsCompleted; }
 }

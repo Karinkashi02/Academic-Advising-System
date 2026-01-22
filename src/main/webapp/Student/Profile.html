@@ -852,17 +852,17 @@
                     <!-- Non-Editable Fields (Locked) -->
                     <div class="form-group">
                         <label><i class="fas fa-graduation-cap"></i> Program</label>
-                        <input type="text" value="Bachelor of Computer Science" disabled>
+                        <input type="text" id="editProgram" value="" disabled>
                     </div>
-                    
+
                     <div class="form-group">
                         <label><i class="fas fa-calendar-alt"></i> Year of Study</label>
-                        <input type="text" value="3" disabled>
+                        <input type="text" id="editYear" value="" disabled>
                     </div>
-                    
+
                     <div class="form-group">
                         <label><i class="fas fa-user-tie"></i> Academic Advisor</label>
-                        <input type="text" value="Dr. Ahmad bin Ismail" disabled>
+                        <input type="text" id="editAdvisor" value="" disabled>
                     </div>
                     
                     <div class="form-actions">
@@ -885,94 +885,152 @@
     </div>
 
     <script>
-        // Student data from ERD
-        const studentData = {
-            studentID: '2025190337',
-            name: 'Muhammad Amar Ghazali Bin Aziz',
-            email: 'amar.ghazali@student.uitm.edu.my',
-            program: 'Bachelor of Computer Science',
-            yearOfStudy: '3',
-            phoneNum: '+6012-3456789',
-            advisorName: 'Dr. Ahmad bin Ismail'
+    document.addEventListener('DOMContentLoaded', function() {
+        const displayName = document.getElementById('displayName');
+        const displayStudentID = document.getElementById('displayStudentID');
+        const displayEmail = document.getElementById('displayEmail');
+        const displayPhone = document.getElementById('displayPhone');
+        const displayProgram = document.getElementById('displayProgram');
+        const displayYear = document.getElementById('displayYear');
+        const displayAdvisor = document.getElementById('displayAdvisor');
+
+        const editOverlay = document.getElementById('editOverlay');
+        const displayCard = document.getElementById('displayCard');
+
+        const editName = document.getElementById('editName');
+        const editEmail = document.getElementById('editEmail');
+        const editPhone = document.getElementById('editPhone');
+        const editPassword = document.getElementById('editPassword');
+
+        // Robust function to determine the webapp context path.
+        // If app is deployed at root it returns '' (empty string),
+        // otherwise returns '/MyAppContext' (no trailing slash).
+        function getContextPath() {
+            const p = window.location.pathname; // e.g. /Academic-Advising/Student/Profile.html
+            const parts = p.split('/').filter(Boolean); // removes empty parts
+            // If no segment or first segment looks like a filename (has a dot), assume root
+            if (parts.length === 0) return '';
+            // The first segment is usually the context path (unless app deployed at root)
+            const first = parts[0];
+            // If the first segment looks like a file name (contains '.'), treat as root
+            if (first.indexOf('.') !== -1) return '';
+            return '/' + first;
+        }
+
+        const ctx = getContextPath();
+
+        async function loadStudent() {
+            try {
+                const url = ctx + '/api/student/me'; // e.g. /Academic-Advising/api/student/me or /api/student/me
+                console.log('Fetching student data from', url);
+                const res = await fetch(url, { cache: 'no-store' });
+                if (!res.ok) {
+                    // Helpful log for debugging
+                    console.error('GET', url, 'returned', res.status, res.statusText);
+                    if (res.status === 401) {
+                        alert('Not authenticated. Please login.');
+                        // redirect to index relative to context
+                        window.location.href = (ctx || '/') + 'index.html';
+                        return;
+                    }
+                    throw new Error('Failed to fetch student data: ' + res.status);
+                }
+                const data = await res.json();
+                // Populate UI
+                displayName.textContent = data.name || '';
+                displayStudentID.textContent = 'Student ID: ' + (data.studentID || '');
+                displayEmail.textContent = data.email || '';
+                displayPhone.textContent = data.phoneNum || '';
+                displayProgram.textContent = data.program || '';
+                displayYear.textContent = data.yearOfStudy || '';
+                displayAdvisor.textContent = data.advisorName || '';
+
+                editName.value = data.name || '';
+                editEmail.value = data.email || '';
+                editPhone.value = data.phoneNum || '';
+
+                const editProgram = document.getElementById('editProgram');
+                const editYear = document.getElementById('editYear');
+                const editAdvisor = document.getElementById('editAdvisor');
+
+                if (editProgram) editProgram.value = data.program || '';
+                if (editYear) editYear.value = data.yearOfStudy || '';
+                if (editAdvisor) editAdvisor.value = data.advisorName || '';
+            } catch (err) {
+                console.error('Error loading student data:', err);
+                showNotification('Unable to load profile data (see console)', 'error');
+            }
+        }
+
+        loadStudent();
+
+        // Open edit form
+        window.openEditForm = function() {
+            displayCard.style.display = 'none';
+            editOverlay.style.display = 'flex';
         };
 
-        // Open edit form (overlay)
-        function openEditForm() {
-            // Hide the main profile card
-            document.getElementById('displayCard').style.display = 'none';
-            // Show the edit overlay
-            document.getElementById('editOverlay').style.display = 'flex';
-            
-            // Populate form fields with current data
-            document.getElementById('editName').value = studentData.name;
-            document.getElementById('editEmail').value = studentData.email;
-            document.getElementById('editPhone').value = studentData.phoneNum;
-            document.getElementById('editPassword').value = '';
-        }
-
         // Close edit form
-        function closeEditForm() {
-            // Show the main profile card again
-            document.getElementById('displayCard').style.display = 'flex';
-            // Hide the edit overlay
-            document.getElementById('editOverlay').style.display = 'none';
-            
-            // Reset password field
-            document.getElementById('editPassword').value = '';
-        }
+        window.closeEditForm = function() {
+            displayCard.style.display = 'flex';
+            editOverlay.style.display = 'none';
+            editPassword.value = '';
+        };
 
-        // Save profile changes
-        function saveProfile() {
-            // Get form values
-            const newName = document.getElementById('editName').value.trim();
-            const newEmail = document.getElementById('editEmail').value.trim();
-            const newPhone = document.getElementById('editPhone').value.trim();
-            const newPassword = document.getElementById('editPassword').value;
+        // Save profile (calls API)
+        window.saveProfile = async function() {
+            const fullName = editName.value.trim();
+            const email = editEmail.value.trim();
+            const phone = editPhone.value.trim();
+            const password = editPassword.value;
 
-            // Validate required fields
-            if (!newName || !newEmail || !newPhone) {
-                showNotification('Please fill in all required fields!', 'error');
+            // split into firstName / lastName (simple)
+            let firstName = '', lastName = '';
+            if (fullName) {
+                const parts = fullName.split(' ');
+                firstName = parts.shift();
+                lastName = parts.join(' ');
+            }
+
+            if (!firstName || !email) {
+                showNotification('Please fill required fields', 'error');
                 return;
             }
 
-            // Validate email format
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(newEmail)) {
-                showNotification('Please enter a valid email address!', 'error');
-                return;
-            }
+            try {
+                const form = new URLSearchParams();
+                form.append('firstName', firstName);
+                form.append('lastName', lastName);
+                form.append('email', email);
+                form.append('phoneNum', phone);
+                if (password) form.append('password', password);
 
-            // Update student data
-            studentData.name = newName;
-            studentData.email = newEmail;
-            studentData.phoneNum = newPhone;
+                const url = ctx + '/api/student/update';
+                console.log('POST', url, 'payload', { firstName, lastName, email, phoneNum: phone, password: !!password });
+                const res = await fetch(url, {
+                    method: 'POST',
+                    body: form,
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                });
 
-            // Update main display
-            document.getElementById('displayName').textContent = studentData.name;
-            document.getElementById('displayEmail').textContent = studentData.email;
-            document.getElementById('displayPhone').textContent = studentData.phoneNum;
+                let json;
+                try { json = await res.json(); } catch (e) { json = {}; }
 
-            // Update password if changed
-            if (newPassword) {
-                if (newPassword.length < 8) {
-                    showNotification('Password must be at least 8 characters!', 'error');
-                    return;
+                if (res.ok && json.success) {
+                    showNotification('Profile updated', 'success');
+                    closeEditForm();
+                    loadStudent();
+                } else {
+                    console.error('Update failed', res.status, json);
+                    showNotification(json.error || json.message || 'Update failed', 'error');
                 }
-                showNotification('Password updated successfully!', 'success');
-                document.getElementById('editPassword').value = '';
+            } catch (err) {
+                console.error('Error updating profile:', err);
+                showNotification('Error updating profile (see console)', 'error');
             }
+        };
 
-            // Close edit form
-            closeEditForm();
-
-            // Show success message
-            showNotification('Profile updated successfully!', 'success');
-
-            // Log updated data
-            console.log('Updated STUDENT Table Data:', studentData);
-        }
-
-        // Notification system
+        // notification helper
         function showNotification(message, type) {
             const notification = document.createElement('div');
             notification.textContent = message;
@@ -980,86 +1038,35 @@
                 position: fixed;
                 top: 20px;
                 right: 20px;
-                padding: 15px 25px;
+                padding: 12px 18px;
                 border-radius: 10px;
                 color: white;
                 font-weight: 600;
                 z-index: 2000;
-                animation: slideIn 0.3s ease-out;
                 box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(255,255,255,0.2);
-                max-width: 400px;
-                word-wrap: break-word;
-                font-size: 1rem;
             `;
-            
-            if (type === 'success') {
-                notification.style.background = 'linear-gradient(135deg, rgba(16, 185, 129, 0.9), rgba(5, 150, 105, 0.9))';
-            } else if (type === 'error') {
-                notification.style.background = 'linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(220, 38, 38, 0.9))';
-            } else {
-                notification.style.background = 'linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(37, 99, 235, 0.9))';
-            }
-            
+            if (type === 'success') notification.style.background = 'linear-gradient(135deg,#10b981,#059669)';
+            else if (type === 'error') notification.style.background = 'linear-gradient(135deg,#ef4444,#dc2626)';
+            else notification.style.background = 'linear-gradient(135deg,#3b82f6,#1e3a8a)';
+
             document.body.appendChild(notification);
-            
             setTimeout(() => {
-                notification.style.animation = 'slideOut 0.3s ease-out';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        document.body.removeChild(notification);
-                    }
-                }, 300);
-            }, 3000);
+                notification.style.transition = 'opacity 0.3s';
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 300);
+            }, 2500);
         }
 
-        // Add CSS for animations
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideIn {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-            @keyframes slideOut {
-                from { transform: translateX(0); opacity: 1; }
-                to { transform: translateX(100%); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Notification bell functionality
-        document.querySelector('.notification').addEventListener('click', function() {
-            showNotification('You have 2 unread notifications', 'info');
-            this.querySelector('.notification-badge').textContent = '0';
-            this.querySelector('.notification-badge').style.backgroundColor = '#6b7280';
+        // Close edit overlay when clicking outside
+        editOverlay.addEventListener('click', function(e) {
+            if (e.target === this) closeEditForm();
         });
 
-        // Close edit form when clicking outside
-        document.getElementById('editOverlay').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeEditForm();
-            }
-        });
-
-        // Close edit form with Escape key
+        // Escape key closes overlay
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && document.getElementById('editOverlay').style.display === 'flex') {
-                closeEditForm();
-            }
+            if (e.key === 'Escape' && editOverlay.style.display === 'flex') closeEditForm();
         });
-
-        // Email validation on blur
-        document.getElementById('editEmail').addEventListener('blur', function() {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (this.value && !emailRegex.test(this.value)) {
-                this.style.borderColor = '#ef4444';
-                this.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
-            } else {
-                this.style.borderColor = '';
-                this.style.boxShadow = '';
-            }
-        });
+    });
     </script>
 </body>
 </html>

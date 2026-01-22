@@ -1000,22 +1000,23 @@
                 <i class="fas fa-book-open"></i>
                 <span>My Courses</span>
             </div>
+            
             <div class="profile-area">
-                
-                <div class="profile-dropdown">
+                <div class="profile-dropdown" id="profileDropdown">
                     <div class="profile-btn" id="profileBtn">
-                        <div class="profile-pic">MA</div>
-                        <div class="profile-info">
-                            <div class="profile-name">M. Amar Ghazali</div>
-                            <div class="profile-role">Student</div>
-                        </div>
-                        <i class="fas fa-chevron-down dropdown-icon"></i>
+                      <div class="profile-pic" id="profilePic">MA</div>
+                      <div class="profile-info">
+                        <div class="profile-name" id="profileName">M. Amar Ghazali</div>
+                        <div class="profile-role" id="profileRole">Student</div>
+                      </div>
+                      <i class="fas fa-chevron-down dropdown-icon"></i>
                     </div>
+
                     <div class="dropdown-menu" id="dropdownMenu">
-                        <a href="Profile.html" class="dropdown-item"><i class="fas fa-user-circle"></i> My Profile</a>
-                        <a href="#" class="dropdown-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                      <a href="Profile.html" class="dropdown-item"><i class="fas fa-user-circle"></i> My Profile</a>
+                      <a href="#" class="dropdown-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
                     </div>
-                </div>
+                  </div>
             </div>
         </header>
 
@@ -1094,7 +1095,7 @@
                 <h3 class="tabs-title"><i class="fas fa-calendar"></i> Semester View</h3>
                 <div class="tabs-nav">
                     <button class="tab-btn active" data-filter="all">All Courses</button>
-                    <button class="tab-btn" data-filter="current">Current (Sem 2)</button>
+                    <button class="tab-btn" data-filter="current">Current Semester</button>
                     <button class="tab-btn" data-filter="completed">Completed</button>
                     <button class="tab-btn" data-filter="upcoming">Upcoming</button>
                 </div>
@@ -1135,438 +1136,169 @@
     </div>
 
     <script>
-        // Hardcoded data based on ERD diagram entities - ONLY from STUDENT_PROGRESS and COURSE tables
-        const coursesData = [
-            {
-                courseID: "C001",
-                courseName: "Enterprise Programming",
-                courseCode: "CSC584",
-                creditHour: 4,
-                remark: "Advanced programming concepts for enterprise applications"
-            },
-            {
-                courseID: "C002",
-                courseName: "Database Systems",
-                courseCode: "CSC566",
-                creditHour: 3,
-                remark: "Database design, implementation and management"
-            },
-            {
-                courseID: "C003",
-                courseName: "Software Engineering",
-                courseCode: "CSC567",
-                creditHour: 3,
-                remark: "Software development methodologies and project management"
-            },
-            {
-                courseID: "C004",
-                courseName: "Web Application Development",
-                courseCode: "ITT569",
-                creditHour: 3,
-                remark: "Modern web development frameworks and technologies"
-            },
-            {
-                courseID: "C005",
-                courseName: "Artificial Intelligence",
-                courseCode: "CSC588",
-                creditHour: 3,
-                remark: "AI algorithms and machine learning techniques"
-            },
-            {
-                courseID: "C006",
-                courseName: "Mobile Application Development",
-                courseCode: "CSC590",
-                creditHour: 3,
-                remark: "Cross-platform mobile app development"
-            }
-        ];
-
-        // Student Progress data from STUDENT_PROGRESS entity - ONLY fields from the table
-        const studentProgressData = [
-            {
-                progressID: "P001",
-                name: "Enterprise Programming Progress",
-                program: "Computer Science",
-                semester: 1,
-                grade: "A",
-                status: "completed",
-                studentID: "S001",
-                courseID: "C001"
-            },
-            {
-                progressID: "P002",
-                name: "Database Systems Progress",
-                program: "Computer Science",
-                semester: 1,
-                grade: "A-",
-                status: "completed",
-                studentID: "S001",
-                courseID: "C002"
-            },
-            {
-                progressID: "P003",
-                name: "Software Engineering Progress",
-                program: "Computer Science",
-                semester: 2,
-                grade: null,
-                status: "ongoing",
-                studentID: "S001",
-                courseID: "C003"
-            },
-            {
-                progressID: "P004",
-                name: "Web Application Development Progress",
-                program: "Computer Science",
-                semester: 2,
-                grade: null,
-                status: "ongoing",
-                studentID: "S001",
-                courseID: "C004"
-            },
-            {
-                progressID: "P005",
-                name: "Artificial Intelligence Progress",
-                program: "Computer Science",
-                semester: 1,
-                grade: "B+",
-                status: "completed",
-                studentID: "S001",
-                courseID: "C005"
-            },
-            {
-                progressID: "P006",
-                name: "Mobile Application Development Progress",
-                program: "Computer Science",
-                semester: 3,
-                grade: null,
-                status: "upcoming",
-                studentID: "S001",
-                courseID: "C006"
-            }
-        ];
-
-        // Merge course data with student progress data
-        const mergedCourses = studentProgressData.map(progress => {
-            const course = coursesData.find(c => c.courseID === progress.courseID);
-            return {
-                ...progress,
-                ...course
-            };
-        });
-
-        // Current filter state
-        let currentFilter = {
-            semester: 'all',
-            status: 'all',
-            search: '',
-            tab: 'all',
-            sort: 'name'
-        };
-
-        // Function to render course cards
-        function renderCourseCards(courses = mergedCourses) {
-            const courseGrid = document.getElementById('courseGrid');
-            courseGrid.innerHTML = '';
-            
-            if (courses.length === 0) {
-                courseGrid.innerHTML = `
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--dark-text); opacity: 0.7;">
-                        <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 20px; color: var(--light-blue);"></i>
-                        <h3 style="margin-bottom: 10px;">No courses found</h3>
-                        <p>Try adjusting your filters or search terms</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            courses.forEach(course => {
-                const card = document.createElement('div');
-                card.className = 'course-card';
-                card.dataset.semester = course.semester;
-                card.dataset.status = course.status;
-                
-                const statusClass = `status-${course.status}`;
-                const statusText = course.status.charAt(0).toUpperCase() + course.status.slice(1);
-                
-                card.innerHTML = `
-                    <div class="course-header">
-                        <div class="course-code">${course.courseCode}</div>
-                        <div class="course-name">${course.courseName}</div>
-                        <div class="course-credits">
-                            <i class="fas fa-clock"></i>
-                            <span>${course.creditHour} Credit Hours</span>
-                        </div>
-                        <div class="course-status ${statusClass}">${statusText}</div>
-                    </div>
-                    <div class="course-body">
-                        <div class="course-info">
-                            <div class="info-item">
-                                <span class="info-label">Semester</span>
-                                <span class="info-value">Semester ${course.semester}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Program</span>
-                                <span class="info-value">${course.program}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">${course.status === 'completed' ? 'Final Grade' : 'Current Grade'}</span>
-                                ${course.grade ? 
-                                    `<span class="grade-badge">${course.grade}</span>` : 
-                                    `<span class="grade-badge na">-</span>`}
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                courseGrid.appendChild(card);
-            });
-        }
-
-        // Function to render table
-        function renderTable(courses = mergedCourses) {
-            const tableBody = document.getElementById('coursesTableBody');
-            tableBody.innerHTML = '';
-            
-            if (courses.length === 0) {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td colspan="7" style="text-align: center; padding: 40px; color: var(--dark-text); opacity: 0.7;">
-                        <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 10px; color: var(--light-blue); display: block;"></i>
-                        No courses match your current filters
-                    </td>
-                `;
-                tableBody.appendChild(row);
-                return;
-            }
-            
-            courses.forEach(course => {
-                const row = document.createElement('tr');
-                
-                const statusClass = `status-${course.status}`;
-                const statusText = course.status.charAt(0).toUpperCase() + course.status.slice(1);
-                
-                row.innerHTML = `
-                    <td><strong>${course.courseCode}</strong></td>
-                    <td>${course.courseName}</td>
-                    <td>${course.creditHour}</td>
-                    <td>Semester ${course.semester}</td>
-                    <td>${course.program}</td>
-                    <td>${course.grade || '-'}</td>
-                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                `;
-                
-                tableBody.appendChild(row);
-            });
-        }
-
-        // Function to sort courses
-        function sortCourses(courses) {
-            const sortedCourses = [...courses];
-            
-            switch(currentFilter.sort) {
-                case 'name':
-                    sortedCourses.sort((a, b) => a.courseName.localeCompare(b.courseName));
-                    break;
-                case 'code':
-                    sortedCourses.sort((a, b) => a.courseCode.localeCompare(b.courseCode));
-                    break;
-                case 'semester':
-                    sortedCourses.sort((a, b) => a.semester - b.semester);
-                    break;
-                case 'credits':
-                    sortedCourses.sort((a, b) => b.creditHour - a.creditHour);
-                    break;
-                default:
-                    sortedCourses.sort((a, b) => a.courseName.localeCompare(b.courseName));
-            }
-            
-            return sortedCourses;
-        }
-
-        
-        // Function to filter courses based on current filter state - SIMPLIFIED FIXED VERSION
-        function filterCourses() {
-            let filteredCourses = [...mergedCourses];
-
-            console.log('Filter state:', currentFilter); // Debug log
-
-            // Apply search filter first (always applies)
-            if (currentFilter.search.trim() !== '') {
-                const searchTerm = currentFilter.search.toLowerCase().trim();
-                filteredCourses = filteredCourses.filter(course => {
-                    return course.courseName.toLowerCase().includes(searchTerm) ||
-                           course.courseCode.toLowerCase().includes(searchTerm) ||
-                           course.program.toLowerCase().includes(searchTerm) ||
-                           (course.grade && course.grade.toLowerCase().includes(searchTerm));
-                });
-            }
-
-            // Apply tab-specific filters
-            if (currentFilter.tab !== 'all') {
-                switch(currentFilter.tab) {
-                    case 'current':
-                        filteredCourses = filteredCourses.filter(course => 
-                            course.semester === 2 && course.status === 'ongoing'
-                        );
-                        break;
-                    case 'completed':
-                        filteredCourses = filteredCourses.filter(course => 
-                            course.status === 'completed'
-                        );
-                        break;
-                    case 'upcoming':
-                        filteredCourses = filteredCourses.filter(course => 
-                            course.status === 'upcoming'
-                        );
-                        break;
-                }
-            } else {
-                // Only apply dropdown filters when on "all" tab
-                if (currentFilter.semester !== 'all') {
-                    filteredCourses = filteredCourses.filter(course => 
-                        course.semester === parseInt(currentFilter.semester)
-                    );
-                }
-
-                if (currentFilter.status !== 'all') {
-                    filteredCourses = filteredCourses.filter(course => 
-                        course.status === currentFilter.status
-                    );
-                }
-            }
-
-            // Sort the filtered courses
-            filteredCourses = sortCourses(filteredCourses);
-
-            console.log('Filtered courses count:', filteredCourses.length); // Debug log
-
-            // Render filtered courses
-            renderCourseCards(filteredCourses);
-            renderTable(filteredCourses);
-        }
-
-        // Function to update filter dropdowns based on active tab - SIMPLIFIED
-        function updateFilterDropdownsForTab() {
-            const semesterFilter = document.getElementById('semesterFilter');
-            const statusFilter = document.getElementById('statusFilter');
-
-            // Always enable dropdowns
-            semesterFilter.disabled = false;
-            statusFilter.disabled = false;
-
-            // For non-"all" tabs, show the appropriate values
-            if (currentFilter.tab !== 'all') {
-                switch(currentFilter.tab) {
-                    case 'current':
-                        semesterFilter.value = '2';
-                        statusFilter.value = 'ongoing';
-                        break;
-                    case 'completed':
-                        semesterFilter.value = 'all';
-                        statusFilter.value = 'completed';
-                        break;
-                    case 'upcoming':
-                        semesterFilter.value = 'all';
-                        statusFilter.value = 'upcoming';
-                        break;
-                }
-            } else {
-                // For "all" tab, use whatever is currently selected
-                semesterFilter.value = currentFilter.semester;
-                statusFilter.value = currentFilter.status;
-            }
-        }
-
-        // Initialize the page - FIXED EVENT LISTENERS
         document.addEventListener('DOMContentLoaded', function() {
-            // Render all courses initially
-            renderCourseCards();
-            renderTable();
+            const ctx = (function() {
+                const p = window.location.pathname.split('/').filter(Boolean);
+                return p.length ? '/' + p[0] : '';
+            })();
 
-            // Profile dropdown functionality (keep as is)
-            const profileBtn = document.getElementById('profileBtn');
-            const dropdownMenu = document.getElementById('dropdownMenu');
-            const dropdownBackdrop = document.getElementById('dropdownBackdrop');
-
-            let isDropdownOpen = false;
-
-            profileBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                toggleDropdown();
-            });
-
-            dropdownBackdrop.addEventListener('click', function() {
-                closeDropdown();
-            });
-
-            document.addEventListener('click', function(e) {
-                if (isDropdownOpen && 
-                    !profileBtn.contains(e.target) && 
-                    !dropdownMenu.contains(e.target)) {
-                    closeDropdown();
-                }
-            });
-
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && isDropdownOpen) {
-                    closeDropdown();
-                }
-            });
-
-            function toggleDropdown() {
-                if (isDropdownOpen) {
-                    closeDropdown();
-                } else {
-                    openDropdown();
-                }
-            }
-
-            function openDropdown() {
-                dropdownMenu.classList.add('show');
-                dropdownBackdrop.classList.add('active');
-                profileBtn.classList.add('active');
-                isDropdownOpen = true;
-            }
-
-            function closeDropdown() {
-                dropdownMenu.classList.remove('show');
-                dropdownBackdrop.classList.remove('active');
-                profileBtn.classList.remove('active');
-                isDropdownOpen = false;
-            }
-
-            // Filter functionality - CLEAN FIX
+            const courseGrid = document.getElementById('courseGrid');
+            const coursesTableBody = document.getElementById('coursesTableBody');
             const semesterFilter = document.getElementById('semesterFilter');
             const statusFilter = document.getElementById('statusFilter');
             const sortFilter = document.getElementById('sortFilter');
             const courseSearch = document.getElementById('courseSearch');
             const tabButtons = document.querySelectorAll('.tab-btn');
 
-            // Semester filter change - SIMPLIFIED
-            semesterFilter.addEventListener('change', function() {
-                // Only apply semester filter when on "all" tab
-                if (currentFilter.tab === 'all') {
-                    currentFilter.semester = this.value;
+            let courses = [];
+            let studentSemester = 2; // fallback
+            let currentFilter = {
+                semester: 'all',
+                status: 'all',
+                search: '',
+                tab: 'all',
+                sort: 'name'
+            };
+
+            async function fetchStudent() {
+                try {
+                    const res = await fetch(ctx + '/api/student/me', { cache: 'no-store' });
+                    if (res.ok) {
+                        const js = await res.json();
+                        if (js.semester) studentSemester = parseInt(js.semester) || studentSemester;
+                    } else {
+                        console.warn('student/me status', res.status);
+                    }
+                } catch (e) {
+                    console.warn('fetch student failed', e);
                 }
-                filterCourses();
-            });
+            }
 
-            // Status filter change - SIMPLIFIED
-            statusFilter.addEventListener('change', function() {
-                // Only apply status filter when on "all" tab
-                if (currentFilter.tab === 'all') {
-                    currentFilter.status = this.value;
+            async function fetchCourses() {
+                await fetchStudent();
+                try {
+                    const res = await fetch(ctx + '/api/student/courses', { cache: 'no-store' });
+                    if (!res.ok) throw new Error('Failed to load courses');
+                    const json = await res.json();
+                    courses = json.courses || [];
+                    filterCourses();
+                } catch (err) {
+                    console.error(err);
+                    courseGrid.innerHTML = '<div style="padding:30px;color:#666">Unable to load courses.</div>';
+                    coursesTableBody.innerHTML = '';
                 }
-                filterCourses();
-            });
+            }
 
-            // Sort filter change (always applies)
-            sortFilter.addEventListener('change', function() {
-                currentFilter.sort = this.value;
-                filterCourses();
-            });
+            function normalizeStatus(s) {
+                if (s === null || s === undefined) return '';
+                return String(s).toLowerCase();
+            }
 
-            // Search input with debounce (always applies)
+            function sortCourses(list) {
+                const sorted = [...list];
+                switch (currentFilter.sort) {
+                    case 'name': sorted.sort((a,b)=> (a.courseName||'').localeCompare(b.courseName||'')); break;
+                    case 'code': sorted.sort((a,b)=> (a.courseID||'').localeCompare(b.courseID||'')); break;
+                    case 'semester': sorted.sort((a,b)=> (a.semester||0) - (b.semester||0)); break;
+                    case 'credits': sorted.sort((a,b)=> (b.creditHour||0) - (a.creditHour||0)); break;
+                }
+                return sorted;
+            }
+
+            function filterCourses() {
+                let filtered = [...courses];
+                const s = currentFilter.search.trim().toLowerCase();
+                if (s) {
+                    filtered = filtered.filter(course => 
+                        (course.courseName && course.courseName.toLowerCase().includes(s)) ||
+                        (course.courseID && String(course.courseID).toLowerCase().includes(s)) ||
+                        (course.program && course.program.toLowerCase().includes(s)) ||
+                        (course.grade && String(course.grade).toLowerCase().includes(s))
+                    );
+                }
+
+                if (currentFilter.tab !== 'all') {
+                    switch (currentFilter.tab) {
+                        case 'current':
+                            // filter by student's current semester (as requested)
+                            filtered = filtered.filter(course => Number(course.semester) === Number(studentSemester));
+                            break;
+                        case 'completed':
+                            filtered = filtered.filter(course => normalizeStatus(course.status) === 'completed');
+                            break;
+                        case 'upcoming':
+                            filtered = filtered.filter(course => normalizeStatus(course.status) === 'upcoming');
+                            break;
+                    }
+                } else {
+                    if (currentFilter.semester !== 'all') filtered = filtered.filter(course => Number(course.semester) === Number(currentFilter.semester));
+                    if (currentFilter.status !== 'all') filtered = filtered.filter(course => normalizeStatus(course.status) === normalizeStatus(currentFilter.status));
+                }
+
+                filtered = sortCourses(filtered);
+                renderCourseCards(filtered);
+                renderTable(filtered);
+            }
+
+            function renderCourseCards(list) {
+                courseGrid.innerHTML = '';
+                if (list.length === 0) {
+                    courseGrid.innerHTML = `<div style="grid-column: 1 / -1; text-align:center; padding:40px; color:#666">No courses found.</div>`;
+                    return;
+                }
+                list.forEach(course => {
+                    const card = document.createElement('div');
+                    card.className = 'course-card';
+                    const statusText = course.status ? (course.status.charAt(0).toUpperCase()+course.status.slice(1)) : '';
+                    card.innerHTML = `
+                        <div class="course-header">
+                            <div class="course-code">${course.courseID}</div>
+                            <div class="course-name">${course.courseName}</div>
+                            <div class="course-credits"><i class="fas fa-clock"></i> <span>${course.creditHour} Credit Hours</span></div>
+                            <div class="course-status">${statusText}</div>
+                        </div>
+                        <div class="course-body">
+                            <div class="course-info">
+                                <div class="info-item"><span class="info-label">Semester</span><span class="info-value">Semester ${course.semester}</span></div>
+                                <div class="info-item"><span class="info-label">Program</span><span class="info-value">${course.program || ''}</span></div>
+                                <div class="info-item"><span class="info-label">${normalizeStatus(course.status) === 'completed' ? 'Final Grade' : 'Current Grade'}</span>
+                                    ${course.grade ? `<span class="grade-badge">${course.grade}</span>` : `<span class="grade-badge na">-</span>`}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    courseGrid.appendChild(card);
+                });
+            }
+
+            function renderTable(list) {
+                coursesTableBody.innerHTML = '';
+                if (list.length === 0) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td colspan="7" style="text-align:center; padding:40px; color:#666">No courses match your filters.</td>`;
+                    coursesTableBody.appendChild(row);
+                    return;
+                }
+                list.forEach(course => {
+                    const row = document.createElement('tr');
+                    const statusText = course.status ? (course.status.charAt(0).toUpperCase()+course.status.slice(1)) : '';
+                    row.innerHTML = `
+                        <td><strong>${course.courseID}</strong></td>
+                        <td>${course.courseName}</td>
+                        <td>${course.creditHour}</td>
+                        <td>Semester ${course.semester}</td>
+                        <td>${course.program || ''}</td>
+                        <td>${course.grade || '-'}</td>
+                        <td><span class="status-badge">${statusText}</span></td>
+                    `;
+                    coursesTableBody.appendChild(row);
+                });
+            }
+
+            semesterFilter.addEventListener('change', function() { currentFilter.semester = this.value; filterCourses(); });
+            statusFilter.addEventListener('change', function() { currentFilter.status = this.value; filterCourses(); });
+            sortFilter.addEventListener('change', function() { currentFilter.sort = this.value; filterCourses(); });
+
             let searchTimeout;
             courseSearch.addEventListener('input', function() {
                 clearTimeout(searchTimeout);
@@ -1576,87 +1308,136 @@
                 }, 300);
             });
 
-            // Tab switching - FIXED
             tabButtons.forEach(btn => {
                 btn.addEventListener('click', function() {
-                    // Update active tab
                     tabButtons.forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
-
-                    // Reset dropdown filters to "all" when switching tabs
-                    if (currentFilter.tab === this.dataset.filter) {
-                        // If clicking the same tab again, do nothing
-                        return;
-                    }
-
-                    // Update filter state
                     currentFilter.tab = this.dataset.filter;
-
-                    // Reset dropdown filters when NOT on "all" tab
+                    // Reset dropdown filters for non-"all" tabs
                     if (currentFilter.tab !== 'all') {
                         currentFilter.semester = 'all';
                         currentFilter.status = 'all';
+                        semesterFilter.value = 'all';
+                        statusFilter.value = 'all';
                     }
-
-                    // Update dropdown display
-                    updateFilterDropdownsForTab();
-
-                    // Apply filters
                     filterCourses();
                 });
             });
 
-            // Add debug function to check filter state
-            function debugFilters() {
-                console.log('Current filter state:', currentFilter);
-                console.log('All courses:', mergedCourses.length);
-                console.log('Semester filter value:', semesterFilter.value);
-                console.log('Status filter value:', statusFilter.value);
-                console.log('Active tab:', currentFilter.tab);
+            fetchCourses();
+        });
+        
+        (function() {
+            // Determine webapp context path (like earlier scripts)
+            function getContextPath() {
+              const p = window.location.pathname.split('/').filter(Boolean);
+              return p.length ? '/' + p[0] : '';
+            }
+            const ctx = getContextPath();
+
+            const dropdown = document.getElementById('profileDropdown');
+            const profileBtn = document.getElementById('profileBtn');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const profileNameEl = document.getElementById('profileName');
+            const profilePicEl = document.getElementById('profilePic');
+            const profileRoleEl = document.getElementById('profileRole');
+
+            // Ensure backdrop exists (create if needed)
+            let backdrop = document.getElementById('dropdownBackdrop');
+            if (!backdrop) {
+              backdrop = document.createElement('div');
+              backdrop.id = 'dropdownBackdrop';
+              backdrop.className = 'dropdown-backdrop';
+              document.body.appendChild(backdrop);
             }
 
-            // Logout button
-            const logoutBtn = document.getElementById('logoutBtn');
-            logoutBtn.addEventListener('click', function(e) {
+            function openMenu() {
+              dropdownMenu.classList.add('show');
+              profileBtn.classList.add('active');
+              backdrop.classList.add('active');
+              dropdown.classList.add('active');
+            }
+            function closeMenu() {
+              dropdownMenu.classList.remove('show');
+              profileBtn.classList.remove('active');
+              backdrop.classList.remove('active');
+              dropdown.classList.remove('active');
+            }
+            function toggleMenu() {
+              if (dropdownMenu.classList.contains('show')) closeMenu(); else openMenu();
+            }
+
+            // Toggle when clicking profile button
+            if (profileBtn) {
+              profileBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleMenu();
+              });
+            }
+
+            // Close when clicking outside or on backdrop
+            backdrop.addEventListener('click', function() {
+              closeMenu();
+            });
+            document.addEventListener('click', function(e) {
+              if (!dropdown.contains(e.target)) {
+                closeMenu();
+              }
+            });
+
+            // Close on Escape
+            document.addEventListener('keydown', function(e) {
+              if (e.key === 'Escape') closeMenu();
+            });
+
+            // Logout handler - calls existing logout path
+            if (logoutBtn) {
+              logoutBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                if (confirm('Are you sure you want to log out?')) {
-                    alert('Logged out successfully. Redirecting to login page...');
+                // Confirm optionally
+                if (!confirm('Are you sure you want to log out?')) return;
+                // Use context path so it works under /Academic-Advising or root
+                const url = ctx + '/logout';
+                // Use location.href to trigger servlet and redirect
+                window.location.href = url;
+              });
+            }
+
+            // Fill profile name and initials by calling /api/student/me if role is student
+            async function loadProfile() {
+              try {
+                const res = await fetch(ctx + '/api/student/me', { cache: 'no-store' });
+                if (!res.ok) {
+                  // not logged in or not student; leave static values
+                  return;
                 }
-            });
+                const json = await res.json();
+                const name = json.name || json.firstName || profileNameEl.textContent;
+                profileNameEl.textContent = name;
+                profileRoleEl.textContent = 'Student';
 
-            // Optional: Add a reset button
-            const resetButton = document.createElement('button');
-            resetButton.className = 'btn btn-outline';
-            resetButton.innerHTML = '<i class="fas fa-redo"></i> Reset';
-            resetButton.addEventListener('click', function() {
-                // Reset all filters
-                currentFilter = {
-                    semester: 'all',
-                    status: 'all',
-                    search: '',
-                    tab: 'all',
-                    sort: 'name'
-                };
+                // create initials for avatar
+                let initials = '';
+                if (json.firstName || json.lastName) {
+                  const f = (json.firstName || '').trim();
+                  const l = (json.lastName || '').trim();
+                  initials = (f ? f.charAt(0) : '') + (l ? l.charAt(0) : '');
+                } else if (name) {
+                  const parts = name.trim().split(/\s+/);
+                  initials = parts[0].charAt(0) + (parts.length > 1 ? parts[parts.length-1].charAt(0) : '');
+                }
+                initials = initials.toUpperCase() || 'ME';
+                if (profilePicEl) profilePicEl.textContent = initials;
+              } catch (err) {
+                // ignore, show default
+                console.warn('Could not load profile info', err);
+              }
+            }
 
-                // Reset UI elements
-                semesterFilter.value = 'all';
-                statusFilter.value = 'all';
-                sortFilter.value = 'name';
-                courseSearch.value = '';
-
-                // Reset tabs
-                tabButtons.forEach(b => {
-                    b.classList.remove('active');
-                    if (b.dataset.filter === 'all') b.classList.add('active');
-                });
-
-                // Apply filters
-                filterCourses();
-            });
-
-            // Add reset button to filters bar if you want
-            // document.querySelector('.filters-bar .filter-group').appendChild(resetButton);
-        });
+            // Call once
+            loadProfile();
+          })();
     </script>
 </body>
 </html>

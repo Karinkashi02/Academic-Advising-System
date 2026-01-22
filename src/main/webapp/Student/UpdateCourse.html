@@ -1002,21 +1002,22 @@
                 <i class="fas fa-edit"></i>
                 <span>Update Course Grade</span>
             </div>
+            
             <div class="profile-area">
-                
-                <div class="profile-dropdown">
-                    <div class="profile-btn" id="profileBtn">
-                        <div class="profile-pic">MA</div>
-                        <div class="profile-info">
-                            <div class="profile-name">M. Amar Ghazali</div>
-                            <div class="profile-role">Student</div>
-                        </div>
-                        <i class="fas fa-chevron-down dropdown-icon"></i>
+                <div class="profile-dropdown" id="profileDropdown">
+                  <div class="profile-btn" id="profileBtn">
+                    <div class="profile-pic" id="profilePic">MA</div>
+                    <div class="profile-info">
+                      <div class="profile-name" id="profileName">M. Amar Ghazali</div>
+                      <div class="profile-role" id="profileRole">Student</div>
                     </div>
-                    <div class="dropdown-menu" id="dropdownMenu">
-                        <a href="Profile.html" class="dropdown-item"><i class="fas fa-user-circle"></i> My Profile</a>
-                        <a href="#" class="dropdown-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                    </div>
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                  </div>
+
+                  <div class="dropdown-menu" id="dropdownMenu">
+                    <a href="Profile.html" class="dropdown-item"><i class="fas fa-user-circle"></i> My Profile</a>
+                    <a href="#" class="dropdown-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                  </div>
                 </div>
             </div>
         </header>
@@ -1185,527 +1186,322 @@
     </div>
 
     <script>
-        // Sample course data (same as My Courses page)
-        const coursesData = [
-            {
-                courseID: "C001",
-                courseName: "Enterprise Programming",
-                courseCode: "CSC584",
-                creditHour: 4,
-                remark: "Advanced programming concepts for enterprise applications"
-            },
-            {
-                courseID: "C002",
-                courseName: "Database Systems",
-                courseCode: "CSC566",
-                creditHour: 3,
-                remark: "Database design, implementation and management"
-            },
-            {
-                courseID: "C003",
-                courseName: "Software Engineering",
-                courseCode: "CSC567",
-                creditHour: 3,
-                remark: "Software development methodologies and project management"
-            },
-            {
-                courseID: "C004",
-                courseName: "Web Application Development",
-                courseCode: "ITT569",
-                creditHour: 3,
-                remark: "Modern web development frameworks and technologies"
-            },
-            {
-                courseID: "C005",
-                courseName: "Artificial Intelligence",
-                courseCode: "CSC588",
-                creditHour: 3,
-                remark: "AI algorithms and machine learning techniques"
-            },
-            {
-                courseID: "C006",
-                courseName: "Mobile Application Development",
-                courseCode: "CSC590",
-                creditHour: 3,
-                remark: "Cross-platform mobile app development"
-            }
-        ];
-
-        // Student Progress data
-        const studentProgressData = [
-            {
-                progressID: "P001",
-                name: "Enterprise Programming Progress",
-                program: "Computer Science",
-                semester: 1,
-                grade: "A",
-                status: "completed",
-                studentID: "S001",
-                courseID: "C001"
-            },
-            {
-                progressID: "P002",
-                name: "Database Systems Progress",
-                program: "Computer Science",
-                semester: 1,
-                grade: "A-",
-                status: "completed",
-                studentID: "S001",
-                courseID: "C002"
-            },
-            {
-                progressID: "P003",
-                name: "Software Engineering Progress",
-                program: "Computer Science",
-                semester: 2,
-                grade: null,
-                status: "ongoing",
-                studentID: "S001",
-                courseID: "C003"
-            },
-            {
-                progressID: "P004",
-                name: "Web Application Development Progress",
-                program: "Computer Science",
-                semester: 2,
-                grade: null,
-                status: "ongoing",
-                studentID: "S001",
-                courseID: "C004"
-            },
-            {
-                progressID: "P005",
-                name: "Artificial Intelligence Progress",
-                program: "Computer Science",
-                semester: 1,
-                grade: "B+",
-                status: "completed",
-                studentID: "S001",
-                courseID: "C005"
-            },
-            {
-                progressID: "P006",
-                name: "Mobile Application Development Progress",
-                program: "Computer Science",
-                semester: 3,
-                grade: null,
-                status: "upcoming",
-                studentID: "S001",
-                courseID: "C006"
-            }
-        ];
-
-        // Merge course data with student progress data
-        const mergedCourses = studentProgressData.map(progress => {
-            const course = coursesData.find(c => c.courseID === progress.courseID);
-            return {
-                ...progress,
-                ...course
-            };
-        });
-
-        // Current selected course
-        let selectedCourse = null;
-        let selectedGrade = "";
-
-        // Initialize the page
         document.addEventListener('DOMContentLoaded', function() {
-            // Profile dropdown functionality (same as My Courses page)
-            const profileBtn = document.getElementById('profileBtn');
-            const dropdownMenu = document.getElementById('dropdownMenu');
-            const dropdownBackdrop = document.getElementById('dropdownBackdrop');
+            const ctx = (function() {
+                const p = window.location.pathname.split('/').filter(Boolean);
+                return p.length ? '/' + p[0] : '';
+            })();
 
-            let isDropdownOpen = false;
-
-            profileBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                toggleDropdown();
-            });
-
-            dropdownBackdrop.addEventListener('click', function() {
-                closeDropdown();
-            });
-
-            document.addEventListener('click', function(e) {
-                if (isDropdownOpen && 
-                    !profileBtn.contains(e.target) && 
-                    !dropdownMenu.contains(e.target)) {
-                    closeDropdown();
-                }
-            });
-
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && isDropdownOpen) {
-                    closeDropdown();
-                }
-            });
-
-            function toggleDropdown() {
-                if (isDropdownOpen) {
-                    closeDropdown();
-                } else {
-                    openDropdown();
-                }
-            }
-
-            function openDropdown() {
-                dropdownMenu.classList.add('show');
-                dropdownBackdrop.classList.add('active');
-                profileBtn.classList.add('active');
-                isDropdownOpen = true;
-            }
-
-            function closeDropdown() {
-                dropdownMenu.classList.remove('show');
-                dropdownBackdrop.classList.remove('active');
-                profileBtn.classList.remove('active');
-                isDropdownOpen = false;
-            }
-
-            // Logout button
-            const logoutBtn = document.getElementById('logoutBtn');
-            logoutBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                if (confirm('Are you sure you want to log out?')) {
-                    alert('Logged out successfully. Redirecting to login page...');
-                    // In a real app, you would redirect to login page
-                    // window.location.href = 'login.html';
-                }
-            });
-
-            // Populate course select dropdown
-            populateCourseSelect();
-
-            // Filter courses based on status
+            const courseSelect = document.getElementById('courseSelect');
             const courseFilter = document.getElementById('courseFilter');
-            courseFilter.addEventListener('change', function() {
-                populateCourseSelect();
-            });
-
-            // Load course button
             const loadCourseBtn = document.getElementById('loadCourseBtn');
-            loadCourseBtn.addEventListener('click', loadSelectedCourse);
-
-            // View all courses button
-            const viewAllCoursesBtn = document.getElementById('viewAllCoursesBtn');
-            viewAllCoursesBtn.addEventListener('click', function() {
-                window.location.href = 'Mycourse.html';
-            });
-
-            // Grade options selection
+            const gradeForm = document.getElementById('gradeForm');
+            const courseCodeEl = document.getElementById('courseCode');
+            const courseNameEl = document.getElementById('courseName');
+            const courseCreditsEl = document.getElementById('courseCredits');
+            const courseSemesterEl = document.getElementById('courseSemester');
+            const courseProgramEl = document.getElementById('courseProgram');
+            const courseStatusEl = document.getElementById('courseStatus');
+            const currentGradeDisplay = document.getElementById('currentGradeDisplay');
             const gradeOptions = document.querySelectorAll('.grade-option');
+            const gradeDescription = document.getElementById('gradeDescription');
+            const updateGradeBtn = document.getElementById('updateGradeBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const statusMessage = document.getElementById('statusMessage');
+            const statusText = document.getElementById('statusText');
+
+            let courses = []; // fetched data
+            let selectedCourse = null;
+            let selectedGrade = "";
+            let studentSemester = 2; // fallback
+
+            // fetch student info (to get current semester)
+            async function fetchStudent() {
+                try {
+                    const res = await fetch(ctx + '/api/student/me', { cache: 'no-store' });
+                    if (res.ok) {
+                        const js = await res.json();
+                        if (js.semester) studentSemester = parseInt(js.semester) || studentSemester;
+                    } else {
+                        console.warn('Could not get /api/student/me:', res.status);
+                    }
+                } catch (e) {
+                    console.warn('Error fetching student data', e);
+                }
+            }
+
+            async function fetchCourses() {
+                await fetchStudent();
+                try {
+                    const res = await fetch(ctx + '/api/student/courses', { cache: 'no-store' });
+                    if (!res.ok) throw new Error('Failed to load courses: ' + res.status);
+                    const json = await res.json();
+                    courses = json.courses || [];
+                    populateCourseSelect();
+                } catch (err) {
+                    console.error(err);
+                    showStatusMessage('Unable to load courses', 'error');
+                }
+            }
+
+            function normalizeStatus(s) {
+                if (!s && s !== '') return '';
+                return String(s).toLowerCase();
+            }
+
+            function populateCourseSelect() {
+                courseSelect.innerHTML = '<option value="">-- Select a course --</option>';
+                const filter = courseFilter.value;
+                const filtered = (filter === 'all') ? courses : courses.filter(c => normalizeStatus(c.status) === normalizeStatus(filter));
+                filtered.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.progressID;
+                    opt.textContent = `${c.courseName} (${c.status ? c.status : ''})`;
+                    opt.dataset.courseData = JSON.stringify(c);
+                    courseSelect.appendChild(opt);
+                });
+                if (filtered.length === 1) {
+                    courseSelect.value = filtered[0].progressID;
+                }
+            }
+
+            function loadSelectedCourse() {
+                const sel = courseSelect.options[courseSelect.selectedIndex];
+                if (!sel || !sel.dataset.courseData) {
+                    showStatusMessage('Please select a course first.', 'error');
+                    return;
+                }
+                selectedCourse = JSON.parse(sel.dataset.courseData);
+                loadCourseData(selectedCourse);
+                showForm();
+                showStatusMessage(`Loaded ${selectedCourse.courseName}`, 'success');
+            }
+
+            function loadCourseData(course) {
+                courseCodeEl.textContent = course.courseID || '';
+                courseNameEl.textContent = course.courseName || '';
+                courseCreditsEl.textContent = course.creditHour || '';
+                courseSemesterEl.textContent = `Semester ${course.semester || ''}`;
+                courseProgramEl.textContent = course.program || '';
+                courseStatusEl.textContent = course.status ? (course.status.charAt(0).toUpperCase() + course.status.slice(1)) : '';
+
+                if (course.grade) {
+                    currentGradeDisplay.textContent = course.grade;
+                    currentGradeDisplay.className = 'current-grade-value';
+                    gradeOptions.forEach(opt => opt.classList.remove('selected'));
+                    const match = Array.from(gradeOptions).find(o => o.dataset.grade === course.grade);
+                    if (match) {
+                        match.classList.add('selected');
+                        selectedGrade = course.grade;
+                        gradeDescription.textContent = match.dataset.description || '';
+                        gradeDescription.classList.add('show');
+                    } else {
+                        selectedGrade = course.grade;
+                        gradeDescription.textContent = '';
+                        gradeDescription.classList.remove('show');
+                    }
+                } else {
+                    currentGradeDisplay.textContent = 'No grade';
+                    currentGradeDisplay.className = 'current-grade-value no-grade';
+                    gradeOptions.forEach(opt => opt.classList.remove('selected'));
+                    selectedGrade = "";
+                    gradeDescription.textContent = 'Select a grade to see its description';
+                    gradeDescription.classList.remove('show');
+                }
+            }
+
+            function showForm() { gradeForm.classList.add('active'); }
+            function hideForm() { gradeForm.classList.remove('active'); }
+
             gradeOptions.forEach(option => {
                 option.addEventListener('click', function() {
-                    // Update selected grade
                     selectedGrade = this.dataset.grade;
-                    
-                    // Update UI
                     gradeOptions.forEach(opt => opt.classList.remove('selected'));
                     this.classList.add('selected');
-                    
-                    // Show grade description
-                    const description = this.dataset.description;
-                    const gradeDescription = document.getElementById('gradeDescription');
-                    gradeDescription.textContent = description;
+                    gradeDescription.textContent = this.dataset.description || '';
                     gradeDescription.classList.add('show');
                 });
             });
 
-            // Update grade button
-            const updateGradeBtn = document.getElementById('updateGradeBtn');
-            updateGradeBtn.addEventListener('click', updateCourseGrade);
+            updateGradeBtn.addEventListener('click', async function() {
+                if (!selectedCourse) {
+                    showStatusMessage('No course loaded', 'error');
+                    return;
+                }
+                // compare normalized status
+                if (normalizeStatus(selectedCourse.status) === 'completed' && (!selectedGrade || selectedGrade === "")) {
+                    showStatusMessage('Please select a grade for completed courses.', 'warning');
+                    return;
+                }
 
-            // Cancel button
-            const cancelBtn = document.getElementById('cancelBtn');
-            cancelBtn.addEventListener('click', function() {
-                resetForm();
-                hideForm();
-            });
+                try {
+                    const form = new URLSearchParams();
+                    form.append('progressID', selectedCourse.progressID);
+                    form.append('grade', selectedGrade || '');
 
-            // Initialize status message
-            hideStatusMessage();
-        });
-
-        // Function to populate course select dropdown
-        function populateCourseSelect() {
-            const courseFilter = document.getElementById('courseFilter');
-            const courseSelect = document.getElementById('courseSelect');
-            const selectedFilter = courseFilter.value;
-            
-            // Clear current options
-            courseSelect.innerHTML = '<option value="">-- Select a course --</option>';
-            
-            // Filter courses by status if needed
-            let filteredCourses = mergedCourses;
-            if (selectedFilter !== 'all') {
-                filteredCourses = mergedCourses.filter(course => 
-                    course.status === selectedFilter
-                );
-            }
-            
-            // Add options for each course
-            filteredCourses.forEach(course => {
-                const option = document.createElement('option');
-                option.value = course.courseID;
-                option.textContent = `${course.courseCode} - ${course.courseName} (${course.status.charAt(0).toUpperCase() + course.status.slice(1)})`;
-                option.dataset.courseData = JSON.stringify(course);
-                courseSelect.appendChild(option);
-            });
-            
-            // If only one course, select it automatically
-            if (filteredCourses.length === 1) {
-                courseSelect.value = filteredCourses[0].courseID;
-            }
-        }
-
-        // Function to load selected course
-        function loadSelectedCourse() {
-            const courseSelect = document.getElementById('courseSelect');
-            const selectedValue = courseSelect.value;
-            
-            if (!selectedValue) {
-                showStatusMessage('Please select a course first.', 'error');
-                return;
-            }
-            
-            // Find the selected course
-            const courseOption = courseSelect.options[courseSelect.selectedIndex];
-            selectedCourse = JSON.parse(courseOption.dataset.courseData);
-            
-            // Load course data into form
-            loadCourseData(selectedCourse);
-            
-            // Show the form
-            showForm();
-            
-            // Show success message
-            showStatusMessage(`Loaded ${selectedCourse.courseCode} - ${selectedCourse.courseName}`, 'success');
-        }
-
-        // Function to load course data into form
-        function loadCourseData(course) {
-            // Update course info card
-            document.getElementById('courseCode').textContent = course.courseCode;
-            document.getElementById('courseName').textContent = course.courseName;
-            document.getElementById('courseCredits').textContent = course.creditHour;
-            document.getElementById('courseSemester').textContent = `Semester ${course.semester}`;
-            document.getElementById('courseProgram').textContent = course.program;
-            document.getElementById('courseStatus').textContent = course.status.charAt(0).toUpperCase() + course.status.slice(1);
-            
-            // Update status badge
-            const statusBadge = document.getElementById('courseStatusBadge');
-            const statusText = course.status.charAt(0).toUpperCase() + course.status.slice(1);
-            const statusClass = getStatusClass(course.status);
-            statusBadge.innerHTML = `<span class="status-badge ${statusClass}">${statusText}</span>`;
-            
-            // Update current grade display
-            const currentGradeDisplay = document.getElementById('currentGradeDisplay');
-            if (course.grade) {
-                currentGradeDisplay.textContent = course.grade;
-                // Add color class based on grade
-                const gradeClass = getGradeClass(course.grade);
-                currentGradeDisplay.className = `current-grade-value ${gradeClass}`;
-                
-                // Select the appropriate grade option
-                const gradeOptions = document.querySelectorAll('.grade-option');
-                gradeOptions.forEach(option => {
-                    option.classList.remove('selected');
-                    if (option.dataset.grade === course.grade) {
-                        option.classList.add('selected');
-                        selectedGrade = course.grade;
-                        
-                        // Show description
-                        const description = option.dataset.description;
-                        const gradeDescription = document.getElementById('gradeDescription');
-                        gradeDescription.textContent = description;
-                        gradeDescription.classList.add('show');
+                    const res = await fetch(ctx + '/api/student/grade', {
+                        method: 'POST',
+                        body: form,
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                    });
+                    const json = await res.json();
+                    if (res.ok && json.success) {
+                        showStatusMessage('Grade updated successfully', 'success');
+                        const idx = courses.findIndex(c => c.progressID == selectedCourse.progressID);
+                        if (idx !== -1) {
+                            courses[idx].grade = selectedGrade || null;
+                            courses[idx].status = (selectedGrade && selectedGrade !== '') ? 'completed' : 'ongoing';
+                            selectedCourse = courses[idx];
+                            loadCourseData(selectedCourse);
+                            const option = courseSelect.options[courseSelect.selectedIndex];
+                            if (option) option.dataset.courseData = JSON.stringify(selectedCourse);
+                        }
+                    } else {
+                        showStatusMessage(json.error || 'Update failed', 'error');
                     }
-                });
-            } else {
-                currentGradeDisplay.textContent = 'No grade';
-                currentGradeDisplay.className = 'current-grade-value no-grade';
-                
-                // Reset grade selection
-                const gradeOptions = document.querySelectorAll('.grade-option');
-                gradeOptions.forEach(option => option.classList.remove('selected'));
+                } catch (err) {
+                    console.error(err);
+                    showStatusMessage('Error updating grade', 'error');
+                }
+            });
+
+            cancelBtn.addEventListener('click', function() { resetForm(); hideForm(); });
+            function resetForm() {
                 selectedGrade = "";
-                
-                // Reset description
-                const gradeDescription = document.getElementById('gradeDescription');
+                gradeOptions.forEach(opt => opt.classList.remove('selected'));
                 gradeDescription.textContent = 'Select a grade to see its description';
                 gradeDescription.classList.remove('show');
             }
-        }
 
-        // Function to update course grade
-        function updateCourseGrade() {
-            if (!selectedCourse) {
-                showStatusMessage('No course selected. Please select a course first.', 'error');
-                return;
+            function showStatusMessage(msg, type='info') {
+                statusText.textContent = msg;
+                statusMessage.className = 'status-message';
+                statusMessage.classList.add('show');
+                if (type === 'success') statusMessage.classList.add('success');
+                else if (type === 'error') statusMessage.classList.add('error');
+                else if (type === 'warning') statusMessage.classList.add('warning');
+                else statusMessage.classList.add('info');
+                if (type !== 'error') setTimeout(() => hideStatusMessage(), 4000);
             }
-            
-            // Check if a grade is selected (only required for completed courses)
-            if (selectedCourse.status === 'completed' && !selectedGrade) {
-                showStatusMessage('Please select a grade for completed courses.', 'warning');
-                return;
+            function hideStatusMessage() { statusMessage.classList.remove('show'); }
+
+            courseFilter.addEventListener('change', function() { populateCourseSelect(); });
+            loadCourseBtn.addEventListener('click', loadSelectedCourse);
+
+            fetchCourses();
+        });
+        
+        (function() {
+            // Determine webapp context path (like earlier scripts)
+            function getContextPath() {
+              const p = window.location.pathname.split('/').filter(Boolean);
+              return p.length ? '/' + p[0] : '';
             }
-            
-            // In a real application, you would send this data to a server
-            // For now, we'll simulate an update
-            
-            // Update the selected course object
-            selectedCourse.grade = selectedGrade || null;
-            
-            // Show success message
-            showStatusMessage(
-                `Successfully updated grade for ${selectedCourse.courseCode} - ${selectedCourse.courseName} to ${selectedGrade || 'No grade'}`,
-                'success'
-            );
-            
-            // Update the UI
-            loadCourseData(selectedCourse);
-            
-            // In a real app, you might want to update the dropdown option data
-            const courseSelect = document.getElementById('courseSelect');
-            const option = courseSelect.options[courseSelect.selectedIndex];
-            option.dataset.courseData = JSON.stringify(selectedCourse);
-            
-            // Show confirmation
-            setTimeout(() => {
-                if (confirm('Grade updated successfully! Would you like to update another course grade?')) {
-                    resetForm();
-                    hideForm();
-                    document.getElementById('courseSelect').focus();
+            const ctx = getContextPath();
+
+            const dropdown = document.getElementById('profileDropdown');
+            const profileBtn = document.getElementById('profileBtn');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const profileNameEl = document.getElementById('profileName');
+            const profilePicEl = document.getElementById('profilePic');
+            const profileRoleEl = document.getElementById('profileRole');
+
+            // Ensure backdrop exists (create if needed)
+            let backdrop = document.getElementById('dropdownBackdrop');
+            if (!backdrop) {
+              backdrop = document.createElement('div');
+              backdrop.id = 'dropdownBackdrop';
+              backdrop.className = 'dropdown-backdrop';
+              document.body.appendChild(backdrop);
+            }
+
+            function openMenu() {
+              dropdownMenu.classList.add('show');
+              profileBtn.classList.add('active');
+              backdrop.classList.add('active');
+              dropdown.classList.add('active');
+            }
+            function closeMenu() {
+              dropdownMenu.classList.remove('show');
+              profileBtn.classList.remove('active');
+              backdrop.classList.remove('active');
+              dropdown.classList.remove('active');
+            }
+            function toggleMenu() {
+              if (dropdownMenu.classList.contains('show')) closeMenu(); else openMenu();
+            }
+
+            // Toggle when clicking profile button
+            if (profileBtn) {
+              profileBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleMenu();
+              });
+            }
+
+            // Close when clicking outside or on backdrop
+            backdrop.addEventListener('click', function() {
+              closeMenu();
+            });
+            document.addEventListener('click', function(e) {
+              if (!dropdown.contains(e.target)) {
+                closeMenu();
+              }
+            });
+
+            // Close on Escape
+            document.addEventListener('keydown', function(e) {
+              if (e.key === 'Escape') closeMenu();
+            });
+
+            // Logout handler - calls existing logout path
+            if (logoutBtn) {
+              logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                // Confirm optionally
+                if (!confirm('Are you sure you want to log out?')) return;
+                // Use context path so it works under /Academic-Advising or root
+                const url = ctx + '/logout';
+                // Use location.href to trigger servlet and redirect
+                window.location.href = url;
+              });
+            }
+
+            // Fill profile name and initials by calling /api/student/me if role is student
+            async function loadProfile() {
+              try {
+                const res = await fetch(ctx + '/api/student/me', { cache: 'no-store' });
+                if (!res.ok) {
+                  // not logged in or not student; leave static values
+                  return;
                 }
-            }, 500);
-        }
+                const json = await res.json();
+                const name = json.name || json.firstName || profileNameEl.textContent;
+                profileNameEl.textContent = name;
+                profileRoleEl.textContent = 'Student';
 
-        // Function to show form
-        function showForm() {
-            document.getElementById('gradeForm').classList.add('active');
-        }
+                // create initials for avatar
+                let initials = '';
+                if (json.firstName || json.lastName) {
+                  const f = (json.firstName || '').trim();
+                  const l = (json.lastName || '').trim();
+                  initials = (f ? f.charAt(0) : '') + (l ? l.charAt(0) : '');
+                } else if (name) {
+                  const parts = name.trim().split(/\s+/);
+                  initials = parts[0].charAt(0) + (parts.length > 1 ? parts[parts.length-1].charAt(0) : '');
+                }
+                initials = initials.toUpperCase() || 'ME';
+                if (profilePicEl) profilePicEl.textContent = initials;
+              } catch (err) {
+                // ignore, show default
+                console.warn('Could not load profile info', err);
+              }
+            }
 
-        // Function to hide form
-        function hideForm() {
-            document.getElementById('gradeForm').classList.remove('active');
-        }
-
-        // Function to reset form
-        function resetForm() {
-            selectedGrade = "";
-            const gradeOptions = document.querySelectorAll('.grade-option');
-            gradeOptions.forEach(option => option.classList.remove('selected'));
-            const gradeDescription = document.getElementById('gradeDescription');
-            gradeDescription.textContent = 'Select a grade to see its description';
-            gradeDescription.classList.remove('show');
-        }
-
-        // Function to show status message
-        function showStatusMessage(message, type = 'info') {
-            const statusMessage = document.getElementById('statusMessage');
-            const statusText = document.getElementById('statusText');
-            
-            // Set message and type
-            statusText.textContent = message;
-            
-            // Remove all existing classes
-            statusMessage.className = 'status-message';
-            
-            // Add appropriate class based on type
-            switch(type) {
-                case 'success':
-                    statusMessage.classList.add('success');
-                    break;
-                case 'error':
-                    statusMessage.classList.add('error');
-                    break;
-                case 'warning':
-                    statusMessage.classList.add('warning');
-                    break;
-                default:
-                    statusMessage.classList.add('info');
-            }
-            
-            // Show the message
-            statusMessage.classList.add('show');
-            
-            // Auto-hide after 5 seconds for non-error messages
-            if (type !== 'error') {
-                setTimeout(() => {
-                    hideStatusMessage();
-                }, 5000);
-            }
-        }
-
-        // Function to hide status message
-        function hideStatusMessage() {
-            document.getElementById('statusMessage').classList.remove('show');
-        }
-
-        // Helper function to get status class
-        function getStatusClass(status) {
-            switch(status) {
-                case 'completed':
-                    return 'status-completed';
-                case 'ongoing':
-                    return 'status-ongoing';
-                case 'upcoming':
-                    return 'status-upcoming';
-                default:
-                    return 'status-ongoing';
-            }
-        }
-
-        // Helper function to get grade color class
-        function getGradeClass(grade) {
-            switch(grade) {
-                case 'A+':
-                    return 'grade-a-plus';
-                case 'A':
-                    return 'grade-a';
-                case 'A-':
-                    return 'grade-a-minus';
-                case 'B+':
-                    return 'grade-b-plus';
-                case 'B':
-                    return 'grade-b';
-                case 'B-':
-                    return 'grade-b-minus';
-                case 'C':
-                    return 'grade-c';
-                case 'F':
-                    return 'grade-f';
-                case 'NT':
-                    return 'grade-not-taken';
-                default:
-                    return '';
-            }
-        }
-
-        // Add CSS for status badges
-        const style = document.createElement('style');
-        style.textContent = `
-            .status-badge {
-                padding: 6px 15px;
-                border-radius: 20px;
-                font-size: 0.85rem;
-                font-weight: 700;
-                display: inline-block;
-            }
-            .status-completed {
-                background: linear-gradient(135deg, #d1fae5, #a7f3d0);
-                color: #065f46;
-            }
-            .status-ongoing {
-                background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-                color: #1e40af;
-            }
-            .status-upcoming {
-                background: linear-gradient(135deg, #fef3c7, #fde68a);
-                color: #92400e;
-            }
-        `;
-        document.head.appendChild(style);
+            // Call once
+            loadProfile();
+          })();
     </script>
 </body>
 </html>

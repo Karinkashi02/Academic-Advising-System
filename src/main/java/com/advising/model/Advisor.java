@@ -10,8 +10,10 @@ package com.advising.model;
  */
 
 public class Advisor {
-    private String advisorID;
-    private String name;
+    private int advisorID;
+    private String username;
+    private String firstName;
+    private String lastName;
     private String email;
     private String password;
     private String phoneNum;
@@ -19,14 +21,30 @@ public class Advisor {
     private String expertise;
     private String officeHours;
     private String officeLoc;
+    private int numSTD;
+    private int maxSTD;
 
     public Advisor() {}
 
     // Getters and Setters
-    public String getAdvisorID() { return advisorID; }
-    public void setAdvisorID(String advisorID) { this.advisorID = advisorID; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public int getAdvisorID() { return advisorID; }
+    public void setAdvisorID(int advisorID) { this.advisorID = advisorID; }
+    
+    public String getUsername() { return username; }
+    public void setName(String uname) { this.username = uname; }
+    
+    public String getName() {
+        String f = firstName == null ? "" : firstName;
+        String l = lastName == null ? "" : lastName;
+        return (f + " " + l).trim();
+    }
+    
+    public String getfirstName() { return firstName; }
+    public void setfirstName(String fname) { this.firstName = fname; }
+    
+    public String getlastName() { return lastName; }
+    public void setlastName(String lname) { this.lastName = lname; }
+    
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
     public String getPassword() { return password; }
@@ -41,4 +59,9 @@ public class Advisor {
     public void setOfficeHours(String officeHours) { this.officeHours = officeHours; }
     public String getOfficeLoc() { return officeLoc; }
     public void setOfficeLoc(String officeLoc) { this.officeLoc = officeLoc; }
+    
+    public int getMaxSTD() { return maxSTD; }
+    public void setMaxSTD(int max) { this.maxSTD = max; }
+    public int getNumSTD() { return numSTD; }
+    public void setNumSTD(int nSTD) { this.numSTD = nSTD; }
 }

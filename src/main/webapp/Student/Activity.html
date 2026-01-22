@@ -995,1095 +995,456 @@
 
     <!-- Main Content -->
     <div class="main-content">
-        <!-- Header -->
-        <header class="header">
-            <div class="page-title">
-                <i class="fas fa-running"></i>
-                <span>Activities & Programs</span>
-            </div>
-            <div class="profile-area">
-                
-                <!-- Replace your current profile-dropdown div with this -->
-                <div class="profile-dropdown" id="profileDropdown">
-                    <div class="profile-btn" id="profileBtn">
-                        <div class="profile-pic">MA</div>
-                        <div class="profile-info">
-                            <div class="profile-name">M. Amar Ghazali</div>
-                            <div class="profile-role">Student</div>
-                        </div>
-                        <i class="fas fa-chevron-down dropdown-icon"></i>
-                    </div>
-                    <div class="profile-dropdown-menu" id="profileMenu">
-                        <div class="dropdown-header">
-                            <i class="fas fa-user-circle"></i> Account
-                        </div>
-                        <a href="Profile.html">
-                            <i class="fas fa-user"></i> My Profile
-                        </a>
-                        <a href="#" id="logoutBtn">
-                            <i class="fas fa-sign-out-alt"></i> Log Out
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <!-- Activity Statistics -->
-        <div class="activity-stats">
-            <div class="stat-card joined">
-                <div class="stat-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="stat-content">
-                    <h3>8</h3>
-                    <p>Activities Joined</p>
-                </div>
-            </div>
-            
-            <div class="stat-card upcoming">
-                <div class="stat-icon">
-                    <i class="fas fa-calendar"></i>
-                </div>
-                <div class="stat-content">
-                    <h3>6</h3>
-                    <p>Upcoming Activities</p>
-                </div>
-            </div>
-            
-            <div class="stat-card completed">
-                <div class="stat-icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="stat-content">
-                    <h3>4</h3>
-                    <p>Completed Programs</p>
-                </div>
-            </div>
-            
-            <div class="stat-card points">
-                <div class="stat-icon">
-                    <i class="fas fa-star"></i>
-                </div>
-                <div class="stat-content">
-                    <h3>125</h3>
-                    <p>Co-curricular Points</p>
-                </div>
-            </div>
+      <!-- Header -->
+      <header class="header">
+        <div class="page-title">
+          <i class="fas fa-running"></i>
+          <span>Activities & Programs</span>
         </div>
 
-        <!-- Filters Bar -->
-        <div class="filters-bar">
-            <div class="filter-group">
-                <select class="filter-select" id="categoryFilter">
-                    <option value="all">All Categories</option>
-                    <option value="academic">Academic</option>
-                    <option value="leadership">Leadership</option>
-                    <option value="technical">Technical</option>
-                    <option value="sports">Sports & Wellness</option>
-                    <option value="cultural">Cultural</option>
-                    <option value="volunteer">Volunteer</option>
-                </select>
-                
-                <select class="filter-select" id="statusFilter">
-                    <option value="all">All Status</option>
-                    <option value="upcoming">Upcoming</option>
-                    <option value="ongoing">Ongoing</option>
-                    <option value="completed">Completed</option>
-                </select>
-                
-                <select class="filter-select" id="sortFilter">
-                    <option value="newest">Newest First</option>
-                    <option value="oldest">Oldest First</option>
-                    <option value="popular">Most Popular</option>
-                    <option value="deadline">Near Deadline</option>
-                </select>
+        <div class="profile-area">
+          <div class="profile-dropdown" id="profileDropdown">
+            <div class="profile-btn" id="profileBtn">
+              <div class="profile-pic" id="profilePic">MA</div>
+              <div class="profile-info">
+                <div class="profile-name" id="profileName">M. Amar Ghazali</div>
+                <div class="profile-role" id="profileRole">Student</div>
+              </div>
+              <i class="fas fa-chevron-down dropdown-icon"></i>
             </div>
-            
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="activitySearch" placeholder="Search activities...">
+
+            <div class="dropdown-menu" id="dropdownMenu">
+              <a href="Profile.html" class="dropdown-item"><i class="fas fa-user-circle"></i> My Profile</a>
+              <a href="#" class="dropdown-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Activity Statistics (static markup; your script may update counts) -->
+      <div class="activity-stats">
+        <div class="stat-card joined">
+          <div class="stat-icon"><i class="fas fa-users"></i></div>
+          <div class="stat-content">
+            <h3 id="statJoined">0</h3>
+            <p>Activities Joined</p>
+          </div>
         </div>
 
-        <!-- Activity Categories -->
-        <div class="activity-categories">
-            <button class="category-btn active" data-category="all">
-                <i class="fas fa-th-large"></i> All Activities
-            </button>
-            <button class="category-btn" data-category="academic">
-                <i class="fas fa-graduation-cap"></i> Academic
-            </button>
-            <button class="category-btn" data-category="workshop">
-                <i class="fas fa-laptop-code"></i> Workshops
-            </button>
-            <button class="category-btn" data-category="competition">
-                <i class="fas fa-trophy"></i> Competitions
-            </button>
-            <button class="category-btn" data-category="club">
-                <i class="fas fa-users"></i> Clubs & Societies
-            </button>
-            <button class="category-btn" data-category="sports">
-                <i class="fas fa-futbol"></i> Sports
-            </button>
-            <button class="category-btn" data-category="volunteer">
-                <i class="fas fa-hands-helping"></i> Volunteer
-            </button>
+        <div class="stat-card upcoming">
+          <div class="stat-icon"><i class="fas fa-calendar"></i></div>
+          <div class="stat-content">
+            <h3 id="statUpcoming">0</h3>
+            <p>Upcoming Activities</p>
+          </div>
         </div>
 
-        <!-- Activity Grid -->
-        <div class="activity-grid" id="activityGrid">
-            <!-- Activity 1: Coding Workshop -->
-            <div class="activity-card" data-category="workshop" data-status="upcoming">
-                <div class="featured-badge">Featured</div>
-                <div class="activity-header" style="background: linear-gradient(135deg, #3b82f6, #1e40af);">
-                    <div class="activity-type">Workshop</div>
-                    <h3 class="activity-title">Full-Stack Web Development Workshop</h3>
-                    <div class="activity-meta">
-                        <span><i class="far fa-calendar"></i> Jan 15-20, 2026</span>
-                        <span><i class="far fa-clock"></i> 10:00 AM - 4:00 PM</span>
-                        <span><i class="fas fa-user-friends"></i> 25/40 spots</span>
-                    </div>
-                </div>
-                <div class="activity-body">
-                    <p class="activity-description">
-                        Hands-on workshop covering modern web development technologies including React, Node.js, and MongoDB. Perfect for students interested in building complete web applications.
-                    </p>
-                    <div class="activity-details">
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-map-marker-alt"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Venue</h4>
-                                <p>Computer Lab 3, BK Building</p>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-user-tie"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Instructor</h4>
-                                <p>Dr. Rahmah</p>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Points</h4>
-                                <p>25 Co-curricular</p>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-tag"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Fee</h4>
-                                <p>RM 50 (Materials)</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="activity-footer">
-                        <span class="activity-status status-upcoming">Registration Open</span>
-                        <button class="btn btn-primary join-activity" data-activity="web-workshop">
-                            <i class="fas fa-sign-in-alt"></i> Join Now
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Activity 2: Hackathon -->
-            <div class="activity-card featured" data-category="competition" data-status="upcoming">
-                <div class="featured-badge">Prize RM 5,000</div>
-                <div class="activity-header" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
-                    <div class="activity-type">Competition</div>
-                    <h3 class="activity-title">UiTM Hackathon 2026: Smart Campus Solutions</h3>
-                    <div class="activity-meta">
-                        <span><i class="far fa-calendar"></i> Feb 10-12, 2026</span>
-                        <span><i class="far fa-clock"></i> 48 Hours</span>
-                        <span><i class="fas fa-user-friends"></i> Team Event</span>
-                    </div>
-                </div>
-                <div class="activity-body">
-                    <p class="activity-description">
-                        48-hour hackathon to develop innovative solutions for campus challenges. Categories include smart parking, digital library, and campus safety systems. Open to all students.
-                    </p>
-                    <div class="activity-details">
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-map-marker-alt"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Venue</h4>
-                                <p>Innovation Hub</p>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-trophy"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Prize</h4>
-                                <p>RM 5,000 + Internship</p>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Points</h4>
-                                <p>50 Co-curricular</p>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-tag"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Registration</h4>
-                                <p>Free</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="activity-footer">
-                        <span class="activity-status status-upcoming">Registration Open</span>
-                        <button class="btn btn-primary join-activity" data-activity="hackathon">
-                            <i class="fas fa-sign-in-alt"></i> Register Team
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Activity 3: Student Leadership -->
-            <div class="activity-card" data-category="club" data-status="ongoing">
-                <div class="activity-header" style="background: linear-gradient(135deg, #10b981, #059669);">
-                    <div class="activity-type">Leadership</div>
-                    <h3 class="activity-title">Computer Science Student Committee</h3>
-                    <div class="activity-meta">
-                        <span><i class="far fa-calendar"></i> Year-Round</span>
-                        <span><i class="fas fa-user-friends"></i> Committee Members</span>
-                    </div>
-                </div>
-                <div class="activity-body">
-                    <p class="activity-description">
-                        Join the Computer Science Student Committee to represent student interests, organize events, and develop leadership skills. Positions available for various departments.
-                    </p>
-                    <div class="activity-details">
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Positions</h4>
-                                <p>President, Events, Academic</p>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Time Commitment</h4>
-                                <p>5-10 hrs/week</p>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Points</h4>
-                                <p>30 Co-curricular</p>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-certificate"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Certification</h4>
-                                <p>Leadership Certificate</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="activity-footer">
-                        <span class="activity-status status-ongoing">Applications Open</span>
-                        <button class="btn btn-success join-activity" data-activity="cs-committee">
-                            <i class="fas fa-user-plus"></i> Apply Now
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Activity 4: Sports Tournament -->
-            <div class="activity-card" data-category="sports" data-status="upcoming">
-                <div class="activity-header" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
-                    <div class="activity-type">Sports</div>
-                    <h3 class="activity-title">Inter-Faculty Futsal Tournament</h3>
-                    <div class="activity-meta">
-                        <span><i class="far fa-calendar"></i> Mar 5-15, 2026</span>
-                        <span><i class="far fa-clock"></i> 6:00 PM Daily</span>
-                        <span><i class="fas fa-user-friends"></i> 5-a-side Teams</span>
-                    </div>
-                </div>
-                <div class="activity-body">
-                    <p class="activity-description">
-                        Annual inter-faculty futsal tournament. Form your team and compete for the championship trophy. Open to all students regardless of skill level.
-                    </p>
-                    <div class="activity-details">
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-map-marker-alt"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Venue</h4>
-                                <p>Sports Complex Court</p>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-trophy"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Prizes</h4>
-                                <p>Trophies + Cash Prizes</p>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Points</h4>
-                                <p>20 Co-curricular</p>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-tag"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Fee</h4>
-                                <p>RM 20 per team</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="activity-footer">
-                        <span class="activity-status status-upcoming">Registration Open</span>
-                        <button class="btn btn-primary join-activity" data-activity="futsal">
-                            <i class="fas fa-sign-in-alt"></i> Register Team
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Activity 5: Volunteer Program -->
-            <div class="activity-card" data-category="volunteer" data-status="ongoing">
-                <div class="activity-header" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-                    <div class="activity-type">Volunteer</div>
-                    <h3 class="activity-title">Tech Literacy for Rural Communities</h3>
-                    <div class="activity-meta">
-                        <span><i class="far fa-calendar"></i> Every Saturday</span>
-                        <span><i class="far fa-clock"></i> 9:00 AM - 1:00 PM</span>
-                        <span><i class="fas fa-user-friends"></i> 15/20 volunteers</span>
-                    </div>
-                </div>
-                <div class="activity-body">
-                    <p class="activity-description">
-                        Teach basic computer skills to rural communities. No prior teaching experience needed. Perfect opportunity to give back while developing communication skills.
-                    </p>
-                    <div class="activity-details">
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-map-marker-alt"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Location</h4>
-                                <p>Kampung Chendering</p>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-car"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Transport</h4>
-                                <p>Provided</p>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Points</h4>
-                                <p>15 Co-curricular</p>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-certificate"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Certificate</h4>
-                                <p>Volunteer Certificate</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="activity-footer">
-                        <span class="activity-status status-ongoing">Volunteers Needed</span>
-                        <button class="btn btn-success join-activity" data-activity="volunteer-tech">
-                            <i class="fas fa-hands-helping"></i> Volunteer Now
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Activity 6: Research Conference -->
-            <div class="activity-card" data-category="academic" data-status="upcoming">
-                <div class="activity-header" style="background: linear-gradient(135deg, #06b6d4, #0891b2);">
-                    <div class="activity-type">Academic</div>
-                    <h3 class="activity-title">Student Research Conference 2026</h3>
-                    <div class="activity-meta">
-                        <span><i class="far fa-calendar"></i> Apr 20-22, 2026</span>
-                        <span><i class="fas fa-user-friends"></i> Presenters & Attendees</span>
-                    </div>
-                </div>
-                <div class="activity-body">
-                    <p class="activity-description">
-                        Present your research projects or attend as a participant. Great opportunity to showcase your work and network with faculty and industry professionals.
-                    </p>
-                    <div class="activity-details">
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-map-marker-alt"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Venue</h4>
-                                <p>Dewan Tun Razak</p>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-microphone"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Presentation</h4>
-                                <p>Oral & Poster Sessions</p>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Points</h4>
-                                <p>40 Co-curricular</p>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-tag"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Fee</h4>
-                                <p>Free for Presenters</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="activity-footer">
-                        <span class="activity-status status-upcoming">Abstract Deadline: Jan 30</span>
-                        <button class="btn btn-primary join-activity" data-activity="research-conf">
-                            <i class="fas fa-paper-plane"></i> Submit Abstract
-                        </button>
-                    </div>
-                </div>
-            </div>
+        <div class="stat-card completed">
+          <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+          <div class="stat-content">
+            <h3 id="statCompleted">0</h3>
+            <p>Completed Programs</p>
+          </div>
         </div>
 
-        <!-- My Activities Section -->
-        <div class="my-activities">
-            <h3 class="section-title"><i class="fas fa-clipboard-list"></i> My Registered Activities</h3>
-            <div class="my-activities-list">
-                <!-- Activity 1 -->
-                <div class="my-activity-item">
-                    <div class="my-activity-info">
-                        <h4>Mobile App Development Workshop</h4>
-                        <div class="my-activity-details">
-                            <span><i class="far fa-calendar"></i> Dec 18, 2025</span>
-                            <span><i class="far fa-clock"></i> 2:00 PM - 5:00 PM</span>
-                            <span><i class="fas fa-map-marker-alt"></i> Lab 4</span>
-                            <span><i class="fas fa-star"></i> 20 Points</span>
-                        </div>
-                    </div>
-                    <div class="my-activity-actions">
-                        <button class="btn btn-outline view-details" data-activity="mobile-workshop">
-                            <i class="fas fa-eye"></i> Details
-                        </button>
-                        <button class="btn btn-outline cancel-activity" data-activity="mobile-workshop">
-                            <i class="fas fa-times"></i> Cancel
-                        </button>
-                    </div>
-                </div>
+        <div class="stat-card points">
+          <div class="stat-icon"><i class="fas fa-star"></i></div>
+          <div class="stat-content">
+            <h3 id="statPoints">0</h3>
+            <p>Co-curricular Points</p>
+          </div>
+        </div>
+      </div>
 
-                <!-- Activity 2 -->
-                <div class="my-activity-item">
-                    <div class="my-activity-info">
-                        <h4>Programming Club: Weekly Meeting</h4>
-                        <div class="my-activity-details">
-                            <span><i class="far fa-calendar"></i> Every Wednesday</span>
-                            <span><i class="far fa-clock"></i> 4:00 PM - 6:00 PM</span>
-                            <span><i class="fas fa-map-marker-alt"></i> Club Room</span>
-                            <span><i class="fas fa-star"></i> 5 Points/Week</span>
-                        </div>
-                    </div>
-                    <div class="my-activity-actions">
-                        <button class="btn btn-outline view-details" data-activity="programming-club">
-                            <i class="fas fa-eye"></i> Details
-                        </button>
-                        <button class="btn btn-outline cancel-activity" data-activity="programming-club">
-                            <i class="fas fa-times"></i> Leave
-                        </button>
-                    </div>
-                </div>
+      <!-- Filters Bar -->
+      <div class="filters-bar">
+        <div class="filter-group">
+          <!-- IMPORTANT: id="activityCategory" is used by the script -->
+          <select class="filter-select" id="activityCategory">
+            <option value="all">All Categories</option>
+            <option value="academic">Academic</option>
+            <option value="leadership">Leadership</option>
+            <option value="technical">Technical</option>
+            <option value="sports">Sports & Wellness</option>
+            <option value="cultural">Cultural</option>
+            <option value="volunteer">Volunteer</option>
+          </select>
 
-                <!-- Activity 3 -->
-                <div class="my-activity-item">
-                    <div class="my-activity-info">
-                        <h4>Cybersecurity Awareness Seminar</h4>
-                        <div class="my-activity-details">
-                            <span><i class="far fa-calendar"></i> Jan 8, 2026</span>
-                            <span><i class="far fa-clock"></i> 10:00 AM - 12:00 PM</span>
-                            <span><i class="fas fa-map-marker-alt"></i> Auditorium</span>
-                            <span><i class="fas fa-star"></i> 15 Points</span>
-                        </div>
-                    </div>
-                    <div class="my-activity-actions">
-                        <button class="btn btn-outline view-details" data-activity="cyber-seminar">
-                            <i class="fas fa-eye"></i> Details
-                        </button>
-                        <button class="btn btn-outline cancel-activity" data-activity="cyber-seminar">
-                            <i class="fas fa-times"></i> Cancel
-                        </button>
-                    </div>
-                </div>
-            </div>
+          <select class="filter-select" id="statusFilter">
+            <option value="all">All Status</option>
+            <option value="upcoming">Upcoming</option>
+            <option value="ongoing">Ongoing</option>
+            <option value="completed">Completed</option>
+          </select>
+
+          <select class="filter-select" id="sortFilter">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="popular">Most Popular</option>
+            <option value="deadline">Near Deadline</option>
+          </select>
+
+          <!-- Create activity button the script expects id="createActivityBtn" -->
+          <button class="btn btn-success" id="createActivityBtn"><i class="fas fa-plus"></i> Create Activity</button>
         </div>
 
-        <!-- Footer -->
-        <footer>
-            <p><strong>Academic Advising & Progress Tracking System</strong> | UiTM Terengganu, Campus Chendering</p>
-            <p>© 2025 CSC584 - Enterprise Programming | <i class="fas fa-user-clock"></i> Last login: Dec 10, 2025 14:30</p>
-        </footer>
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <!-- script expects id="activitySearch" -->
+          <input type="text" id="activitySearch" placeholder="Search activities...">
+        </div>
+      </div>
+
+      <!-- Activity Categories (visual buttons, script doesn't strictly require ids here) -->
+      <div class="activity-categories">
+        <button class="category-btn active" data-category="all"><i class="fas fa-th-large"></i> All Activities</button>
+        <button class="category-btn" data-category="academic"><i class="fas fa-graduation-cap"></i> Academic</button>
+        <button class="category-btn" data-category="workshop"><i class="fas fa-laptop-code"></i> Workshops</button>
+        <button class="category-btn" data-category="competition"><i class="fas fa-trophy"></i> Competitions</button>
+        <button class="category-btn" data-category="club"><i class="fas fa-users"></i> Clubs & Societies</button>
+        <button class="category-btn" data-category="sports"><i class="fas fa-futbol"></i> Sports</button>
+        <button class="category-btn" data-category="volunteer"><i class="fas fa-hands-helping"></i> Volunteer</button>
+      </div>
+
+      <!-- Activity Grid: script will render into this container (id expected by script: activitiesContainer) -->
+      <div class="activity-grid" id="activitiesContainer">
+        <!-- Initially empty — your script will populate activities here -->
+      </div>
+
+      <!-- My Registered Activities (optional static fallback) -->
+      <div class="my-activities">
+        <h3 class="section-title"><i class="fas fa-clipboard-list"></i> My Registered Activities</h3>
+        <div class="my-activities-list" id="myActivitiesList">
+          <!-- Script may populate this; kept as placeholder for now -->
+        </div>
+      </div>
+
+      <footer>
+        <p><strong>Academic Advising & Progress Tracking System</strong> | UiTM Terengganu, Campus Chendering</p>
+        <p>© 2025 CSC584 - Enterprise Programming</p>
+      </footer>
     </div>
 
-    <!-- Activity Details Modal -->
-    <div class="modal" id="activityModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="modalActivityTitle">Activity Details</h3>
-                <button class="modal-close" id="modalClose">&times;</button>
-            </div>
-            <div class="modal-body" id="modalActivityBody">
-                <!-- Content will be populated by JavaScript -->
-            </div>
+    <!-- Create / Edit Activity Modal -->
+    <div class="modal" id="createActivityModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Create / Edit Activity</h3>
+          <button class="modal-close" id="createModalClose">&times;</button>
         </div>
+        <div class="modal-body">
+          <form id="createActivityForm">
+            <div class="form-group">
+              <label class="form-label" for="title">Title</label>
+              <input class="form-control" name="title" id="title" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="description">Description</label>
+              <textarea class="form-control" name="description" id="description" rows="4"></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="dateTime">Date & Time</label>
+                <input class="form-control" type="datetime-local" name="dateTime" id="dateTime" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="location">Location</label>
+                <input class="form-control" name="location" id="location" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="capacity">Capacity</label>
+                <input class="form-control" name="capacity" id="capacity" type="number" min="1" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="category">Category</label>
+                <input class="form-control" name="category" id="category" />
+              </div>
+            </div>
+
+            <div style="display:flex;gap:12px;margin-top:18px;">
+              <button type="submit" class="btn btn-primary">Save</button>
+              <button type="button" class="btn btn-outline" id="createCancelBtn">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Activity Details Modal (script expects id="activityDetailModal", body id="activityDetailBody") -->
+    <div class="modal" id="activityDetailModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="modalActivityTitle">Activity Details</h3>
+          <button class="modal-close" id="activityDetailClose">&times;</button>
+        </div>
+        <div class="modal-body" id="activityDetailBody">
+          <!-- Filled by script -->
+        </div>
+      </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Page loaded - initializing...');
-            
-            // Notification bell - FIXED SELECTOR
-            const notificationBtn = document.querySelector('.notification');
-            if (notificationBtn) {
-                notificationBtn.addEventListener('click', function() {
-                    const badge = this.querySelector('.notification-badge');
-                    const count = badge ? badge.textContent : '0';
-                    alert(`You have ${count} activity notifications:\n\n1. 🎯 New: Full-Stack Web Development Workshop\n2. 📅 Reminder: Programming Club meeting tomorrow\n3. ✅ Completed: Volunteer hours approved\n4. 🏆 You earned 20 co-curricular points!\n5. 🔔 Registration closing soon: Hackathon 2026`);
-                    if (badge) {
-                        badge.textContent = '0';
-                        badge.style.backgroundColor = '#6b7280';
-                    }
-                });
-                console.log('Notification button initialized');
-            }
+          const ctx = (function(){ const p = window.location.pathname.split('/').filter(Boolean); return p.length?'/'+p[0]:''; })();
 
-            // Get all elements
-            const categoryButtons = document.querySelectorAll('.category-btn');
-            const activityCards = document.querySelectorAll('.activity-card');
-            const categoryFilter = document.getElementById('categoryFilter');
-            const statusFilter = document.getElementById('statusFilter');
-            const sortFilter = document.getElementById('sortFilter');
-            const activitySearch = document.getElementById('activitySearch');
-            
-            console.log('Elements found:', {
-                categoryButtons: categoryButtons.length,
-                activityCards: activityCards.length,
-                categoryFilter: !!categoryFilter,
-                statusFilter: !!statusFilter,
-                sortFilter: !!sortFilter,
-                activitySearch: !!activitySearch
+          // Elements
+          const activitiesContainer = document.getElementById('activitiesContainer');
+          const activitySearch = document.getElementById('activitySearch');
+          const activityCategory = document.getElementById('activityCategory'); // optional filter select if present
+          const createBtn = document.getElementById('createActivityBtn');
+          const createModal = document.getElementById('createActivityModal');
+          const createForm = document.getElementById('createActivityForm');
+          const createClose = document.getElementById('createModalClose');
+          const dropdownBackdrop = document.getElementById('dropdownBackdrop');
+
+          // details modal
+          const activityDetailModal = document.getElementById('activityDetailModal');
+          const activityDetailBody = document.getElementById('activityDetailBody');
+          const activityDetailClose = document.getElementById('activityDetailClose');
+
+          let activities = []; // all activities
+
+          async function apiGet(path) {
+            const res = await fetch(ctx + path, { cache: 'no-store' });
+            if (!res.ok) throw new Error('GET ' + path + ' returned ' + res.status);
+            return res.json();
+          }
+          async function apiPost(path, body) {
+            const res = await fetch(ctx + path, { method:'POST', body: body, headers: { 'Content-Type':'application/x-www-form-urlencoded' }});
+            if (!res.ok) {
+              const txt = await res.text().catch(()=>null);
+              throw new Error('POST ' + path + ' returned ' + res.status + ' ' + txt);
+            }
+            return res.json();
+          }
+
+          // load & render
+          async function loadActivities() {
+            try {
+              const json = await apiGet('/api/activities');
+              activities = json.activities || [];
+              renderActivities(activities);
+            } catch (e) {
+              console.error(e);
+              activitiesContainer.innerHTML = '<div style="padding:20px;color:#666">Unable to load activities.</div>';
+            }
+          }
+
+          function renderActivities(list) {
+            // apply client-side search/category filter
+            const q = activitySearch ? (activitySearch.value || '').toLowerCase().trim() : '';
+            const cat = activityCategory ? (activityCategory.value || 'all') : 'all';
+            const filtered = list.filter(a=>{
+              if (cat !== 'all' && a.category && a.category.toLowerCase() !== cat.toLowerCase()) return false;
+              if (!q) return true;
+              return (a.title && a.title.toLowerCase().includes(q)) || (a.description && a.description.toLowerCase().includes(q)) || (a.location && a.location.toLowerCase().includes(q));
             });
 
-            // Filter state
-            let currentFilter = {
-                category: 'all',
-                status: 'all',
-                search: '',
-                sort: 'newest'
-            };
+            if (!activitiesContainer) return;
+            activitiesContainer.innerHTML = '';
+            if (filtered.length === 0) {
+              activitiesContainer.innerHTML = '<div style="padding:20px;color:#666">No activities found.</div>';
+              return;
+            }
 
-            // Category button clicks
-            categoryButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    console.log('Category button clicked:', this.dataset.category);
-                    categoryButtons.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    currentFilter.category = this.dataset.category;
-                    filterActivities();
-                });
+            filtered.forEach(a => {
+              const card = document.createElement('div');
+              card.className = 'activity-card';
+              const dt = a.dateTime ? new Date(String(a.dateTime).replace(' ', 'T')) : null;
+              const dateStr = dt ? dt.toLocaleDateString() : '';
+              const timeStr = dt ? dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
+              const spots = a.capacity && a.capacity !== null ? `${a.participantCount}/${a.capacity}` : `${a.participantCount}`;
+              const joinBtn = a.joined ? `<button class="btn btn-sm btn-outline leave-activity" data-id="${a.activityID}">Leave</button>` : `<button class="btn btn-sm btn-primary join-activity" data-id="${a.activityID}">Join</button>`;
+              // if the logged-in user is owner, show manage buttons (edit/delete)
+              const isOwner = (a.ownerID && typeof a.ownerID !== 'undefined') && (a.ownerID === (window.loggedInUserId || a.ownerID)); // best-effort
+              const manageBtns = isOwner ? `<button class="btn btn-sm btn-outline edit-activity" data-id="${a.activityID}">Edit</button>
+                                           <button class="btn btn-sm btn-outline delete-activity" data-id="${a.activityID}">Delete</button>` : '';
+
+              card.innerHTML = `
+                <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+                  <div style="font-weight:700">${escapeHtml(a.title)}</div>
+                  <div style="color:#64748b">${dateStr} ${timeStr}</div>
+                </div>
+                <div style="margin:8px 0;color:#475569">${escapeHtml(a.location)} ${a.category ? ' • ' + escapeHtml(a.category) : ''}</div>
+                <div style="margin:8px 0;color:#0f172a;opacity:0.9">${escapeHtml(a.description ? (a.description.length>120 ? a.description.substring(0,120)+'...' : a.description) : '')}</div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+                  <div style="color:#0f172a;opacity:0.85">Participants: ${spots}</div>
+                  <div style="display:flex;gap:8px;align-items:center;">
+                    <button class="btn btn-sm btn-outline details-activity" data-id="${a.activityID}">Details</button>
+                    ${joinBtn}
+                    ${manageBtns}
+                  </div>
+                </div>
+              `;
+              activitiesContainer.appendChild(card);
             });
 
-            // Main filter function
-            function filterActivities() {
-                console.log('Filtering activities with:', currentFilter);
-                
-                let visibleCount = 0;
-                activityCards.forEach(card => {
-                    const cardCategory = card.dataset.category;
-                    const cardStatus = card.dataset.status;
-                    const cardTitle = card.querySelector('.activity-title').textContent.toLowerCase();
-                    const cardDesc = card.querySelector('.activity-description').textContent.toLowerCase();
+            // bind buttons
+            document.querySelectorAll('.join-activity').forEach(b => b.addEventListener('click', async function() {
+              const id = this.dataset.id;
+              try {
+                const body = new URLSearchParams(); body.append('activityID', id);
+                const res = await apiPost('/api/activity/join', body);
+                if (res.success) await loadActivities();
+                else alert(res.error || 'Could not join');
+              } catch (e) { console.error(e); alert('Error joining activity'); }
+            }));
+            document.querySelectorAll('.leave-activity').forEach(b => b.addEventListener('click', async function() {
+              const id = this.dataset.id;
+              if (!confirm('Leave this activity?')) return;
+              try {
+                const body = new URLSearchParams(); body.append('activityID', id);
+                const res = await apiPost('/api/activity/leave', body);
+                if (res.success) await loadActivities();
+                else alert(res.error || 'Could not leave');
+              } catch (e) { console.error(e); alert('Error leaving activity'); }
+            }));
+            document.querySelectorAll('.details-activity').forEach(b => b.addEventListener('click', function() {
+              const id = this.dataset.id;
+              openDetailModal(id);
+            }));
+            document.querySelectorAll('.edit-activity').forEach(b => b.addEventListener('click', function() {
+              const id = this.dataset.id;
+              openEditModal(id);
+            }));
+            document.querySelectorAll('.delete-activity').forEach(b => b.addEventListener('click', async function() {
+              const id = this.dataset.id;
+              if (!confirm('Delete this activity?')) return;
+              try {
+                const body = new URLSearchParams(); body.append('activityID', id);
+                const res = await apiPost('/api/activity/delete', body);
+                if (res.success) await loadActivities();
+                else alert(res.error || 'Could not delete');
+              } catch (e) { console.error(e); alert('Error deleting activity'); }
+            }));
+          }
 
-                    let show = true;
+          // details modal
+          async function openDetailModal(activityID) {
+            const a = (activities || []).find(x => String(x.activityID) === String(activityID));
+            if (!a) return;
+            const dt = a.dateTime ? new Date(String(a.dateTime).replace(' ', 'T')) : null;
+            const dateStr = dt ? dt.toLocaleDateString() : '';
+            const timeStr = dt ? dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
+            activityDetailBody.innerHTML = `
+              <h3>${escapeHtml(a.title)}</h3>
+              <div style="color:#64748b">${dateStr} ${timeStr} • ${escapeHtml(a.location || '')}</div>
+              <div style="margin-top:12px">${escapeHtml(a.description || '')}</div>
+              <div style="margin-top:12px;color:#0f172a">Category: ${escapeHtml(a.category || '')}</div>
+              <div style="margin-top:12px;color:#0f172a">Participants: ${a.participantCount}${a.capacity ? ' / ' + a.capacity : ''}</div>
+            `;
+            activityDetailModal.classList.add('show');
+            dropdownBackdrop.classList.add('active');
+          }
 
-                    // Filter by category
-                    if (currentFilter.category !== 'all' && cardCategory !== currentFilter.category) {
-                        show = false;
-                    }
+          // create/edit modal helpers
+          function openCreateModal() {
+            if (!createModal) return;
+            createForm.setAttribute('data-edit-id', ''); // new
+            createForm.title.value = '';
+            createForm.description.value = '';
+            createForm.dateTime.value = '';
+            createForm.location.value = '';
+            createForm.capacity.value = '';
+            createForm.category.value = '';
+            createModal.classList.add('show'); dropdownBackdrop.classList.add('active');
+          }
 
-                    // Filter by status
-                    if (currentFilter.status !== 'all' && cardStatus !== currentFilter.status) {
-                        show = false;
-                    }
+          function openEditModal(id) {
+            const a = (activities || []).find(x => String(x.activityID) === String(id));
+            if (!a) return;
+            createForm.setAttribute('data-edit-id', id);
+            createForm.title.value = a.title || '';
+            createForm.description.value = a.description || '';
+            // convert DB datetime string to input datetime-local format (YYYY-MM-DDTHH:MM)
+            if (a.dateTime) {
+              const dt = new Date(String(a.dateTime).replace(' ', 'T'));
+              const yyyy = dt.getFullYear();
+              const mm = String(dt.getMonth()+1).padStart(2,'0');
+              const dd = String(dt.getDate()).padStart(2,'0');
+              const hh = String(dt.getHours()).padStart(2,'0');
+              const min = String(dt.getMinutes()).padStart(2,'0');
+              createForm.dateTime.value = `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+            } else createForm.dateTime.value = '';
+            createForm.location.value = a.location || '';
+            createForm.capacity.value = a.capacity || '';
+            createForm.category.value = a.category || '';
+            createForm.description.value = a.description || '';
+            createModal.classList.add('show'); dropdownBackdrop.classList.add('active');
+          }
 
-                    // Filter by search
-                    if (currentFilter.search.trim() !== '') {
-                        const searchValue = currentFilter.search.toLowerCase().trim();
-                        if (!cardTitle.includes(searchValue) && !cardDesc.includes(searchValue)) {
-                            show = false;
-                        }
-                    }
+          if (createClose) createClose.addEventListener('click', ()=>{ createModal.classList.remove('show'); dropdownBackdrop.classList.remove('active'); });
+          if (activityDetailClose) activityDetailClose.addEventListener('click', ()=>{ activityDetailModal.classList.remove('show'); dropdownBackdrop.classList.remove('active'); });
 
-                    // Apply display
-                    if (show) {
-                        card.style.display = 'block';
-                        visibleCount++;
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-                
-                console.log('Visible activities:', visibleCount);
-                
-                // Sort activities
-                sortActivities();
-            }
+          // create/edit submit
+          if (createForm) {
+            createForm.addEventListener('submit', async function(e) {
+              e.preventDefault();
+              const editId = createForm.getAttribute('data-edit-id');
+              const title = createForm.title.value.trim();
+              const description = createForm.description.value.trim();
+              const dateTime = createForm.dateTime.value.trim();
+              const location = createForm.location.value.trim();
+              const capacity = createForm.capacity.value.trim();
+              const category = createForm.category.value.trim();
 
-            // Sort function - SIMPLIFIED
-            function sortActivities() {
-                const container = document.getElementById('activityGrid');
-                const visibleCards = Array.from(activityCards).filter(card => card.style.display !== 'none');
-                
-                if (visibleCards.length === 0) {
-                    console.log('No visible cards to sort');
-                    return;
+              if (!title || !dateTime) { alert('Title and date/time required'); return; }
+
+              try {
+                const body = new URLSearchParams();
+                body.append('title', title);
+                body.append('description', description);
+                body.append('dateTime', dateTime);
+                body.append('location', location);
+                if (capacity) body.append('capacity', capacity);
+                body.append('category', category);
+
+                if (!editId) {
+                  // create
+                  const res = await apiPost('/api/activity/create', body);
+                  if (res.success) {
+                    alert('Activity created');
+                    createModal.classList.remove('show'); dropdownBackdrop.classList.remove('active');
+                    await loadActivities();
+                  } else alert(res.error || 'Create failed');
+                } else {
+                  body.append('activityID', editId);
+                  const res = await apiPost('/api/activity/update', body);
+                  if (res.success) {
+                    alert('Activity updated');
+                    createModal.classList.remove('show'); dropdownBackdrop.classList.remove('active');
+                    await loadActivities();
+                  } else alert(res.error || 'Update failed');
                 }
-
-                visibleCards.sort((a, b) => {
-                    const aFeatured = a.classList.contains('featured');
-                    const bFeatured = b.classList.contains('featured');
-                    
-                    // Featured items first
-                    if (aFeatured && !bFeatured) return -1;
-                    if (!aFeatured && bFeatured) return 1;
-                    
-                    // Then sort by selected criteria
-                    switch(currentFilter.sort) {
-                        case 'newest':
-                            return 0; // Already in correct order
-                        case 'oldest':
-                            return 0; // Already in correct order
-                        case 'popular':
-                            try {
-                                const aSpans = a.querySelectorAll('.activity-meta span');
-                                const bSpans = b.querySelectorAll('.activity-meta span');
-                                const aCount = aSpans.length > 0 ? parseInt(aSpans[aSpans.length-1].textContent.split('/')[0]) || 0 : 0;
-                                const bCount = bSpans.length > 0 ? parseInt(bSpans[bSpans.length-1].textContent.split('/')[0]) || 0 : 0;
-                                return bCount - aCount;
-                            } catch (e) {
-                                return 0;
-                            }
-                        case 'deadline':
-                            return 0; // Already in correct order
-                        default:
-                            return 0;
-                    }
-                });
-
-                // Reorder in DOM - only if we actually sorted
-                if (currentFilter.sort === 'popular') {
-                    visibleCards.forEach(card => {
-                        container.appendChild(card);
-                    });
-                }
-                
-                console.log('Activities sorted by:', currentFilter.sort);
-            }
-
-            // Event listeners for filters - FIXED
-            if (categoryFilter) {
-                categoryFilter.addEventListener('change', function() {
-                    console.log('Category filter changed:', this.value);
-                    currentFilter.category = this.value;
-                    // Update active category button
-                    categoryButtons.forEach(b => {
-                        b.classList.remove('active');
-                        if (b.dataset.category === this.value) {
-                            b.classList.add('active');
-                        } else if (this.value === 'all' && b.dataset.category === 'all') {
-                            b.classList.add('active');
-                        }
-                    });
-                    filterActivities();
-                });
-            }
-
-            if (statusFilter) {
-                statusFilter.addEventListener('change', function() {
-                    console.log('Status filter changed:', this.value);
-                    currentFilter.status = this.value;
-                    filterActivities();
-                });
-            }
-
-            if (sortFilter) {
-                sortFilter.addEventListener('change', function() {
-                    console.log('Sort filter changed:', this.value);
-                    currentFilter.sort = this.value;
-                    sortActivities();
-                });
-            }
-
-            // Search with debounce
-            if (activitySearch) {
-                let searchTimeout;
-                activitySearch.addEventListener('input', function() {
-                    clearTimeout(searchTimeout);
-                    searchTimeout = setTimeout(() => {
-                        console.log('Search input:', this.value);
-                        currentFilter.search = this.value;
-                        filterActivities();
-                    }, 300);
-                });
-            }
-
-            // Activity details data
-            const activityDetails = {
-                'web-workshop': {
-                    title: 'Full-Stack Web Development Workshop',
-                    category: 'Workshop',
-                    description: 'This intensive 5-day workshop covers everything you need to know about modern web development. From frontend frameworks to backend APIs and databases, you\'ll build a complete web application from scratch.',
-                    details: {
-                        'Dates': 'January 15-20, 2026',
-                        'Time': '10:00 AM - 4:00 PM daily',
-                        'Venue': 'Computer Lab 3, BK Building',
-                        'Instructor': 'Dr. Rahmah (Senior Web Developer)',
-                        'Prerequisites': 'Basic programming knowledge',
-                        'Required Materials': 'Laptop with Node.js installed',
-                        'Points Awarded': '25 Co-curricular Points',
-                        'Certificate': 'Workshop Completion Certificate',
-                        'Registration Deadline': 'January 10, 2026'
-                    },
-                    syllabus: [
-                        'Day 1: HTML5, CSS3, and JavaScript Fundamentals',
-                        'Day 2: React.js Components and State Management',
-                        'Day 3: Node.js and Express.js Backend Development',
-                        'Day 4: MongoDB Database Integration',
-                        'Day 5: Deployment and Final Project Presentation'
-                    ],
-                    requirements: [
-                        'Bring your own laptop',
-                        'Install Node.js before workshop',
-                        'Basic understanding of JavaScript',
-                        'Commitment to attend all sessions'
-                    ]
-                },
-                'hackathon': {
-                    title: 'UiTM Hackathon 2026: Smart Campus Solutions',
-                    category: 'Competition',
-                    description: 'Join our 48-hour hackathon to create innovative solutions for campus challenges. Work in teams of 3-5 to develop software/hardware solutions. Mentors from industry and academia will be available to guide teams.',
-                    details: {
-                        'Dates': 'February 10-12, 2026',
-                        'Duration': '48 Hours (Continuous)',
-                        'Venue': 'Innovation Hub, Main Campus',
-                        'Team Size': '3-5 members',
-                        'Prizes': '1st: RM 5,000 + Internship Offers',
-                        'Categories': 'Smart Parking, Digital Library, Campus Safety',
-                        'Judges': 'Industry experts and faculty members',
-                        'Points Awarded': '50 Co-curricular Points',
-                        'Registration Deadline': 'February 1, 2026'
-                    },
-                    timeline: [
-                        'Day 1 (10:00 AM): Opening & Problem Statements',
-                        'Day 1 (12:00 PM): Coding Begins',
-                        'Day 2 (10:00 AM): Mid-point Check-in',
-                        'Day 3 (10:00 AM): Submission Deadline',
-                        'Day 3 (2:00 PM): Project Presentations',
-                        'Day 3 (5:00 PM): Awards Ceremony'
-                    ],
-                    rules: [
-                        'Teams must be formed before registration',
-                        'Code must be written during the event',
-                        'Use of open-source libraries allowed',
-                        'Projects must be original work'
-                    ]
-                }
-            };
-
-            // Join activity buttons
-            const joinButtons = document.querySelectorAll('.join-activity');
-            console.log('Join buttons found:', joinButtons.length);
-            
-            joinButtons.forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    const activityId = this.dataset.activity;
-                    console.log('Join button clicked:', activityId);
-                    
-                    const details = activityDetails[activityId];
-                    
-                    if (details) {
-                        // Show details modal
-                        showActivityModal(details);
-                    } else {
-                        // Simulate joining activity
-                        const activityCard = this.closest('.activity-card');
-                        const activityTitle = activityCard.querySelector('.activity-title').textContent;
-                        
-                        if (confirm(`Are you sure you want to join "${activityTitle}"?`)) {
-                            this.innerHTML = '<i class="fas fa-check"></i> Joined';
-                            this.classList.remove('btn-primary', 'btn-success');
-                            this.classList.add('btn-outline');
-                            this.disabled = true;
-                            
-                            // Update spots count
-                            const spotsElement = activityCard.querySelector('.activity-meta span:last-child');
-                            const spotsText = spotsElement.textContent;
-                            const match = spotsText.match(/(\d+)\/(\d+)/);
-                            
-                            if (match) {
-                                const current = parseInt(match[1]);
-                                const total = parseInt(match[2]);
-                                if (current < total) {
-                                    spotsElement.textContent = `${current + 1}/${total} spots`;
-                                }
-                            }
-                            
-                            alert(`✅ Successfully joined "${activityTitle}"!\n\nYou will receive a confirmation email with further details.`);
-                        }
-                    }
-                });
+              } catch (err) {
+                console.error(err);
+                alert('Error saving activity');
+              }
             });
+          }
 
-            // Modal functionality
-            const modal = document.getElementById('activityModal');
-            const modalClose = document.getElementById('modalClose');
-
-            function showActivityModal(details) {
-                console.log('Showing modal for:', details.title);
-                
-                document.getElementById('modalActivityTitle').textContent = details.title;
-                
-                let syllabusHTML = '';
-                if (details.syllabus) {
-                    syllabusHTML = `
-                        <div style="margin-top: 20px;">
-                            <h4 style="color: var(--primary-blue); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-                                <i class="fas fa-list-ol"></i> Syllabus / Timeline
-                            </h4>
-                            <ul style="padding-left: 20px;">
-                                ${details.syllabus.map(item => `<li style="margin-bottom: 8px; color: var(--dark-text);">${item}</li>`).join('')}
-                            </ul>
-                        </div>
-                    `;
-                }
-                
-                let requirementsHTML = '';
-                if (details.requirements) {
-                    requirementsHTML = `
-                        <div style="margin-top: 20px;">
-                            <h4 style="color: var(--primary-blue); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-                                <i class="fas fa-exclamation-circle"></i> Requirements
-                            </h4>
-                            <ul style="padding-left: 20px;">
-                                ${details.requirements.map(item => `<li style="margin-bottom: 8px; color: var(--dark-text);">${item}</li>`).join('')}
-                            </ul>
-                        </div>
-                    `;
-                }
-                
-                document.getElementById('modalActivityBody').innerHTML = `
-                    <div style="margin-bottom: 25px;">
-                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                            <span style="background: var(--light-blue); color: var(--primary-blue); padding: 5px 15px; border-radius: 20px; font-weight: 600;">
-                                ${details.category}
-                            </span>
-                            <span style="color: var(--dark-text); opacity: 0.8;">
-                                <i class="fas fa-star" style="color: #f59e0b;"></i> Featured Activity
-                            </span>
-                        </div>
-                        <p style="color: var(--dark-text); line-height: 1.6; margin-bottom: 20px;">${details.description}</p>
-                    </div>
-                    
-                    <div style="background: #f8fafc; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
-                        <h4 style="color: var(--primary-blue); margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
-                            <i class="fas fa-info-circle"></i> Activity Details
-                        </h4>
-                        <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
-                            ${Object.entries(details.details).map(([key, value]) => `
-                                <div style="display: flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;">
-                                    <span style="color: var(--dark-text); opacity: 0.7;">${key}:</span>
-                                    <span style="font-weight: 600; color: var(--primary-blue);">${value}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    
-                    ${syllabusHTML}
-                    ${requirementsHTML}
-                    
-                    <div style="display: flex; gap: 15px; margin-top: 30px;">
-                        <button class="btn btn-primary" style="flex: 1;" id="confirmJoin">
-                            <i class="fas fa-sign-in-alt"></i> Join This Activity
-                        </button>
-                        <button class="btn btn-outline" style="flex: 1;" id="closeModal">
-                            <i class="fas fa-times"></i> Close
-                        </button>
-                    </div>
-                `;
-                
-                modal.classList.add('show');
-                
-                // Add event listeners for modal buttons
-                document.getElementById('confirmJoin').addEventListener('click', function() {
-                    alert(`✅ Successfully joined "${details.title}"!\n\nYou will receive a confirmation email with further details.`);
-                    modal.classList.remove('show');
-                });
-                
-                document.getElementById('closeModal').addEventListener('click', function() {
-                    modal.classList.remove('show');
-                });
-            }
-
-            // Close modal
-            if (modalClose) {
-                modalClose.addEventListener('click', function() {
-                    modal.classList.remove('show');
-                });
-            }
-
-            // Close modal when clicking outside
-            if (modal) {
-                modal.addEventListener('click', function(e) {
-                    if (e.target === modal) {
-                        modal.classList.remove('show');
-                    }
-                });
-            }
-
-            // My Activities actions
-            document.querySelectorAll('.view-details').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const activityId = this.dataset.activity;
-                    alert(`Showing details for your registered activity: ${activityId}`);
-                });
+          // search filter
+          if (activitySearch) {
+            let t;
+            activitySearch.addEventListener('input', function() {
+              clearTimeout(t);
+              t = setTimeout(()=> renderActivities(activities), 200);
             });
+          }
 
-            document.querySelectorAll('.cancel-activity').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const activityName = this.closest('.my-activity-item').querySelector('h4').textContent;
-                    
-                    if (confirm(`Are you sure you want to cancel your registration for "${activityName}"?`)) {
-                        this.closest('.my-activity-item').remove();
-                        alert(`Registration cancelled for "${activityName}".`);
-                    }
-                });
-            });
+          if (createBtn) createBtn.addEventListener('click', openCreateModal);
 
-            console.log('All event listeners initialized successfully');
-            
-            // Initial filter
-            filterActivities();
+          // utility
+          function escapeHtml(t){ if(!t) return ''; return String(t).replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]); }); }
+
+          // initial
+          loadActivities();
         });
-        // Profile dropdown functionality
-            const profileDropdown = document.getElementById('profileDropdown');
-            const profileBtn = document.getElementById('profileBtn');
-            const profileMenu = document.getElementById('profileMenu');
-            const logoutBtn = document.getElementById('logoutBtn');
-
-            if (profileBtn) {
-                // Toggle dropdown when profile button is clicked
-                profileBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    profileMenu.classList.toggle('show');
-                    profileDropdown.classList.toggle('active');
-                    console.log('Profile dropdown toggled');
-                });
-
-                // Close dropdown when clicking outside
-                document.addEventListener('click', function(e) {
-                    if (!profileDropdown.contains(e.target)) {
-                        profileMenu.classList.remove('show');
-                        profileDropdown.classList.remove('active');
-                    }
-                });
-
-                // Close dropdown when clicking on a menu item
-                profileMenu.querySelectorAll('a').forEach(item => {
-                    item.addEventListener('click', function() {
-                        profileMenu.classList.remove('show');
-                        profileDropdown.classList.remove('active');
-                    });
-                });
-
-                // Logout functionality
-                if (logoutBtn) {
-                    logoutBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        if (confirm('Are you sure you want to log out?')) {
-                            alert('You have been logged out successfully. Redirecting to login page...');
-                            // In a real application, you would redirect to login page
-                            // window.location.href = 'login.html';
-                        }
-                    });
-                }
-
-                console.log('Profile dropdown initialized');
-            } else {
-                console.error('Profile button not found!');
-            }   
     </script>
 </body>
 </html>

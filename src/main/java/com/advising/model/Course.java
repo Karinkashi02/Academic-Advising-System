@@ -13,6 +13,7 @@ public class Course {
     private String name;
     private int creditHour;
     private String remark;
+    private String program;
 
     public Course() {}
     // Getters and Setters...
@@ -24,4 +25,6 @@ public class Course {
     public void setCreditHour(int creditHour) { this.creditHour = creditHour; }
     public String getRemark() { return remark; }
     public void setRemark(String remark) { this.remark = remark; }
+    public String getProgram() { return program; }
+    public void setProgram(String program) { this.program = program; }
 }
