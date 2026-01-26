@@ -520,273 +520,463 @@
                 font-size: 24px;
             }
         }
+        
+        .advisee-card{background:#fff;border-radius:12px;padding:14px;border:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
+        .advisee-name{font-weight:700;color:var(--text-dark)}
+        .advisee-meta{font-size:13px;color:var(--text-light)}
+        .pagination{display:flex;gap:8px;justify-content:center;margin-top:12px}
+        .page-btn{padding:6px 10px;border:1px solid var(--border);background:white;border-radius:6px;cursor:pointer}
+        .page-btn.active{background:var(--primary);color:white;border-color:var(--primary)}
+        
+        .filter-controls { display:flex; gap:12px; align-items:center; }
+        .filter-select { padding:6px 10px; border-radius:8px; border:1px solid var(--border); background:white; }
+        
+        .status-badge { display:inline-block; padding:6px 10px; border-radius:12px; font-weight:700; font-size:12px; text-transform:capitalize; margin-left:8px; }
+        .status-confirmed { background:rgba(39,174,96,0.12); color:var(--success); border:1px solid rgba(39,174,96,0.14); }
+        .status-pending   { background:rgba(243,156,18,0.12); color:var(--warning); border:1px solid rgba(243,156,18,0.14); }
+        .status-denied    { background:rgba(239,68,68,0.08); color:var(--danger); border:1px solid rgba(239,68,68,0.12); }
+
+        .cancel-reason { color:var(--danger); margin-top:6px; font-size:13px; font-weight:600; }
+        .status-pill{font-size:12px;padding:4px 8px;border-radius:12px;font-weight:700;margin-left:6px}
+        .status-cancelled{background:rgba(107,114,128,0.06);color:#6b7280;border:1px solid rgba(107,114,128,0.08)}
+        .session-actions{display:flex;gap:8px;margin-left:12px;align-self:flex-start}
+        .small-muted{font-size:12px;color:#6b7280;margin-top:6px}
+        @media (max-width:1200px){.sidebar{width:70px}.main-content{margin-left:70px}}
     </style>
 </head>
 <body>
     <div class="dashboard-container">
-        <!-- Sidebar -->
         <div class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo">
-                    <div class="logo-main">
-                        Advise<span>.</span>
-                    </div>
-                </div>
-            </div>
-            
+            <div class="sidebar-header"><div class="logo-main">Advise<span>.</span></div></div>
             <nav class="sidebar-nav">
-                <a href="advisor_dashboard.html" class="nav-item active">
-                    <i class="fas fa-home"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="manage_student.html" class="nav-item">
-                    <i class="fas fa-users"></i>
-                    <span>My Advisees</span>
-                </a>
-                <a href="view_advising_session.html" class="nav-item">
-                    <i class="fas fa-calendar-check"></i>
-                    <span>Advising Sessions</span>
-                </a>
-                <a href="advisor_report.html" class="nav-item">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Reports</span>
-                </a>
+                <a href="advisor_dashboard.html" class="nav-item active"><i class="fas fa-home"></i><span>Dashboard</span></a>
+                <a href="manage_student.html" class="nav-item"><i class="fas fa-users"></i><span>My Advisees</span></a>
+                <a href="view_advising_session.html" class="nav-item"><i class="fas fa-calendar-check"></i><span>Advising Sessions</span></a>
+                <a href="advisor_report.html" class="nav-item"><i class="fas fa-chart-bar"></i><span>Reports</span></a>
             </nav>
-            
         </div>
-        
-        <!-- Main Content -->
+
         <div class="main-content">
-            <!-- Header -->
             <header class="header">
                 <h1>Dashboard Overview</h1>
                 <div class="header-actions">
-                    <a href="advisor_profile.html" class="profile-btn" title="My Profile">
-                        <i class="fas fa-user"></i>
-                    </a>
-                    <div class="logout-btn" title="Logout">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </div>
+                    <a href="advisor_profile.html" class="profile-btn" title="My Profile"><i class="fas fa-user"></i></a>
+                    <div class="logout-btn" title="Logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></div>
                 </div>
             </header>
-            
-            <!-- Content Area -->
+
             <div class="content">
-                <!-- Welcome Section -->
                 <div class="welcome-section">
                     <div class="welcome-header">
-                        <h1>Welcome back, Dr. Davis!</h1>
-                        <div class="subtitle">
-                            Manage and monitor your advising responsibilities, support student success, and track academic progress.
-                        </div>
-                        
+                        <h1 id="welcomeName">Welcome back, Advisor</h1>
+                        <div class="subtitle">Manage and monitor your advising responsibilities, support student success, and track academic progress.</div>
+
                         <div class="quick-stats">
-                            <div class="stat-badge">
-                                <i class="fas fa-clock"></i>
-                                3 Pending Approvals
-                            </div>
-                            <div class="stat-badge">
-                                <i class="fas fa-calendar-day"></i>
-                                2 Today's Sessions
-                            </div>
-                            <div class="stat-badge">
-                                <i class="fas fa-percentage"></i>
-                                92% On-track Students
-                            </div>
-                            <div class="stat-badge">
-                                <i class="fas fa-user-clock"></i>
-                                5 Recent Meetings
-                            </div>
+                            <div class="stat-badge" id="badgePendingApprovals"><i class="fas fa-clock"></i> <span id="pendingApprovalsCount">0</span> Pending</div>
+                            <div class="stat-badge" id="badgeTodaysSessions"><i class="fas fa-calendar-day"></i> <span id="todaysSessionsCount">0</span> Today</div>
+                            <div class="stat-badge" id="badgeOnTrack"><i class="fas fa-percentage"></i> <span id="onTrackPercent">--</span> On-track</div>
+                            <div class="stat-badge" id="badgeRecentMeetings"><i class="fas fa-user-clock"></i> <span id="recentMeetingsCount">0</span> Recent</div>
                         </div>
                     </div>
-                    
-                    <!-- Main Statistics Grid -->
+
                     <div class="stats-grid">
                         <div class="stat-card-large">
-                            <div class="stat-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
+                            <div class="stat-icon"><i class="fas fa-users"></i></div>
                             <div class="stat-info">
-                                <h3>24</h3>
+                                <h3 id="totalStudentsStat">0</h3>
                                 <p>Total Students</p>
                             </div>
-                            <div class="stat-extra">
-                                Under your guidance
-                            </div>
                         </div>
-                        
+
                         <div class="stat-card-large">
-                            <div class="stat-icon">
-                                <i class="fas fa-calendar-check"></i>
-                            </div>
+                            <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
                             <div class="stat-info">
-                                <h3>8</h3>
+                                <h3 id="upcomingSessionsStat">0</h3>
                                 <p>Upcoming Sessions</p>
                             </div>
-                            <div class="stat-extra">
-                                This month
-                            </div>
                         </div>
-                        
+
                         <div class="stat-card-large">
-                            <div class="stat-icon">
-                                <i class="fas fa-graduation-cap"></i>
-                            </div>
+                            <div class="stat-icon"><i class="fas fa-graduation-cap"></i></div>
                             <div class="stat-info">
-                                <h3>5</h3>
+                                <h3 id="graduatingSoonStat">0</h3>
                                 <p>Graduating Soon</p>
                             </div>
-                            <div class="stat-extra">
-                                Next semester
-                            </div>
                         </div>
-                        
+
                         <div class="stat-card-large">
-                            <div class="stat-icon">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
+                            <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
                             <div class="stat-info">
-                                <h3>3.42</h3>
+                                <h3 id="avgGpaStat">0.00</h3>
                                 <p>Average GPA</p>
                             </div>
-                            <div class="stat-extra">
-                                +0.08 from last term
-                            </div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Recent Activities -->
+
                 <div class="recent-activities">
                     <div class="section-header">
-                        <h2><i class="fas fa-history"></i> Recent Activities</h2>
-                        <a href="#" class="btn">View All Activities</a>
+                        <h2><i class="fas fa-history"></i> Recent Sessions</h2>
+                        <div style="display:flex;align-items:center;gap:12px">
+                            <label for="sessionFilter" style="font-size:13px;color:var(--text-light);margin-right:6px;">Filter:</label>
+                            <select id="sessionFilter" class="filter-select" title="Filter sessions by status">
+                                <option value="all">All</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="pending">Pending</option>
+                                <option value="denied">Denied</option>
+                            </select>
+                            <a href="view_advising_session.html" class="btn" style="margin-left:8px;">View All Sessions</a>
+                        </div>
                     </div>
-                    
-                    <div class="activities-list" id="activitiesList">
-                        <!-- Activities will be populated by JavaScript -->
+
+                    <div class="activities-list" id="activitiesList"></div>
+                </div>
+
+                <div class="card" id="adviseesCard">
+                    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+                        <h2>My Advisees</h2>
+                        <div>
+                            <a href="manage_student.html" class="btn btn-outline" id="manageAdviseesBtn">Manage Advisees</a>
+                        </div>
                     </div>
+
+                    <div id="adviseesList" style="display:grid; grid-template-columns: repeat(auto-fill,minmax(260px,1fr)); gap:16px; padding-top:12px;"></div>
+                    <div id="adviseesPagination" class="pagination" style="margin-top:12px;"></div>
                 </div>
             </div>
-            
-            <footer>
-                © 2025 Advising System — University Academic Services
-            </footer>
+
+            <footer>© 2025 Advising System — University Academic Services</footer>
         </div>
     </div>
 
     <script>
-        // Sample data
-        const recentActivities = [
-            {
-                id: 1,
-                title: "Advising Meeting Completed",
-                description: "Graduation planning session with Sarah Johnson",
-                type: "meeting",
-                time: "2 hours ago",
-                student: "Sarah Johnson",
-                icon: "fas fa-calendar-check"
-            },
-            {
-                id: 2,
-                title: "Academic Report Updated",
-                description: "Updated academic progress report for Michael Chen",
-                type: "report",
-                time: "1 day ago",
-                student: "Michael Chen",
-                icon: "fas fa-file-alt"
-            },
-            {
-                id: 3,
-                title: "Course Registration Approved",
-                description: "Approved course registration for Olivia Taylor",
-                type: "approval",
-                time: "2 days ago",
-                student: "Olivia Taylor",
-                icon: "fas fa-user-check"
-            },
-            {
-                id: 4,
-                title: "Academic Alert",
-                description: "Flagged academic concern for James Martinez",
-                type: "alert",
-                time: "3 days ago",
-                student: "James Martinez",
-                icon: "fas fa-exclamation-triangle"
-            },
-            {
-                id: 5,
-                title: "Graduation Plan Reviewed",
-                description: "Reviewed and approved graduation plan for Emily Davis",
-                type: "meeting",
-                time: "4 days ago",
-                student: "Emily Davis",
-                icon: "fas fa-graduation-cap"
-            }
-        ];
+    (function () {
+      const ctx = (function(){ const p = window.location.pathname.split('/').filter(Boolean); return p.length ? '/' + p[0] : ''; })();
 
-        // Initialize the page
-        document.addEventListener('DOMContentLoaded', function() {
-            loadRecentActivities();
-            setupEventListeners();
+      function q(id){ return document.getElementById(id); }
+      function fmtDate(ts) { if (!ts) return ''; try { const d = new Date(String(ts).replace(' ', 'T')); return d.toLocaleString(); } catch(e){ return ts; } }
+      function escapeHtml(t){ if (t === null || typeof t === 'undefined') return ''; return String(t).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+      async function apiGet(path) {
+        const res = await fetch(ctx + path, { cache: 'no-store' });
+        if (!res.ok) {
+          const txt = await res.text().catch(()=>null);
+          throw new Error('GET ' + path + ' ' + res.status + ' ' + (txt || ''));
+        }
+        return res.json();
+      }
+
+      async function apiPost(path, body) {
+        const res = await fetch(ctx + path, { method: 'POST', body: body, headers: { 'Content-Type': 'application/x-www-form-urlencoded' }});
+        const text = await res.text().catch(()=>null);
+        try { return JSON.parse(text); } catch (e) { return { ok: res.ok, status: res.status, text }; }
+      }
+
+      // state
+      let allSessions = []; // store sessions fetched from /api/advisor/sessions
+      let advisees = [];
+      let adviseesPage = 1;
+      const PAGE_SIZE = 6;
+
+      // load overview + prefer server-provided counts for accuracy
+      async function loadOverview() {
+        try {
+          const data = await apiGet('/api/advisor/me');
+          if (data.advisor) {
+            const adv = data.advisor;
+            const name = ((adv.firstName||'') + ' ' + (adv.lastName||'')).trim() || adv.email || '';
+            if (name) q('welcomeName').textContent = 'Welcome back, ' + name + '!';
+          }
+          if (typeof data.totalStudents !== 'undefined') q('totalStudentsStat').textContent = data.totalStudents;
+          if (typeof data.upcomingSessions !== 'undefined') q('upcomingSessionsStat').textContent = data.upcomingSessions;
+          if (typeof data.graduatingSoon !== 'undefined') q('graduatingSoonStat').textContent = data.graduatingSoon;
+          if (typeof data.averageAdviseeCgpa !== 'undefined' && data.averageAdviseeCgpa !== null) q('avgGpaStat').textContent = Number(data.averageAdviseeCgpa).toFixed(2);
+
+          // todaysSessions provided by server is authoritative: only confirmed counted server-side
+          if (typeof data.todaysSessions !== 'undefined') {
+            q('todaysSessionsCount').textContent = data.todaysSessions;
+          }
+
+          // recentMeetings: we consider past confirmed/completed sessions; if server returns recentSessions use length
+          if (Array.isArray(data.recentSessions)) {
+            q('recentMeetingsCount').textContent = data.recentSessions.length;
+          }
+
+        } catch (err) {
+          console.warn('loadOverview error', err);
+        }
+      }
+
+      // load sessions and render list respecting filter (filter UI will control)
+      async function loadSessionsAndRender() {
+        try {
+          const j = await apiGet('/api/advisor/sessions');
+          allSessions = Array.isArray(j.sessions) ? j.sessions : [];
+          // compute pending (status === 'pending')
+          const pending = allSessions.filter(s => (s.status||'').toLowerCase() === 'pending').length;
+          q('pendingApprovalsCount').textContent = pending;
+
+          // compute today's confirmed sessions (use confirmed only)
+          const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+          const tomorrow = new Date(todayStart); tomorrow.setDate(todayStart.getDate()+1);
+          const todaysConfirmed = allSessions.filter(s => {
+            if (!s.sessionDateTime) return false;
+            const ts = new Date(String(s.sessionDateTime).replace(' ', 'T'));
+            return ts >= todayStart && ts < tomorrow && (String(s.status||'').toLowerCase() === 'confirmed');
+          }).length;
+          q('todaysSessionsCount').textContent = todaysConfirmed;
+
+          // compute upcoming confirmed sessions in next 30 days (if you want to update stat)
+          const now = new Date();
+          const in30 = new Date(now); in30.setDate(in30.getDate()+30);
+          const upcomingConfirmed = allSessions.filter(s => {
+            if (!s.sessionDateTime) return false;
+            const ts = new Date(String(s.sessionDateTime).replace(' ', 'T'));
+            const st = String(s.status||'').toLowerCase();
+            return ts >= now && ts <= in30 && st === 'confirmed';
+          }).length;
+          q('upcomingSessionsStat').textContent = upcomingConfirmed;
+
+          // set recent meetings count (past confirmed/completed)
+          const pastConfirmed = allSessions.filter(s => {
+            if (!s.sessionDateTime) return false;
+            const ts = new Date(String(s.sessionDateTime).replace(' ', 'T'));
+            const st = String(s.status||'').toLowerCase();
+            return ts <= new Date() && (st === 'confirmed' || st === 'completed');
+          }).length;
+          q('recentMeetingsCount').textContent = pastConfirmed;
+
+          // render according to selected filter
+          renderRecentSessionsCards();
+        } catch (err) {
+          console.warn('loadSessionsAndRender', err);
+        }
+      }
+
+      // returns current session filter value
+      function getSessionFilter() {
+        const sel = q('sessionFilter');
+        return sel ? sel.value : 'all';
+      }
+
+      // render recent sessions area applying filter
+      function renderRecentSessionsCards() {
+        const container = q('activitiesList');
+        if (!container) return;
+        container.innerHTML = '';
+        const filter = getSessionFilter();
+        let sessions = allSessions.slice(); // copy
+
+        // optionally sort descending by datetime
+        sessions.sort((a,b) => {
+          const ta = a.sessionDateTime ? new Date(String(a.sessionDateTime).replace(' ', 'T')).getTime() : 0;
+          const tb = b.sessionDateTime ? new Date(String(b.sessionDateTime).replace(' ', 'T')).getTime() : 0;
+          return tb - ta;
         });
 
-        function loadRecentActivities() {
-            const activitiesContainer = document.getElementById('activitiesList');
-            activitiesContainer.innerHTML = '';
-            
-            recentActivities.forEach(activity => {
-                const activityItem = document.createElement('div');
-                activityItem.className = 'activity-item';
-                
-                activityItem.innerHTML = `
-                    <div class="activity-icon ${activity.type}">
-                        <i class="${activity.icon}"></i>
-                    </div>
-                    <div class="activity-details">
-                        <div class="activity-title">${activity.title}</div>
-                        <div class="activity-description">${activity.description}</div>
-                        <div class="activity-meta">
-                            <div class="activity-time">
-                                <i class="far fa-clock"></i> ${activity.time}
-                            </div>
-                            <div class="activity-student">
-                                <i class="fas fa-user"></i> ${activity.student}
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                activitiesContainer.appendChild(activityItem);
-                
-                // Add click event
-                activityItem.addEventListener('click', function() {
-                    alert(`Viewing details for: ${activity.title}\n\nStudent: ${activity.student}\nTime: ${activity.time}`);
-                });
-            });
+        // apply filter
+        if (filter !== 'all') {
+          sessions = sessions.filter(s => (String(s.status||'').toLowerCase() === filter));
         }
 
-        function setupEventListeners() {
-            // Logout button
-            document.querySelector('.logout-btn').addEventListener('click', function() {
-                if (confirm('Are you sure you want to logout?')) {
-                    alert('You have been logged out.');
-                    window.location.href = '../index.html';
-                }
-            });
-            
-            // Profile button
-            document.querySelector('.profile-btn').addEventListener('click', function(e) {
-                e.preventDefault();
-                window.location.href = 'advisor_profile.html';
-            });
-            
-            // View all activities button
-            document.querySelector('.btn').addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('Redirecting to full activity history...');
-            });
+        if (sessions.length === 0) {
+          container.innerHTML = '<div style="padding:12px;color:#666">No sessions (matching filter).</div>';
+          return;
         }
+
+        // limit to 12
+        sessions.slice(0, 12).forEach(s => {
+          const card = document.createElement('div');
+          card.className = 'activity-item';
+
+          const student = (s.studentName && s.studentName !== 'null') ? s.studentName : (s.studentID || 'Unknown Student');
+          const notes = s.notes || '';
+          const status = (s.status || '').toLowerCase();
+          const cancelReason = s.cancelReason || s.cancelreason || '';
+
+          // status badge markup
+          let statusClass = 'status-pending';
+          let statusLabel = status || 'pending';
+          if (status === 'confirmed') { statusClass = 'status-confirmed'; statusLabel = 'Confirmed'; }
+          else if (status === 'denied' || status === 'denial' || status === 'rejected') { statusClass = 'status-denied'; statusLabel = 'Denied'; }
+          else if (status === 'completed') { statusClass = 'status-confirmed'; statusLabel = 'Completed'; }
+          else if (status === 'pending') { statusClass = 'status-pending'; statusLabel = 'Pending'; }
+
+          const when = fmtDate(s.sessionDateTime);
+
+          card.innerHTML = `
+            <div class="activity-icon meeting"><i class="fas fa-calendar-check"></i></div>
+            <div class="activity-details">
+              <div style="display:flex;align-items:center;gap:8px">
+                <div class="activity-title">${escapeHtml(s.title || '(no title)')}</div>
+                <span class="status-badge ${statusClass}" title="Status">${escapeHtml(statusLabel)}</span>
+              </div>
+              <div class="activity-description">${escapeHtml(student)} • <span style="color:#666">${escapeHtml(when)}</span></div>
+              ${ notes ? `<div style="margin-top:6px;font-size:13px;color:#445">${escapeHtml(notes)}</div>` : '' }
+              ${ (status === 'denied' || status === 'cancelled' || cancelReason) ? `<div class="cancel-reason">Reason: ${escapeHtml(cancelReason)}</div>` : '' }
+              <div class="activity-meta" style="margin-top:8px;">
+                <div class="activity-time"><i class="far fa-clock"></i> ${escapeHtml(when)}</div>
+                <div class="activity-student"><i class="fas fa-user"></i> ${escapeHtml(student)}</div>
+              </div>
+            </div>
+          `;
+
+          // actions area
+          const actions = document.createElement('div');
+          actions.style.display = 'flex';
+          actions.style.gap = '8px';
+          actions.style.marginLeft = '8px';
+
+          // pending -> Accept / Deny
+          if (status === 'pending') {
+            const acceptBtn = document.createElement('button');
+            acceptBtn.className = 'btn';
+            acceptBtn.textContent = 'Accept';
+            acceptBtn.addEventListener('click', async (ev) => {
+              ev.stopPropagation();
+              if (!confirm('Accept this advising session?')) return;
+              try {
+                const res = await apiPost('/api/advisor/session/update', new URLSearchParams({ sessionID: s.sessionID, action: 'accept' }));
+                if (res && (res.success || res.ok)) {
+                  alert('Session accepted.');
+                  await loadOverview();
+                  await loadSessionsAndRender();
+                } else {
+                  alert('Could not accept session: ' + (res && res.error ? res.error : JSON.stringify(res)));
+                }
+              } catch (err) { console.error(err); alert('Network error'); }
+            });
+            const denyBtn = document.createElement('button');
+            denyBtn.className = 'btn';
+            denyBtn.style.background = 'var(--danger)';
+            denyBtn.style.borderColor = 'var(--danger)';
+            denyBtn.textContent = 'Deny';
+            denyBtn.addEventListener('click', async (ev) => {
+              ev.stopPropagation();
+              const reason = prompt('Reason for denying (optional):');
+              if (reason === null) return;
+              try {
+                const res = await apiPost('/api/advisor/session/update', new URLSearchParams({ sessionID: s.sessionID, action: 'deny', reason }));
+                if (res && (res.success || res.ok)) {
+                  alert('Session denied.');
+                  await loadOverview();
+                  await loadSessionsAndRender();
+                } else {
+                  alert('Could not deny session: ' + (res && res.error ? res.error : JSON.stringify(res)));
+                }
+              } catch (err) { console.error(err); alert('Network error'); }
+            });
+            actions.appendChild(acceptBtn);
+            actions.appendChild(denyBtn);
+          } else {
+            const viewBtn = document.createElement('button');
+            viewBtn.className = 'btn';
+            viewBtn.textContent = 'Details';
+            viewBtn.addEventListener('click', (ev) => {
+              ev.stopPropagation();
+              alert('Session: ' + (s.title||'') + '\nStudent: ' + student + '\nWhen: ' + fmtDate(s.sessionDateTime) + '\nStatus: ' + (s.status || '') + '\n\nNotes:\n' + (s.notes || '') + (cancelReason ? '\n\nReason: ' + cancelReason : ''));
+            });
+            actions.appendChild(viewBtn);
+          }
+
+          card.appendChild(actions);
+          card.addEventListener('click', () => {
+            alert('Session: ' + (s.title||'') + '\nStudent: ' + student + '\nWhen: ' + fmtDate(s.sessionDateTime) + '\nStatus: ' + (s.status || '') + '\n\nNotes:\n' + (s.notes || '') + (cancelReason ? '\n\nReason: ' + cancelReason : ''));
+          });
+
+          container.appendChild(card);
+        });
+      }
+
+      // advisees: load / render / pagination
+      async function loadAdvisees() {
+        try {
+          const j = await apiGet('/api/advisor/students');
+          advisees = Array.isArray(j.students) ? j.students : [];
+          adviseesPage = 1;
+          renderAdviseesPage(adviseesPage);
+          renderAdviseesPagination();
+          if (advisees && advisees.length) q('totalStudentsStat').textContent = advisees.length;
+        } catch (err) {
+          console.warn('loadAdvisees', err);
+        }
+      }
+
+      function renderAdviseesPage(page) {
+        const container = q('adviseesList');
+        if (!container) return;
+        container.innerHTML = '';
+        const start = (page-1)*PAGE_SIZE;
+        const slice = advisees.slice(start, start+PAGE_SIZE);
+        if (slice.length === 0) {
+          container.innerHTML = '<div style="padding:12px;color:#666">No advisees found.</div>';
+          return;
+        }
+        slice.forEach(s => {
+          const card = document.createElement('div');
+          card.className = 'advisee-card';
+          const name = s.name || ((s.firstName||'')+' '+(s.lastName||'')).trim() || s.studentID;
+          const cgpa = (s.cgpa === null || typeof s.cgpa === 'undefined') ? 'N/A' : Number(s.cgpa).toFixed(2);
+          const credits = s.creditsCompleted === null || typeof s.creditsCompleted === 'undefined' ? 'N/A' : s.creditsCompleted;
+          card.innerHTML = `
+            <div class="advisee-name">${escapeHtml(name)}</div>
+            <div class="advisee-meta">${escapeHtml(s.program || '')} • Year ${escapeHtml(String(s.yearOfStudy || ''))}</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
+              <div style="font-size:13px;color:#666">CGPA: <strong>${escapeHtml(cgpa)}</strong></div>
+              <div style="font-size:13px;color:#666">Credits: <strong>${escapeHtml(String(credits))}</strong></div>
+            </div>
+            <div style="margin-top:8px;display:flex;gap:8px;">
+              <a class="btn" href="/Advisor/view_student_detail.html?student_id=${encodeURIComponent(s.studentID||'')}" style="padding:6px 10px;font-size:13px;">View</a>
+              <button class="page-btn email-advisee" data-id="${escapeHtml(s.studentID||'')}" style="padding:6px 10px;font-size:13px;">Email</button>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+        // wire email buttons
+        container.querySelectorAll('.email-advisee').forEach(b => {
+          b.addEventListener('click', () => {
+            const id = b.dataset.id;
+            window.location.href = 'mailto:' + (advisees.find(a=>a.studentID===id)?.email || '');
+          });
+        });
+      }
+
+      function renderAdviseesPagination() {
+        const pag = q('adviseesPagination'); if (!pag) return;
+        pag.innerHTML = '';
+        const total = advisees.length;
+        const pages = Math.max(1, Math.ceil(total/PAGE_SIZE));
+        for (let i=1;i<=pages;i++){
+          const b = document.createElement('button');
+          b.className = 'page-btn' + (i===adviseesPage ? ' active' : '');
+          b.textContent = i;
+          b.addEventListener('click', () => { adviseesPage = i; renderAdviseesPage(i); renderAdviseesPagination(); });
+          pag.appendChild(b);
+        }
+      }
+
+      // full refresh
+      async function refreshAll() {
+        await loadOverview();
+        await loadSessionsAndRender();
+        await loadAdvisees();
+      }
+
+      document.addEventListener('DOMContentLoaded', function(){
+        // logout
+        const logoutBtn = q('logoutBtn');
+        if (logoutBtn) logoutBtn.addEventListener('click', function(){ if (!confirm('Logout?')) return; window.location.href = ctx + '/logout'; });
+
+        // filter change
+        const filterEl = q('sessionFilter');
+        if (filterEl) {
+          filterEl.addEventListener('change', () => renderRecentSessionsCards());
+        }
+
+        refreshAll();
+        setInterval(refreshAll, 60*1000);
+      });
+    })();
     </script>
 </body>
 </html>

@@ -86,12 +86,16 @@ public class RegisterServlet extends HttpServlet {
 
                 ps.executeUpdate();
             } else {
-                sql = "INSERT INTO advisor (username, firstName, lastName, email, password, phoneNum, department) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                sql = "INSERT INTO advisor (username, firstName, lastName, email, password, phoneNum, department, expertise, maxstd, officehours, officeloc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 PreparedStatement ps = conn.prepareStatement(sql);
-
+;
                 String advisorID = request.getParameter("advisorID");
                 String phone = request.getParameter("phoneNum");
                 String department = request.getParameter("department");
+                String expertise = request.getParameter("expertise");
+                int maxSTD = Integer.parseInt(request.getParameter("maxSTD"));
+                String officehours = request.getParameter("officehours");
+                String officeloc = request.getParameter("officeloc");
 
                 System.out.println("[RegisterServlet] advisor fields: advisorID=" + advisorID + " phone=" + phone + " dept=" + department);
 
@@ -102,6 +106,10 @@ public class RegisterServlet extends HttpServlet {
                 ps.setString(5, password);
                 ps.setString(6, phone);
                 ps.setString(7, department);
+                ps.setString(8, expertise);
+                ps.setInt(9, maxSTD);
+                ps.setString(10, officehours);
+                ps.setString(11, officeloc);
                 ps.executeUpdate();
             }
             response.sendRedirect("index.html?reg=success");
