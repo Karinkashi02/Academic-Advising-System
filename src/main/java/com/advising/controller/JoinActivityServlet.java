@@ -20,8 +20,7 @@ public class JoinActivityServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json"); response.setCharacterEncoding("UTF-8");
 
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("role") == null || !"student".equals(session.getAttribute("role"))) {
@@ -46,7 +45,7 @@ public class JoinActivityServlet extends HttpServlet {
 
         try (Connection conn = DBConnection.getConnection()) {
             // check capacity and current count
-            String sel = "SELECT capacity FROM activity WHERE activityID = ?";
+            String sel = "SELECT capacity, dateTime, status FROM activity WHERE activityID = ?";
             try (PreparedStatement ps = conn.prepareStatement(sel)) {
                 ps.setInt(1, activityID);
                 try (ResultSet rs = ps.executeQuery()) {
@@ -56,7 +55,15 @@ public class JoinActivityServlet extends HttpServlet {
                         return;
                     }
                     Integer capacity = rs.getObject("capacity") == null ? null : rs.getInt("capacity");
-                    // get current count
+                    Timestamp ts = rs.getTimestamp("dateTime");
+                    String status = rs.getString("status");
+                    // Do not allow joining past activities
+                    if (ts != null && ts.getTime() <= System.currentTimeMillis()) {
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        response.getWriter().write("{\"error\":\"Cannot join a past activity\"}");
+                        return;
+                    }
+                    // capacity check
                     String cntSql = "SELECT COUNT(*) AS cnt FROM activity_registration WHERE activityID = ?";
                     try (PreparedStatement cps = conn.prepareStatement(cntSql)) {
                         cps.setInt(1, activityID);
@@ -81,7 +88,7 @@ public class JoinActivityServlet extends HttpServlet {
                 try {
                     ips.executeUpdate();
                 } catch (SQLException ex) {
-                    // possible duplicate PK -> already joined
+                    // duplicate PK -> already joined
                     response.setStatus(HttpServletResponse.SC_CONFLICT);
                     response.getWriter().write("{\"error\":\"Already joined\"}");
                     return;

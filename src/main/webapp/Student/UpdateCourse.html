@@ -164,47 +164,12 @@
             color: var(--light-blue);
         }
 
-        /* Profile Area */
+        /* Profile Area - Updated to match Activity.html */
         .profile-area {
             display: flex;
             align-items: center;
             gap: 20px;
             position: relative;
-        }
-
-        .notification {
-            position: relative;
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.2);
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .notification:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.1);
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: #ef4444;
-            color: white;
-            border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
         }
 
         .profile-dropdown {
@@ -228,11 +193,6 @@
         .profile-btn:hover {
             background: rgba(255, 255, 255, 0.3);
             border-color: rgba(255, 255, 255, 0.5);
-        }
-
-        .profile-btn.active {
-            background: rgba(255, 255, 255, 0.35);
-            border-color: rgba(255, 255, 255, 0.7);
         }
 
         .profile-pic {
@@ -282,59 +242,63 @@
             flex-shrink: 0;
         }
 
-        .profile-btn.active .dropdown-icon {
-            transform: rotate(180deg);
-        }
-
-        /* Dropdown Menu */
-        .dropdown-menu {
+        /* Profile dropdown menu - Updated to match Activity.html */
+        .profile-dropdown-menu {
             position: absolute;
-            top: calc(100% + 10px);
+            top: 100%;
             right: 0;
+            width: 220px;
             background: white;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            min-width: 220px;
-            margin-top: 5px;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
-            z-index: 1100;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            margin-top: 10px;
+            z-index: 1000;
+            display: none;
             overflow: hidden;
-            border: 1px solid #e5e7eb;
+            border: 1px solid #e2e8f0;
         }
 
-        .dropdown-menu.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
+        .profile-dropdown-menu.show {
+            display: block;
         }
 
-        .dropdown-menu a {
+        .profile-dropdown-menu a {
             display: flex;
             align-items: center;
+            gap: 12px;
             padding: 15px 20px;
             color: var(--dark-text);
             text-decoration: none;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             border-bottom: 1px solid #f1f5f9;
         }
 
-        .dropdown-menu a:last-child {
+        .profile-dropdown-menu a:hover {
+            background: #f8fafc;
+            color: var(--primary-blue);
+        }
+
+        .profile-dropdown-menu a:last-child {
             border-bottom: none;
-            color: #ef4444;
+            color: var(--error-red);
         }
 
-        .dropdown-menu a:hover {
-            background-color: #f8fafc;
-            padding-left: 25px;
-        }
-
-        .dropdown-menu i {
-            margin-right: 12px;
-            color: var(--secondary-blue);
+        .profile-dropdown-menu a i {
             width: 20px;
+            text-align: center;
+        }
+
+        .profile-dropdown-menu .dropdown-header {
+            padding: 15px 20px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+        /* Add rotation to dropdown icon when menu is open */
+        .profile-dropdown.active .dropdown-icon {
+            transform: rotate(180deg);
         }
 
         /* Backdrop */
@@ -670,7 +634,6 @@
             box-shadow: 0 5px 15px rgba(30, 58, 138, 0.2);
         }
 
-        /* Color coding for grade options */
         .grade-option[data-grade="A+"] {
             border-color: #10b981;
             color: #10b981;
@@ -1014,9 +977,10 @@
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                   </div>
 
-                  <div class="dropdown-menu" id="dropdownMenu">
-                    <a href="Profile.html" class="dropdown-item"><i class="fas fa-user-circle"></i> My Profile</a>
-                    <a href="#" class="dropdown-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                  <div class="profile-dropdown-menu" id="profileMenu">
+                    <div class="dropdown-header" id="profileMenuHeader">Student</div>
+                    <a href="Profile.html"><i class="fas fa-user-circle"></i> My Profile</a>
+                    <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
                   </div>
                 </div>
             </div>
@@ -1044,8 +1008,8 @@
                         <label class="form-label" for="courseFilter"><i class="fas fa-filter"></i> Filter by Status</label>
                         <select class="form-select" id="courseFilter">
                             <option value="all">All Courses</option>
-                            <option value="ongoing">Ongoing Courses</option>
-                            <option value="completed">Completed Courses</option>
+                            <option value="Ongoing">Ongoing Courses</option>
+                            <option value="Completed">Completed Courses</option>
                         </select>
                     </div>
                     
@@ -1064,116 +1028,81 @@
                 </div>
             </div>
 
-            <!-- Grade Update Form -->
+            <!-- Grade Update Form (this container will be reused for single-course and multi-course views) -->
             <div class="grade-form" id="gradeForm">
-                <!-- Course Information Card -->
-                <div class="course-info-card">
-                    <div class="info-header">
-                        <div class="course-code" id="courseCode">CSC584</div>
-                        <div class="status-badge" id="courseStatusBadge"></div>
+                <!-- Original single-course content is preserved so we can restore it -->
+                <div id="singleCourseInner">
+                    <!-- Course Information Card -->
+                    <div class="course-info-card" id="courseInfoCard">
+                        <div class="info-header">
+                            <div class="course-code" id="courseCode">CSC584</div>
+                            <div class="status-badge" id="courseStatusBadge"></div>
+                        </div>
+                        <div class="course-name" id="courseName">Enterprise Programming</div>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">Credit Hours</span>
+                                <span class="info-value" id="courseCredits">4</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Semester</span>
+                                <span class="info-value" id="courseSemester">Semester 1</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Program</span>
+                                <span class="info-value" id="courseProgram">Computer Science</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Current Status</span>
+                                <span class="info-value" id="courseStatus">Completed</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="course-name" id="courseName">Enterprise Programming</div>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <span class="info-label">Credit Hours</span>
-                            <span class="info-value" id="courseCredits">4</span>
+
+                    <!-- Grade Input Section -->
+                    <div class="grade-input-section" id="singleGradeSection">
+                        <h3 class="grade-input-title">
+                            <i class="fas fa-award"></i>
+                            Update Final Grade
+                        </h3>
+
+                        <div class="current-grade-display">
+                            <span class="current-grade-label">Current Grade:</span>
+                            <span class="current-grade-value" id="currentGradeDisplay">-</span>
                         </div>
-                        <div class="info-item">
-                            <span class="info-label">Semester</span>
-                            <span class="info-value" id="courseSemester">Semester 1</span>
+
+                        <div class="grade-options" id="gradeOptions">
+                            <div class="grade-option" data-grade="A+" data-description="Excellent: 85-100%">A+</div>
+                            <div class="grade-option" data-grade="A" data-description="Excellent: 80-84%">A</div>
+                            <div class="grade-option" data-grade="A-" data-description="Very Good: 75-79%">A-</div>
+                            <div class="grade-option" data-grade="B+" data-description="Good: 70-74%">B+</div>
+                            <div class="grade-option" data-grade="B" data-description="Good: 65-69%">B</div>
+                            <div class="grade-option" data-grade="B-" data-description="Satisfactory: 60-64%">B-</div>
+                            <div class="grade-option" data-grade="C" data-description="Pass: 50-59%">C</div>
+                            <div class="grade-option" data-grade="F" data-description="Fail: Below 50%">F</div>
+                            <div class="grade-option" data-grade="NT" data-description="Not Taken: Course not taken">NT</div>
+                            <div class="grade-option" data-grade="" data-description="No grade assigned">None</div>
                         </div>
-                        <div class="info-item">
-                            <span class="info-label">Program</span>
-                            <span class="info-value" id="courseProgram">Computer Science</span>
+
+                        <div class="grade-description" id="gradeDescription">
+                            Select a grade to see its description
                         </div>
-                        <div class="info-item">
-                            <span class="info-label">Current Status</span>
-                            <span class="info-value" id="courseStatus">Completed</span>
-                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions" id="singleFormActions">
+                        <button type="button" class="btn btn-secondary" id="cancelBtn">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        <button type="button" class="btn btn-success" id="updateGradeBtn">
+                            <i class="fas fa-save"></i> Update Grade
+                        </button>
                     </div>
                 </div>
 
-                <!-- Grade Input Section -->
-                <div class="grade-input-section">
-                    <h3 class="grade-input-title">
-                        <i class="fas fa-award"></i>
-                        Update Final Grade
-                    </h3>
-                    
-                    <div class="current-grade-display">
-                        <span class="current-grade-label">Current Grade:</span>
-                        <span class="current-grade-value" id="currentGradeDisplay">-</span>
-                    </div>
-                    
-                    <div class="grade-options" id="gradeOptions">
-                        <div class="grade-option" data-grade="A+" data-description="Excellent: 85-100%">A+</div>
-                        <div class="grade-option" data-grade="A" data-description="Excellent: 80-84%">A</div>
-                        <div class="grade-option" data-grade="A-" data-description="Very Good: 75-79%">A-</div>
-                        <div class="grade-option" data-grade="B+" data-description="Good: 70-74%">B+</div>
-                        <div class="grade-option" data-grade="B" data-description="Good: 65-69%">B</div>
-                        <div class="grade-option" data-grade="B-" data-description="Satisfactory: 60-64%">B-</div>
-                        <div class="grade-option" data-grade="C" data-description="Pass: 50-59%">C</div>
-                        <div class="grade-option" data-grade="F" data-description="Fail: Below 50%">F</div>
-                        <div class="grade-option" data-grade="NT" data-description="Not Taken: Course not taken">NT</div>
-                        <div class="grade-option" data-grade="" data-description="No grade assigned">None</div>
-                    </div>
-                    
-                    <div class="grade-description" id="gradeDescription">
-                        Select a grade to see its description
-                    </div>
-                    
-                    <!-- Grade Scale Information -->
-                    <div class="grade-scale-info">
-                        <h4><i class="fas fa-info-circle"></i> Grade Scale</h4>
-                        <div class="grade-scale-grid">
-                            <div class="scale-item">
-                                <span>A+</span>
-                                <span>85 - 100%</span>
-                            </div>
-                            <div class="scale-item">
-                                <span>A</span>
-                                <span>80 - 84%</span>
-                            </div>
-                            <div class="scale-item">
-                                <span>A-</span>
-                                <span>75 - 79%</span>
-                            </div>
-                            <div class="scale-item">
-                                <span>B+</span>
-                                <span>70 - 74%</span>
-                            </div>
-                            <div class="scale-item">
-                                <span>B</span>
-                                <span>65 - 69%</span>
-                            </div>
-                            <div class="scale-item">
-                                <span>B-</span>
-                                <span>60 - 64%</span>
-                            </div>
-                            <div class="scale-item">
-                                <span>C</span>
-                                <span>50 - 59%</span>
-                            </div>
-                            <div class="scale-item">
-                                <span>F</span>
-                                <span>Below 50%</span>
-                            </div>
-                            <div class="scale-item">
-                                <span>NT</span>
-                                <span>Not Taken</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Form Actions -->
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" id="cancelBtn">
-                        <i class="fas fa-times"></i> Cancel
-                    </button>
-                    <button type="button" class="btn btn-success" id="updateGradeBtn">
-                        <i class="fas fa-save"></i> Update Grade
-                    </button>
+                <!-- Container used when showing all courses (populated by JS) -->
+                <div id="multiCourseInner" style="display:none;">
+                    <!-- JS will generate a list of mini forms here when multi-view is active -->
                 </div>
             </div>
         </div>
@@ -1186,322 +1115,410 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const ctx = (function() {
-                const p = window.location.pathname.split('/').filter(Boolean);
-                return p.length ? '/' + p[0] : '';
-            })();
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = (function() {
+            const p = window.location.pathname.split('/').filter(Boolean);
+            return p.length ? '/' + p[0] : '';
+        })();
 
-            const courseSelect = document.getElementById('courseSelect');
-            const courseFilter = document.getElementById('courseFilter');
-            const loadCourseBtn = document.getElementById('loadCourseBtn');
-            const gradeForm = document.getElementById('gradeForm');
-            const courseCodeEl = document.getElementById('courseCode');
-            const courseNameEl = document.getElementById('courseName');
-            const courseCreditsEl = document.getElementById('courseCredits');
-            const courseSemesterEl = document.getElementById('courseSemester');
-            const courseProgramEl = document.getElementById('courseProgram');
-            const courseStatusEl = document.getElementById('courseStatus');
-            const currentGradeDisplay = document.getElementById('currentGradeDisplay');
-            const gradeOptions = document.querySelectorAll('.grade-option');
-            const gradeDescription = document.getElementById('gradeDescription');
-            const updateGradeBtn = document.getElementById('updateGradeBtn');
-            const cancelBtn = document.getElementById('cancelBtn');
-            const statusMessage = document.getElementById('statusMessage');
-            const statusText = document.getElementById('statusText');
+        // Helper selectors
+        const q = id => document.getElementById(id);
+        const escapeHtml = s => s ? String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])) : '';
 
-            let courses = []; // fetched data
-            let selectedCourse = null;
-            let selectedGrade = "";
-            let studentSemester = 2; // fallback
+        // DOM refs
+        const viewAllCoursesBtn = q('viewAllCoursesBtn');
+        const courseFilter = q('courseFilter');
+        const courseSelect = q('courseSelect');
+        const loadCourseBtn = q('loadCourseBtn');
 
-            // fetch student info (to get current semester)
-            async function fetchStudent() {
-                try {
-                    const res = await fetch(ctx + '/api/student/me', { cache: 'no-store' });
-                    if (res.ok) {
-                        const js = await res.json();
-                        if (js.semester) studentSemester = parseInt(js.semester) || studentSemester;
-                    } else {
-                        console.warn('Could not get /api/student/me:', res.status);
+        const gradeForm = q('gradeForm');
+        const singleCourseInner = q('singleCourseInner');
+        const multiCourseInner = q('multiCourseInner');
+
+        const courseCodeEl = q('courseCode');
+        const courseNameEl = q('courseName');
+        const courseCreditsEl = q('courseCredits');
+        const courseSemesterEl = q('courseSemester');
+        const courseProgramEl = q('courseProgram');
+        const courseStatusEl = q('courseStatus');
+        const currentGradeDisplay = q('currentGradeDisplay');
+        const gradeOptionsContainer = q('gradeOptions');
+        const gradeDescription = q('gradeDescription');
+
+        const updateGradeBtn = q('updateGradeBtn');
+        const cancelBtn = q('cancelBtn');
+
+        const statusMessage = q('statusMessage');
+        const statusText = q('statusText');
+
+        // Profile dropdown elements
+        const profileBtn = q('profileBtn');
+        const profileMenu = q('profileMenu');
+        const profileNameEl = q('profileName');
+        const profilePicEl = q('profilePic');
+        const logoutBtn = q('logoutBtn');
+        const dropdownBackdrop = q('dropdownBackdrop');
+
+        let courses = [];
+        let selectedCourse = null;
+        let studentSemester = 2; // fallback
+        let selectedGrade = "";
+
+        // Profile dropdown functionality (matching Activity.html)
+        if (profileBtn && profileMenu) {
+            profileBtn.addEventListener('click', e => {
+                e.stopPropagation();
+                profileMenu.classList.toggle('show');
+                profileBtn.classList.toggle('active');
+            });
+            
+            document.addEventListener('click', e => {
+                if (!profileBtn.contains(e.target) && !profileMenu.contains(e.target)) {
+                    profileMenu.classList.remove('show');
+                    profileBtn.classList.remove('active');
+                }
+            });
+        }
+        
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', e => {
+                e.preventDefault();
+                window.location.href = ctx + '/logout';
+            });
+        }
+        
+        async function loadProfile() {
+            try {
+              const res = await fetch(ctx + '/api/student/me', { cache: 'no-store' });
+              if (!res.ok) return; // not logged or not student
+              const json = await res.json();
+              const name = json.name || (json.firstName ? (json.firstName + (json.lastName ? ' ' + json.lastName : '')) : profileNameEl.textContent);
+              profileNameEl.textContent = name;
+              profileRoleEl.textContent = 'Student';
+              // initials
+              let initials = '';
+              if (json.firstName || json.lastName) {
+                initials = (json.firstName || '').charAt(0) + (json.lastName || '').charAt(0);
+              } else if (name) {
+                const parts = name.trim().split(/\s+/);
+                initials = parts[0].charAt(0) + (parts.length > 1 ? parts[parts.length-1].charAt(0) : '');
+              }
+              profilePicEl.textContent = (initials || 'ME').toUpperCase();
+            } catch (e) {
+              // ignore
+              console.warn('Could not load profile', e);
+            }
+        }
+
+        // API helpers
+        async function apiGet(path) {
+            const res = await fetch(ctx + path, { cache: 'no-store' });
+            if (!res.ok) throw new Error('GET ' + path + ' ' + res.status);
+            return res.json();
+        }
+        async function apiPost(path, body) {
+            const res = await fetch(ctx + path, { method: 'POST', body: body, headers: { 'Content-Type': 'application/x-www-form-urlencoded' }});
+            if (!res.ok) {
+                const txt = await res.text().catch(()=>null);
+                throw new Error('POST ' + path + ' ' + res.status + ' ' + txt);
+            }
+            return res.json();
+        }
+
+        function showStatus(msg, type='info') {
+            if (!statusMessage || !statusText) return;
+            statusMessage.className = 'status-message ' + type;
+            statusText.textContent = msg;
+            statusMessage.style.display = 'flex';
+            if (type !== 'error') setTimeout(()=> { statusMessage.style.display = 'none'; }, 3500);
+        }
+
+        // load student to get semester
+        async function fetchStudent() {
+            try {
+                const res = await fetch(ctx + '/api/student/me', { cache: 'no-store' });
+                if (res.ok) {
+                    const js = await res.json();
+                    if (js.semester) studentSemester = parseInt(js.semester) || studentSemester;
+                }
+            } catch (e) { console.warn('fetchStudent', e); }
+        }
+
+        // fetch courses list
+        async function fetchCourses() {
+            await fetchStudent();
+            try {
+                const json = await apiGet('/api/student/courses');
+                courses = json.courses || [];
+                populateCourseSelect();
+            } catch (e) {
+                console.error('fetchCourses', e);
+                showStatus('Unable to load courses', 'error');
+            }
+        }
+
+        // populate the select used for single course flow
+        function populateCourseSelect() {
+            if (!courseSelect) return;
+            courseSelect.innerHTML = '<option value="">-- Select a course --</option>';
+            const filterVal = courseFilter ? courseFilter.value : 'all';
+            const filtered = (filterVal === 'all') ? courses : courses.filter(c => (c.status||'').toLowerCase() === filterVal.toLowerCase());
+            filtered.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.progressID;
+                opt.textContent = `${c.courseName} (${c.status || ''})`;
+                opt.dataset.courseData = JSON.stringify(c);
+                courseSelect.appendChild(opt);
+            });
+        }
+
+        // restore original single-course area (inner HTML already present in DOM)
+        function showSingleCourseView() {
+            multiCourseInner.style.display = 'none';
+            singleCourseInner.style.display = 'block';
+            gradeForm.classList.add('active');
+        }
+
+        // build mini grade select for each course
+        function buildGradeSelect(currentGrade) {
+            const grades = ["A+","A","A-","B+","B","B-","C","F","NT",""];
+            const sel = document.createElement('select');
+            sel.className = 'form-select mini-grade-select';
+            grades.forEach(g => {
+                const o = document.createElement('option');
+                o.value = g;
+                o.textContent = (g === '') ? 'None' : g;
+                if (String(currentGrade || '') === String(g)) o.selected = true;
+                sel.appendChild(o);
+            });
+            return sel;
+        }
+
+        // open multi-course view inside grade-form container
+        function openAllInGradeForm() {
+            if (!gradeForm || !multiCourseInner || !singleCourseInner) return;
+            // hide single view and show multi view
+            singleCourseInner.style.display = 'none';
+            multiCourseInner.innerHTML = ''; // clear previous
+            multiCourseInner.style.display = 'block';
+            gradeForm.classList.add('active');
+
+            if (!courses || courses.length === 0) {
+                multiCourseInner.innerHTML = '<div style="padding:12px;color:#666">No courses available.</div>';
+                return;
+            }
+
+            const header = document.createElement('div');
+            header.style.display = 'flex';
+            header.style.justifyContent = 'space-between';
+            header.style.alignItems = 'center';
+            header.style.marginBottom = '12px';
+            header.innerHTML = `<h3 style="margin:0;color:#1e3a8a">Bulk Grade Editor</h3>`;
+            multiCourseInner.appendChild(header);
+
+            // list
+            courses.forEach(course => {
+                const card = document.createElement('div');
+                card.style.border = '1px solid #e6eefb';
+                card.style.padding = '12px';
+                card.style.borderRadius = '8px';
+                card.style.marginBottom = '12px';
+                card.style.display = 'flex';
+                card.style.justifyContent = 'space-between';
+                card.style.alignItems = 'center';
+                card.style.gap = '12px';
+                card.style.flexWrap = 'wrap';
+
+                const info = document.createElement('div');
+                info.style.flex = '1 1 60%';
+                info.innerHTML = `<div style="font-weight:700;color:#1e3a8a">${escapeHtml(course.courseName)} (${escapeHtml(course.courseID)})</div>
+                                  <div style="color:#64748b;font-size:0.9rem">Semester ${course.semester} • ${course.creditHour} Credit(s)</div>`;
+
+                const controls = document.createElement('div');
+                controls.style.display = 'flex';
+                controls.style.gap = '8px';
+                controls.style.alignItems = 'center';
+                controls.style.flex = '0 0 auto';
+
+                const sel = buildGradeSelect(course.grade);
+                sel.style.minWidth = '120px';
+
+                const btnUpdate = document.createElement('button');
+                btnUpdate.className = 'btn btn-success';
+                btnUpdate.textContent = 'Update';
+                btnUpdate.addEventListener('click', async () => {
+                    btnUpdate.disabled = true;
+                    btnUpdate.textContent = 'Saving...';
+                    try {
+                        const form = new URLSearchParams();
+                        form.append('progressID', course.progressID);
+                        form.append('grade', sel.value || '');
+                        const res = await fetch(ctx + '/api/student/grade', {
+                            method: 'POST',
+                            body: form,
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                        });
+                        const json = await res.json();
+                        if (res.ok && json.success) {
+                            course.grade = sel.value || null;
+                            course.status = (sel.value && sel.value !== '') ? 'Completed' : 'Ongoing';
+                            showStatus(`Updated ${course.courseName}`, 'success');
+                            // refresh select list
+                            populateCourseSelect();
+                        } else {
+                            showStatus(json.error || 'Update failed', 'error');
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        showStatus('Error updating grade', 'error');
+                    } finally {
+                        btnUpdate.disabled = false;
+                        btnUpdate.textContent = 'Update';
                     }
-                } catch (e) {
-                    console.warn('Error fetching student data', e);
-                }
-            }
-
-            async function fetchCourses() {
-                await fetchStudent();
-                try {
-                    const res = await fetch(ctx + '/api/student/courses', { cache: 'no-store' });
-                    if (!res.ok) throw new Error('Failed to load courses: ' + res.status);
-                    const json = await res.json();
-                    courses = json.courses || [];
-                    populateCourseSelect();
-                } catch (err) {
-                    console.error(err);
-                    showStatusMessage('Unable to load courses', 'error');
-                }
-            }
-
-            function normalizeStatus(s) {
-                if (!s && s !== '') return '';
-                return String(s).toLowerCase();
-            }
-
-            function populateCourseSelect() {
-                courseSelect.innerHTML = '<option value="">-- Select a course --</option>';
-                const filter = courseFilter.value;
-                const filtered = (filter === 'all') ? courses : courses.filter(c => normalizeStatus(c.status) === normalizeStatus(filter));
-                filtered.forEach(c => {
-                    const opt = document.createElement('option');
-                    opt.value = c.progressID;
-                    opt.textContent = `${c.courseName} (${c.status ? c.status : ''})`;
-                    opt.dataset.courseData = JSON.stringify(c);
-                    courseSelect.appendChild(opt);
                 });
-                if (filtered.length === 1) {
-                    courseSelect.value = filtered[0].progressID;
-                }
-            }
 
-            function loadSelectedCourse() {
-                const sel = courseSelect.options[courseSelect.selectedIndex];
-                if (!sel || !sel.dataset.courseData) {
-                    showStatusMessage('Please select a course first.', 'error');
-                    return;
-                }
-                selectedCourse = JSON.parse(sel.dataset.courseData);
-                loadCourseData(selectedCourse);
-                showForm();
-                showStatusMessage(`Loaded ${selectedCourse.courseName}`, 'success');
-            }
-
-            function loadCourseData(course) {
-                courseCodeEl.textContent = course.courseID || '';
-                courseNameEl.textContent = course.courseName || '';
-                courseCreditsEl.textContent = course.creditHour || '';
-                courseSemesterEl.textContent = `Semester ${course.semester || ''}`;
-                courseProgramEl.textContent = course.program || '';
-                courseStatusEl.textContent = course.status ? (course.status.charAt(0).toUpperCase() + course.status.slice(1)) : '';
-
-                if (course.grade) {
-                    currentGradeDisplay.textContent = course.grade;
-                    currentGradeDisplay.className = 'current-grade-value';
-                    gradeOptions.forEach(opt => opt.classList.remove('selected'));
-                    const match = Array.from(gradeOptions).find(o => o.dataset.grade === course.grade);
-                    if (match) {
-                        match.classList.add('selected');
-                        selectedGrade = course.grade;
-                        gradeDescription.textContent = match.dataset.description || '';
-                        gradeDescription.classList.add('show');
-                    } else {
-                        selectedGrade = course.grade;
-                        gradeDescription.textContent = '';
-                        gradeDescription.classList.remove('show');
+                const btnEdit = document.createElement('button');
+                btnEdit.className = 'btn btn-outline';
+                btnEdit.textContent = 'Edit in Form';
+                btnEdit.addEventListener('click', () => {
+                    // set single select to this course and load it
+                    if (courseSelect) {
+                        let found = false;
+                        for (let i=0;i<courseSelect.options.length;i++){
+                            const opt = courseSelect.options[i];
+                            if (opt.value == course.progressID) { courseSelect.selectedIndex = i; found = true; break; }
+                        }
+                        if (!found) {
+                            const opt = document.createElement('option');
+                            opt.value = course.progressID;
+                            opt.textContent = `${course.courseName} (${course.status || ''})`;
+                            opt.dataset.courseData = JSON.stringify(course);
+                            courseSelect.appendChild(opt);
+                            courseSelect.value = course.progressID;
+                        }
                     }
+                    // simulate load button click for single form usage
+                    loadCourseBtn?.click();
+                });
+
+                controls.appendChild(sel);
+                controls.appendChild(btnUpdate);
+                controls.appendChild(btnEdit);
+
+                card.appendChild(info);
+                card.appendChild(controls);
+                multiCourseInner.appendChild(card);
+            });
+        }
+
+        // single-course load handler
+        if (loadCourseBtn) {
+            loadCourseBtn.addEventListener('click', function() {
+                const sel = courseSelect.options[courseSelect.selectedIndex];
+                if (!sel || !sel.dataset.courseData) { showStatus('Please select a course first.', 'error'); return; }
+                selectedCourse = JSON.parse(sel.dataset.courseData);
+                // Populate single-course UI elements
+                if (courseCodeEl) courseCodeEl.textContent = selectedCourse.courseID || '';
+                if (courseNameEl) courseNameEl.textContent = selectedCourse.courseName || '';
+                if (courseCreditsEl) courseCreditsEl.textContent = selectedCourse.creditHour || '';
+                if (courseSemesterEl) courseSemesterEl.textContent = `Semester ${selectedCourse.semester || ''}`;
+                if (courseProgramEl) courseProgramEl.textContent = selectedCourse.program || '';
+                if (courseStatusEl) courseStatusEl.textContent = selectedCourse.status ? (selectedCourse.status.charAt(0).toUpperCase()+selectedCourse.status.slice(1)) : '';
+                if (currentGradeDisplay) currentGradeDisplay.textContent = selectedCourse.grade || 'No grade';
+
+                // reset grade option visuals
+                const gradeOpts = gradeOptionsContainer ? gradeOptionsContainer.querySelectorAll('.grade-option') : [];
+                gradeOpts.forEach(opt => opt.classList.remove('selected'));
+                if (selectedCourse.grade && gradeOptionsContainer) {
+                    const match = gradeOptionsContainer.querySelector(`.grade-option[data-grade="${selectedCourse.grade}"]`);
+                    if (match) match.classList.add('selected');
+                    selectedGrade = selectedCourse.grade;
+                    gradeDescription.textContent = (match && match.dataset.description) ? match.dataset.description : '';
+                    gradeDescription.classList.toggle('show', !!match);
                 } else {
-                    currentGradeDisplay.textContent = 'No grade';
-                    currentGradeDisplay.className = 'current-grade-value no-grade';
-                    gradeOptions.forEach(opt => opt.classList.remove('selected'));
                     selectedGrade = "";
                     gradeDescription.textContent = 'Select a grade to see its description';
                     gradeDescription.classList.remove('show');
                 }
-            }
 
-            function showForm() { gradeForm.classList.add('active'); }
-            function hideForm() { gradeForm.classList.remove('active'); }
-
-            gradeOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    selectedGrade = this.dataset.grade;
-                    gradeOptions.forEach(opt => opt.classList.remove('selected'));
-                    this.classList.add('selected');
-                    gradeDescription.textContent = this.dataset.description || '';
-                    gradeDescription.classList.add('show');
-                });
+                // show single-course view
+                showSingleCourseView();
+                showStatus(`Loaded ${selectedCourse.courseName}`, 'success');
             });
+        }
 
-            updateGradeBtn.addEventListener('click', async function() {
-                if (!selectedCourse) {
-                    showStatusMessage('No course loaded', 'error');
-                    return;
-                }
-                // compare normalized status
-                if (normalizeStatus(selectedCourse.status) === 'completed' && (!selectedGrade || selectedGrade === "")) {
-                    showStatusMessage('Please select a grade for completed courses.', 'warning');
-                    return;
-                }
-
-                try {
-                    const form = new URLSearchParams();
-                    form.append('progressID', selectedCourse.progressID);
-                    form.append('grade', selectedGrade || '');
-
-                    const res = await fetch(ctx + '/api/student/grade', {
-                        method: 'POST',
-                        body: form,
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-                    });
-                    const json = await res.json();
-                    if (res.ok && json.success) {
-                        showStatusMessage('Grade updated successfully', 'success');
-                        const idx = courses.findIndex(c => c.progressID == selectedCourse.progressID);
-                        if (idx !== -1) {
-                            courses[idx].grade = selectedGrade || null;
-                            courses[idx].status = (selectedGrade && selectedGrade !== '') ? 'completed' : 'ongoing';
-                            selectedCourse = courses[idx];
-                            loadCourseData(selectedCourse);
-                            const option = courseSelect.options[courseSelect.selectedIndex];
-                            if (option) option.dataset.courseData = JSON.stringify(selectedCourse);
-                        }
-                    } else {
-                        showStatusMessage(json.error || 'Update failed', 'error');
-                    }
-                } catch (err) {
-                    console.error(err);
-                    showStatusMessage('Error updating grade', 'error');
-                }
-            });
-
-            cancelBtn.addEventListener('click', function() { resetForm(); hideForm(); });
-            function resetForm() {
-                selectedGrade = "";
-                gradeOptions.forEach(opt => opt.classList.remove('selected'));
-                gradeDescription.textContent = 'Select a grade to see its description';
-                gradeDescription.classList.remove('show');
-            }
-
-            function showStatusMessage(msg, type='info') {
-                statusText.textContent = msg;
-                statusMessage.className = 'status-message';
-                statusMessage.classList.add('show');
-                if (type === 'success') statusMessage.classList.add('success');
-                else if (type === 'error') statusMessage.classList.add('error');
-                else if (type === 'warning') statusMessage.classList.add('warning');
-                else statusMessage.classList.add('info');
-                if (type !== 'error') setTimeout(() => hideStatusMessage(), 4000);
-            }
-            function hideStatusMessage() { statusMessage.classList.remove('show'); }
-
-            courseFilter.addEventListener('change', function() { populateCourseSelect(); });
-            loadCourseBtn.addEventListener('click', loadSelectedCourse);
-
-            fetchCourses();
+        // wire grade-option click for single-course (use event delegation)
+        gradeOptionsContainer && gradeOptionsContainer.addEventListener('click', function(e) {
+            const opt = e.target.closest('.grade-option');
+            if (!opt) return;
+            // toggle selected class
+            const opts = gradeOptionsContainer.querySelectorAll('.grade-option');
+            opts.forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+            selectedGrade = opt.dataset.grade || '';
+            gradeDescription.textContent = opt.dataset.description || '';
+            gradeDescription.classList.add('show');
         });
-        
-        (function() {
-            // Determine webapp context path (like earlier scripts)
-            function getContextPath() {
-              const p = window.location.pathname.split('/').filter(Boolean);
-              return p.length ? '/' + p[0] : '';
-            }
-            const ctx = getContextPath();
 
-            const dropdown = document.getElementById('profileDropdown');
-            const profileBtn = document.getElementById('profileBtn');
-            const dropdownMenu = document.getElementById('dropdownMenu');
-            const logoutBtn = document.getElementById('logoutBtn');
-            const profileNameEl = document.getElementById('profileName');
-            const profilePicEl = document.getElementById('profilePic');
-            const profileRoleEl = document.getElementById('profileRole');
-
-            // Ensure backdrop exists (create if needed)
-            let backdrop = document.getElementById('dropdownBackdrop');
-            if (!backdrop) {
-              backdrop = document.createElement('div');
-              backdrop.id = 'dropdownBackdrop';
-              backdrop.className = 'dropdown-backdrop';
-              document.body.appendChild(backdrop);
-            }
-
-            function openMenu() {
-              dropdownMenu.classList.add('show');
-              profileBtn.classList.add('active');
-              backdrop.classList.add('active');
-              dropdown.classList.add('active');
-            }
-            function closeMenu() {
-              dropdownMenu.classList.remove('show');
-              profileBtn.classList.remove('active');
-              backdrop.classList.remove('active');
-              dropdown.classList.remove('active');
-            }
-            function toggleMenu() {
-              if (dropdownMenu.classList.contains('show')) closeMenu(); else openMenu();
-            }
-
-            // Toggle when clicking profile button
-            if (profileBtn) {
-              profileBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                toggleMenu();
-              });
-            }
-
-            // Close when clicking outside or on backdrop
-            backdrop.addEventListener('click', function() {
-              closeMenu();
-            });
-            document.addEventListener('click', function(e) {
-              if (!dropdown.contains(e.target)) {
-                closeMenu();
-              }
-            });
-
-            // Close on Escape
-            document.addEventListener('keydown', function(e) {
-              if (e.key === 'Escape') closeMenu();
-            });
-
-            // Logout handler - calls existing logout path
-            if (logoutBtn) {
-              logoutBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                // Confirm optionally
-                if (!confirm('Are you sure you want to log out?')) return;
-                // Use context path so it works under /Academic-Advising or root
-                const url = ctx + '/logout';
-                // Use location.href to trigger servlet and redirect
-                window.location.href = url;
-              });
-            }
-
-            // Fill profile name and initials by calling /api/student/me if role is student
-            async function loadProfile() {
-              try {
-                const res = await fetch(ctx + '/api/student/me', { cache: 'no-store' });
-                if (!res.ok) {
-                  // not logged in or not student; leave static values
-                  return;
-                }
+        // single-course update button
+        updateGradeBtn && updateGradeBtn.addEventListener('click', async function() {
+            if (!selectedCourse) { showStatus('No course loaded', 'error'); return; }
+            try {
+                const form = new URLSearchParams();
+                form.append('progressID', selectedCourse.progressID);
+                form.append('grade', selectedGrade || '');
+                const res = await fetch(ctx + '/api/student/grade', {
+                    method: 'POST',
+                    body: form,
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                });
                 const json = await res.json();
-                const name = json.name || json.firstName || profileNameEl.textContent;
-                profileNameEl.textContent = name;
-                profileRoleEl.textContent = 'Student';
-
-                // create initials for avatar
-                let initials = '';
-                if (json.firstName || json.lastName) {
-                  const f = (json.firstName || '').trim();
-                  const l = (json.lastName || '').trim();
-                  initials = (f ? f.charAt(0) : '') + (l ? l.charAt(0) : '');
-                } else if (name) {
-                  const parts = name.trim().split(/\s+/);
-                  initials = parts[0].charAt(0) + (parts.length > 1 ? parts[parts.length-1].charAt(0) : '');
+                if (res.ok && json.success) {
+                    // update local data
+                    const idx = courses.findIndex(c => c.progressID == selectedCourse.progressID);
+                    if (idx !== -1) {
+                        courses[idx].grade = selectedGrade || null;
+                        courses[idx].status = (selectedGrade && selectedGrade !== '') ? 'Completed' : 'Ongoing';
+                        // update displayed grade
+                        currentGradeDisplay.textContent = courses[idx].grade || 'No grade';
+                    }
+                    showStatus('Grade updated successfully', 'success');
+                } else {
+                    showStatus(json.error || 'Update failed', 'error');
                 }
-                initials = initials.toUpperCase() || 'ME';
-                if (profilePicEl) profilePicEl.textContent = initials;
-              } catch (err) {
-                // ignore, show default
-                console.warn('Could not load profile info', err);
-              }
+            } catch (err) {
+                console.error(err);
+                showStatus('Error updating grade', 'error');
             }
+        });
 
-            // Call once
-            loadProfile();
-          })();
+        // cancel single form
+        cancelBtn && cancelBtn.addEventListener('click', function() {
+            // hide form container
+            gradeForm.classList.remove('active');
+            // reset single content visuals
+            const opts = gradeOptionsContainer ? gradeOptionsContainer.querySelectorAll('.grade-option') : [];
+            opts && opts.forEach(o => o.classList.remove('selected'));
+            selectedGrade = "";
+        });
+
+        // wire viewAllCoursesBtn to show multi-course inside gradeForm
+        if (viewAllCoursesBtn) {
+            viewAllCoursesBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                openAllInGradeForm();
+            });
+        } else {
+            console.warn('viewAllCoursesBtn not found');
+        }
+
+        // filter select changes should update the single select list
+        courseFilter && courseFilter.addEventListener('change', populateCourseSelect);
+
+        // initial load
+        fetchCourses();
+        loadProfile();
+    });
     </script>
 </body>
 </html>

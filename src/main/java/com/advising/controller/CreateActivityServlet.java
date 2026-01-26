@@ -35,6 +35,8 @@ public class CreateActivityServlet extends HttpServlet {
         String location = request.getParameter("location");
         String capacityStr = request.getParameter("capacity");
         String category = request.getParameter("category");
+        String pointsStr = request.getParameter("points");
+        String host = request.getParameter("host");
 
         if (title == null || title.trim().isEmpty() || dateTimeRaw == null || dateTimeRaw.trim().isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -42,7 +44,6 @@ public class CreateActivityServlet extends HttpServlet {
             return;
         }
 
-        // normalize datetime
         String normalized = dateTimeRaw.replace('T', ' ');
         if (normalized.length() == 16) normalized = normalized + ":00";
         Timestamp ts;
@@ -57,8 +58,13 @@ public class CreateActivityServlet extends HttpServlet {
             try { capacity = Integer.parseInt(capacityStr); } catch (NumberFormatException ex) { capacity = null; }
         }
 
+        Integer points = null;
+        if (pointsStr != null && !pointsStr.trim().isEmpty()) {
+            try { points = Integer.parseInt(pointsStr); } catch (NumberFormatException ex) { points = null; }
+        }
+
         try (Connection conn = DBConnection.getConnection()) {
-            String sql = "INSERT INTO activity (title, description, dateTime, location, capacity, category, studentID) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO activity (title, description, dateTime, location, capacity, category, host, points, studentID, status, points_awarded) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setString(1, title);
                 ps.setString(2, description);
@@ -66,7 +72,11 @@ public class CreateActivityServlet extends HttpServlet {
                 ps.setString(4, location);
                 if (capacity == null) ps.setNull(5, Types.INTEGER); else ps.setInt(5, capacity);
                 ps.setString(6, category);
-                ps.setString(7, studentID);
+                ps.setString(7, host);
+                if (points == null) ps.setNull(8, Types.INTEGER); else ps.setInt(8, points);
+                ps.setString(9, studentID);
+                ps.setString(10, "upcoming");
+                ps.setBoolean(11, false);
                 int inserted = ps.executeUpdate();
                 if (inserted > 0) {
                     try (ResultSet keys = ps.getGeneratedKeys()) {
@@ -78,11 +88,9 @@ public class CreateActivityServlet extends HttpServlet {
                         response.getWriter().write(out.toString());
                         return;
                     }
-                } else {
-                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                    response.getWriter().write("{\"error\":\"Insert failed\"}");
-                    return;
                 }
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.getWriter().write("{\"error\":\"Insert failed\"}");
             }
         } catch (SQLException e) {
             e.printStackTrace();

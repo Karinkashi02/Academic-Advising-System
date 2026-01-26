@@ -76,7 +76,7 @@ public class UpdateGradeServlet extends HttpServlet {
             }
 
             // Update grade and maybe status
-            String newStatus = (grade != null && !grade.trim().isEmpty()) ? "completed" : "ongoing";
+            String newStatus = (grade != null && !grade.trim().isEmpty()) ? "Completed" : "Ongoing";
             String updateSql = "UPDATE student_progress SET grade = ?, status = ? WHERE progressID = ?";
             try (PreparedStatement upPs = conn.prepareStatement(updateSql)) {
                 if (grade == null || grade.trim().isEmpty()) {

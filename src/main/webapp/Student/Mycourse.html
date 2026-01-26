@@ -528,11 +528,6 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
         }
 
         .course-body {
@@ -623,56 +618,6 @@
             box-shadow: 0 6px 15px rgba(59, 130, 246, 0.6);
         }
 
-        /* Semester Tabs */
-        .semester-tabs {
-            background: var(--card-white);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            margin-bottom: 30px;
-        }
-
-        .tabs-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .tabs-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-blue);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .tabs-nav {
-            display: flex;
-            gap: 10px;
-            background: #f1f5f9;
-            padding: 5px;
-            border-radius: 10px;
-        }
-
-        .tab-btn {
-            padding: 10px 25px;
-            border: none;
-            background: transparent;
-            color: var(--dark-text);
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .tab-btn.active {
-            background: white;
-            color: var(--primary-blue);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
         /* Detailed Table View */
         .detailed-view {
             background: var(--card-white);
@@ -742,11 +687,6 @@
         .status-ongoing {
             background: linear-gradient(135deg, #dbeafe, #bfdbfe);
             color: #1e40af;
-        }
-
-        .status-upcoming {
-            background: linear-gradient(135deg, #fef3c7, #fde68a);
-            color: #92400e;
         }
 
         /* Footer */
@@ -874,7 +814,7 @@
             .stats-cards {
                 grid-template-columns: repeat(2, 1fr);
             }
-            
+
             .course-grid {
                 grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             }
@@ -886,21 +826,21 @@
                 align-items: stretch;
                 gap: 20px;
             }
-            
+
             .filters-bar {
                 flex-direction: column;
                 gap: 15px;
             }
-            
+
             .filter-group {
                 flex-wrap: wrap;
                 justify-content: center;
             }
-            
+
             .search-box {
                 width: 100%;
             }
-            
+
             .search-box input {
                 width: 100%;
             }
@@ -910,41 +850,41 @@
             .sidebar {
                 width: 80px;
             }
-            
+
             .logo-container h2, .logo-container p {
                 display: none;
             }
-            
+
             .nav-links a span {
                 display: none;
             }
-            
+
             .nav-links i {
                 margin-right: 0;
                 font-size: 1.4rem;
             }
-            
+
             .main-content {
                 margin-left: 80px;
                 padding: 15px;
             }
-            
+
             .stats-cards {
                 grid-template-columns: 1fr;
             }
-            
+
             .course-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .profile-btn {
                 padding: 8px 12px;
             }
-            
+
             .profile-info {
                 display: none;
             }
-            
+
             .modal-content {
                 width: 95%;
                 margin: 10px;
@@ -955,17 +895,17 @@
             .page-title {
                 font-size: 1.5rem;
             }
-            
+
             .tabs-nav {
                 flex-wrap: wrap;
                 justify-content: center;
             }
-            
+
             .tab-btn {
                 padding: 8px 15px;
                 font-size: 0.9rem;
             }
-            
+
             .modal-info-grid {
                 grid-template-columns: 1fr;
             }
@@ -1000,7 +940,7 @@
                 <i class="fas fa-book-open"></i>
                 <span>My Courses</span>
             </div>
-            
+
             <div class="profile-area">
                 <div class="profile-dropdown" id="profileDropdown">
                     <div class="profile-btn" id="profileBtn">
@@ -1013,12 +953,45 @@
                     </div>
 
                     <div class="dropdown-menu" id="dropdownMenu">
+                      <div class="dropdown-header" id="profileMenuHeader" style="padding:12px 20px; background:#f8fafc; border-bottom:1px solid #e5e7eb; font-weight:600; color:var(--primary-blue);"></div>
                       <a href="Profile.html" class="dropdown-item"><i class="fas fa-user-circle"></i> My Profile</a>
                       <a href="#" class="dropdown-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
                     </div>
-                  </div>
+                </div>
             </div>
         </header>
+
+        <!-- Statistics Cards: these values are updated by JS -->
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-icon grade"><i class="fas fa-award"></i></div>
+                <div class="stat-content">
+                    <h3 id="statCgpa">-</h3>
+                    <p>Current CGPA</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon credits"><i class="fas fa-graduation-cap"></i></div>
+                <div class="stat-content">
+                    <h3 id="statCredits">0</h3>
+                    <p>Credits Completed</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon gpa"><i class="fas fa-chart-line"></i></div>
+                <div class="stat-content">
+                    <h3 id="statLastGpa">-</h3>
+                    <p>Last Semester GPA</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon status"><i class="fas fa-check-circle"></i></div>
+                <div class="stat-content">
+                    <h3 id="statStanding">-</h3>
+                    <p>Academic Standing</p>
+                </div>
+            </div>
+        </div>
 
         <!-- Filters and Actions Bar -->
         <div class="filters-bar">
@@ -1034,7 +1007,6 @@
                     <option value="all">All Status</option>
                     <option value="completed">Completed</option>
                     <option value="ongoing">Ongoing</option>
-                    <option value="upcoming">Upcoming</option>
                 </select>
                 <select class="filter-select" id="sortFilter">
                     <option value="name">Sort by Name</option>
@@ -1049,65 +1021,8 @@
             </div>
         </div>
 
-        <!-- Statistics Cards -->
-        <div class="stats-cards">
-            <div class="stat-card">
-                <div class="stat-icon grade">
-                    <i class="fas fa-award"></i>
-                </div>
-                <div class="stat-content">
-                    <h3>3.68</h3>
-                    <p>Current CGPA</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon credits">
-                    <i class="fas fa-graduation-cap"></i>
-                </div>
-                <div class="stat-content">
-                    <h3>52</h3>
-                    <p>Credits Completed</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon gpa">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="stat-content">
-                    <h3>3.75</h3>
-                    <p>Last Semester GPA</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon status">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="stat-content">
-                    <h3>Good</h3>
-                    <p>Academic Standing</p>
-                </div>
-            </div>
-        </div>
+        <div class="course-grid" id="courseGrid"></div>
 
-        <!-- Semester Tabs -->
-        <div class="semester-tabs">
-            <div class="tabs-header">
-                <h3 class="tabs-title"><i class="fas fa-calendar"></i> Semester View</h3>
-                <div class="tabs-nav">
-                    <button class="tab-btn active" data-filter="all">All Courses</button>
-                    <button class="tab-btn" data-filter="current">Current Semester</button>
-                    <button class="tab-btn" data-filter="completed">Completed</button>
-                    <button class="tab-btn" data-filter="upcoming">Upcoming</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Course Cards Grid -->
-        <div class="course-grid" id="courseGrid">
-            <!-- Course Cards will be generated by JavaScript -->
-        </div>
-
-        <!-- Detailed Table View -->
         <div class="detailed-view">
             <h3 class="view-title"><i class="fas fa-table"></i> All Courses Overview</h3>
             <table id="coursesTable">
@@ -1122,9 +1037,7 @@
                         <th>Status</th>
                     </tr>
                 </thead>
-                <tbody id="coursesTableBody">
-                    <!-- Table rows will be generated by JavaScript -->
-                </tbody>
+                <tbody id="coursesTableBody"></tbody>
             </table>
         </div>
 
@@ -1136,308 +1049,325 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const ctx = (function() {
-                const p = window.location.pathname.split('/').filter(Boolean);
-                return p.length ? '/' + p[0] : '';
-            })();
+    document.addEventListener('DOMContentLoaded', function() {
+        // Determine context path
+        function getContextPath() {
+            const p = window.location.pathname.split('/').filter(Boolean);
+            return p.length ? '/' + p[0] : '';
+        }
+        const ctx = getContextPath();
 
-            const courseGrid = document.getElementById('courseGrid');
-            const coursesTableBody = document.getElementById('coursesTableBody');
-            const semesterFilter = document.getElementById('semesterFilter');
-            const statusFilter = document.getElementById('statusFilter');
-            const sortFilter = document.getElementById('sortFilter');
-            const courseSearch = document.getElementById('courseSearch');
-            const tabButtons = document.querySelectorAll('.tab-btn');
+        // Helpers
+        const q = id => document.getElementById(id);
+        function escapeHtml(t){ if (!t) return ''; return String(t).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
-            let courses = [];
-            let studentSemester = 2; // fallback
-            let currentFilter = {
-                semester: 'all',
-                status: 'all',
-                search: '',
-                tab: 'all',
-                sort: 'name'
-            };
+        // Elements
+        const statCgpaEl = q('statCgpa');
+        const statCreditsEl = q('statCredits');
+        const statLastGpaEl = q('statLastGpa');
+        const statStandingEl = q('statStanding');
 
-            async function fetchStudent() {
-                try {
-                    const res = await fetch(ctx + '/api/student/me', { cache: 'no-store' });
-                    if (res.ok) {
-                        const js = await res.json();
-                        if (js.semester) studentSemester = parseInt(js.semester) || studentSemester;
-                    } else {
-                        console.warn('student/me status', res.status);
+        const courseGrid = q('courseGrid');
+        const coursesTableBody = q('coursesTableBody');
+        const semesterFilter = q('semesterFilter');
+        const statusFilter = q('statusFilter');
+        const sortFilter = q('sortFilter');
+        const courseSearch = q('courseSearch');
+
+        const profileBtn = q('profileBtn');
+        const profileMenu = q('dropdownMenu');
+        const profileNameEl = q('profileName');
+        const profilePicEl = q('profilePic');
+        const profileMenuHeader = q('profileMenuHeader');
+        const logoutBtn = q('logoutBtn');
+
+        // state
+        let courses = [];
+        let student = {}; // from /api/student/me
+
+        // grade -> point mapping (same as server)
+        function gradeToPoint(g) {
+            if (!g) return null;
+            const grade = String(g).trim().toUpperCase();
+            switch(grade){
+                case 'A+': return 4.0;
+                case 'A': return 4.0;
+                case 'A-': return 3.7;
+                case 'B+': return 3.3;
+                case 'B': return 3.0;
+                case 'B-': return 2.7;
+                case 'C': return 2.0;
+                case 'D': return 1.0;
+                case 'F': return 0.0;
+                default: return null;
+            }
+        }
+
+        async function apiGet(path) {
+            const res = await fetch(ctx + path, { cache: 'no-store' });
+            if (!res.ok) throw new Error('GET ' + path + ' ' + res.status);
+            return res.json();
+        }
+
+        // load profile from server and update dropdown/avatars
+        async function loadProfile() {
+            try {
+                const res = await fetch(ctx + '/api/student/me', { cache: 'no-store' });
+                if (!res.ok) return;
+                const json = await res.json();
+                student = json || student || {};
+                const name = student.name || (student.firstName ? (student.firstName + (student.lastName ? ' ' + student.lastName : '')) : (profileNameEl ? profileNameEl.textContent : ''));
+                if (profileNameEl) profileNameEl.textContent = name;
+                if (profileMenuHeader) profileMenuHeader.textContent = name;
+                if (profilePicEl) {
+                    let initials = 'ME';
+                    if (student.firstName || student.lastName) initials = ((student.firstName||'').charAt(0) + (student.lastName||'').charAt(0)).toUpperCase();
+                    else if (name) {
+                        const parts = String(name).trim().split(/\s+/);
+                        initials = (parts[0].charAt(0) + (parts.length>1 ? parts[parts.length-1].charAt(0) : '')).toUpperCase();
                     }
+                    profilePicEl.textContent = initials || 'ME';
+                }
+            } catch (e) {
+                console.warn('Could not load profile', e);
+            }
+        }
+
+        // fetch profile and courses and update UI
+        async function loadAll() {
+            try {
+                // fetch student profile (so stats can prefer server values)
+                await loadProfile();
+
+                // fetch courses
+                try {
+                    const cjson = await apiGet('/api/student/courses');
+                    courses = cjson.courses || [];
                 } catch (e) {
-                    console.warn('fetch student failed', e);
+                    console.warn('student/courses fetch failed', e);
+                    courses = [];
                 }
+
+                // Update stats
+                updateStats();
+
+                // Render UI lists
+                renderCourseCards(courses);
+                renderTable(courses);
+            } catch (err) {
+                console.error('loadAll', err);
             }
+        }
 
-            async function fetchCourses() {
-                await fetchStudent();
-                try {
-                    const res = await fetch(ctx + '/api/student/courses', { cache: 'no-store' });
-                    if (!res.ok) throw new Error('Failed to load courses');
-                    const json = await res.json();
-                    courses = json.courses || [];
-                    filterCourses();
-                } catch (err) {
-                    console.error(err);
-                    courseGrid.innerHTML = '<div style="padding:30px;color:#666">Unable to load courses.</div>';
-                    coursesTableBody.innerHTML = '';
+        // compute CGPA if server doesn't provide it (or provided value is zero/unset)
+        function computeCgpaFromCourses(list) {
+            let totalWeighted = 0;
+            let totalCredits = 0;
+            list.forEach(c => {
+                const g = c.grade;
+                const credit = Number(c.creditHour || 0);
+                const gp = gradeToPoint(g);
+                if (gp !== null && !isNaN(credit) && credit > 0) {
+                    totalWeighted += gp * credit;
+                    totalCredits += credit;
                 }
+            });
+            if (totalCredits === 0) return null;
+            return Math.round((totalWeighted / totalCredits) * 100) / 100;
+        }
+
+        // compute credits completed from courses list: only count credits for courses that are actually completed
+        function computeCreditsCompleted(list) {
+            let sum = 0;
+            list.forEach(c => {
+                const st = (c.status || '').toLowerCase();
+                const grade = (c.grade || '').toUpperCase();
+                // Count credit if status is completed OR grade maps to a valid grade point
+                if (st === 'completed' || gradeToPoint(grade) !== null) {
+                    sum += Number(c.creditHour || 0);
+                }
+            });
+            return sum;
+        }
+
+        // compute last semester GPA
+        function computeLastSemesterGpa(list, studentSemesterVal) {
+            if (!Array.isArray(list) || list.length === 0) return null;
+            let currentSem = Number(studentSemesterVal || 0);
+            if (!currentSem || isNaN(currentSem)) {
+                const sems = list.map(c => Number(c.semester || 0)).filter(n => n > 0);
+                if (sems.length === 0) return null;
+                const maxSem = Math.max(...sems);
+                currentSem = maxSem;
             }
+            const lastSem = Math.max(1, currentSem - 1);
+            let candidates = list.filter(c => Number(c.semester || 0) === lastSem);
+            if (candidates.length === 0 && currentSem > 0) candidates = list.filter(c => Number(c.semester || 0) === currentSem);
+            if (candidates.length === 0) return null;
+            let totalWeighted = 0; let totalCredits = 0;
+            candidates.forEach(c => {
+                const gp = gradeToPoint(c.grade);
+                const credit = Number(c.creditHour || 0);
+                if (gp !== null && !isNaN(credit) && credit > 0) {
+                    totalWeighted += gp * credit;
+                    totalCredits += credit;
+                }
+            });
+            if (totalCredits === 0) return null;
+            return Math.round((totalWeighted / totalCredits) * 100) / 100;
+        }
 
-            function normalizeStatus(s) {
-                if (s === null || s === undefined) return '';
-                return String(s).toLowerCase();
+        // determine academic standing
+        function deriveAcademicStanding(cgpaVal, studentRemark) {
+            if (studentRemark && String(studentRemark).trim() !== '') return String(studentRemark);
+            const g = Number(cgpaVal);
+            if (!g || isNaN(g)) return 'Not Available';
+            if (g >= 3.75) return 'Excellent';
+            if (g >= 3.5) return 'Very Good';
+            if (g >= 3.0) return 'Good';
+            if (g >= 2.0) return 'Satisfactory';
+            return 'Probation';
+        }
+
+        // update the stat cards in DOM
+        function updateStats() {
+            // CGPA: prefer server-provided student.cgpa (non-zero), fallback to computed
+            let cgpa = (student && (typeof student.cgpa !== 'undefined' && student.cgpa !== null)) ? Number(student.cgpa) : null;
+            if ((cgpa === null || isNaN(cgpa) || cgpa === 0) && courses.length > 0) {
+                const comp = computeCgpaFromCourses(courses);
+                if (comp !== null) cgpa = comp;
             }
+            statCgpaEl.textContent = (cgpa === null || isNaN(cgpa) || cgpa === 0) ? '-' : cgpa.toFixed(2);
 
-            function sortCourses(list) {
-                const sorted = [...list];
-                switch (currentFilter.sort) {
-                    case 'name': sorted.sort((a,b)=> (a.courseName||'').localeCompare(b.courseName||'')); break;
-                    case 'code': sorted.sort((a,b)=> (a.courseID||'').localeCompare(b.courseID||'')); break;
-                    case 'semester': sorted.sort((a,b)=> (a.semester||0) - (b.semester||0)); break;
-                    case 'credits': sorted.sort((a,b)=> (b.creditHour||0) - (a.creditHour||0)); break;
-                }
-                return sorted;
+            // Credits completed: prefer server value if present; else compute
+            let credits = (student && (typeof student.creditsCompleted !== 'undefined' && student.creditsCompleted !== null)) ? Number(student.creditsCompleted) : null;
+            if (credits === null || isNaN(credits) || credits === 0) {
+                credits = computeCreditsCompleted(courses);
             }
+            statCreditsEl.textContent = credits || 0;
 
-            function filterCourses() {
-                let filtered = [...courses];
-                const s = currentFilter.search.trim().toLowerCase();
-                if (s) {
-                    filtered = filtered.filter(course => 
-                        (course.courseName && course.courseName.toLowerCase().includes(s)) ||
-                        (course.courseID && String(course.courseID).toLowerCase().includes(s)) ||
-                        (course.program && course.program.toLowerCase().includes(s)) ||
-                        (course.grade && String(course.grade).toLowerCase().includes(s))
-                    );
-                }
+            // last semester GPA
+            let lastGpa = computeLastSemesterGpa(courses, student && student.semester ? student.semester : null);
+            statLastGpaEl.textContent = (lastGpa === null) ? '-' : lastGpa.toFixed(2);
 
-                if (currentFilter.tab !== 'all') {
-                    switch (currentFilter.tab) {
-                        case 'current':
-                            // filter by student's current semester (as requested)
-                            filtered = filtered.filter(course => Number(course.semester) === Number(studentSemester));
-                            break;
-                        case 'completed':
-                            filtered = filtered.filter(course => normalizeStatus(course.status) === 'completed');
-                            break;
-                        case 'upcoming':
-                            filtered = filtered.filter(course => normalizeStatus(course.status) === 'upcoming');
-                            break;
-                    }
-                } else {
-                    if (currentFilter.semester !== 'all') filtered = filtered.filter(course => Number(course.semester) === Number(currentFilter.semester));
-                    if (currentFilter.status !== 'all') filtered = filtered.filter(course => normalizeStatus(course.status) === normalizeStatus(currentFilter.status));
-                }
+            // standing
+            const standing = deriveAcademicStanding(cgpa, student && student.remark ? student.remark : null);
+            statStandingEl.textContent = standing;
+        }
 
-                filtered = sortCourses(filtered);
-                renderCourseCards(filtered);
-                renderTable(filtered);
+        // render course cards
+        function renderCourseCards(list) {
+            courseGrid.innerHTML = '';
+            if (!Array.isArray(list) || list.length === 0) {
+                courseGrid.innerHTML = `<div style="grid-column: 1 / -1; text-align:center; padding:40px; color:#666">No courses found.</div>`;
+                return;
             }
+            list.forEach(course => {
+                const card = document.createElement('div');
+                card.className = 'course-card';
+                const statusText = course.status ? (course.status.charAt(0).toUpperCase()+course.status.slice(1)) : '';
+                // map status to CSS class
+                let statusClass = '';
+                if (String(statusText).toLowerCase() === 'completed') statusClass = 'status-completed';
+                else if (String(statusText).toLowerCase() === 'ongoing') statusClass = 'status-ongoing';
 
-            function renderCourseCards(list) {
-                courseGrid.innerHTML = '';
-                if (list.length === 0) {
-                    courseGrid.innerHTML = `<div style="grid-column: 1 / -1; text-align:center; padding:40px; color:#666">No courses found.</div>`;
-                    return;
-                }
-                list.forEach(course => {
-                    const card = document.createElement('div');
-                    card.className = 'course-card';
-                    const statusText = course.status ? (course.status.charAt(0).toUpperCase()+course.status.slice(1)) : '';
-                    card.innerHTML = `
-                        <div class="course-header">
-                            <div class="course-code">${course.courseID}</div>
-                            <div class="course-name">${course.courseName}</div>
-                            <div class="course-credits"><i class="fas fa-clock"></i> <span>${course.creditHour} Credit Hours</span></div>
-                            <div class="course-status">${statusText}</div>
-                        </div>
-                        <div class="course-body">
-                            <div class="course-info">
-                                <div class="info-item"><span class="info-label">Semester</span><span class="info-value">Semester ${course.semester}</span></div>
-                                <div class="info-item"><span class="info-label">Program</span><span class="info-value">${course.program || ''}</span></div>
-                                <div class="info-item"><span class="info-label">${normalizeStatus(course.status) === 'completed' ? 'Final Grade' : 'Current Grade'}</span>
-                                    ${course.grade ? `<span class="grade-badge">${course.grade}</span>` : `<span class="grade-badge na">-</span>`}
-                                </div>
+                const gradeHtml = course.grade ? `<span class="grade-badge">${escapeHtml(course.grade)}</span>` : `<span class="grade-badge na">-</span>`;
+
+                card.innerHTML = `
+                    <div class="course-header">
+                        <div class="course-code">${escapeHtml(course.courseID || '')}</div>
+                        <div class="course-name">${escapeHtml(course.courseName || '')}</div>
+                        <div class="course-credits"><i class="fas fa-clock"></i> <span>${escapeHtml(String(course.creditHour || '0'))} Credit Hours</span></div>
+                        <div class="course-status"><span class="status-badge ${statusClass}">${escapeHtml(statusText)}</span></div>
+                    </div>
+                    <div class="course-body">
+                        <div class="course-info">
+                            <div class="info-item"><span class="info-label">Semester</span><span class="info-value">Semester ${escapeHtml(String(course.semester || ''))}</span></div>
+                            <div class="info-item"><span class="info-label">Program</span><span class="info-value">${escapeHtml(course.program || '')}</span></div>
+                            <div class="info-item"><span class="info-label">${(String(course.status || '').toLowerCase() === 'completed') ? 'Final Grade' : 'Current Grade'}</span>
+                                ${gradeHtml}
                             </div>
                         </div>
-                    `;
-                    courseGrid.appendChild(card);
-                });
-            }
-
-            function renderTable(list) {
-                coursesTableBody.innerHTML = '';
-                if (list.length === 0) {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `<td colspan="7" style="text-align:center; padding:40px; color:#666">No courses match your filters.</td>`;
-                    coursesTableBody.appendChild(row);
-                    return;
-                }
-                list.forEach(course => {
-                    const row = document.createElement('tr');
-                    const statusText = course.status ? (course.status.charAt(0).toUpperCase()+course.status.slice(1)) : '';
-                    row.innerHTML = `
-                        <td><strong>${course.courseID}</strong></td>
-                        <td>${course.courseName}</td>
-                        <td>${course.creditHour}</td>
-                        <td>Semester ${course.semester}</td>
-                        <td>${course.program || ''}</td>
-                        <td>${course.grade || '-'}</td>
-                        <td><span class="status-badge">${statusText}</span></td>
-                    `;
-                    coursesTableBody.appendChild(row);
-                });
-            }
-
-            semesterFilter.addEventListener('change', function() { currentFilter.semester = this.value; filterCourses(); });
-            statusFilter.addEventListener('change', function() { currentFilter.status = this.value; filterCourses(); });
-            sortFilter.addEventListener('change', function() { currentFilter.sort = this.value; filterCourses(); });
-
-            let searchTimeout;
-            courseSearch.addEventListener('input', function() {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    currentFilter.search = this.value;
-                    filterCourses();
-                }, 300);
+                    </div>
+                `;
+                courseGrid.appendChild(card);
             });
+        }
 
-            tabButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    tabButtons.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    currentFilter.tab = this.dataset.filter;
-                    // Reset dropdown filters for non-"all" tabs
-                    if (currentFilter.tab !== 'all') {
-                        currentFilter.semester = 'all';
-                        currentFilter.status = 'all';
-                        semesterFilter.value = 'all';
-                        statusFilter.value = 'all';
-                    }
-                    filterCourses();
-                });
+        // render table
+        function renderTable(list) {
+            coursesTableBody.innerHTML = '';
+            if (!Array.isArray(list) || list.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="7" style="text-align:center; padding:40px; color:#666">No courses match your filters.</td>`;
+                coursesTableBody.appendChild(row);
+                return;
+            }
+            list.forEach(course => {
+                const tr = document.createElement('tr');
+                const statusText = course.status ? (course.status.charAt(0).toUpperCase()+course.status.slice(1)) : '';
+                let statusClass = '';
+                if (String(statusText).toLowerCase() === 'completed') statusClass = 'status-completed';
+                else if (String(statusText).toLowerCase() === 'ongoing') statusClass = 'status-ongoing';
+                tr.innerHTML = `
+                    <td><strong>${escapeHtml(course.courseID)}</strong></td>
+                    <td>${escapeHtml(course.courseName)}</td>
+                    <td>${escapeHtml(String(course.creditHour || 0))}</td>
+                    <td>Semester ${escapeHtml(String(course.semester || ''))}</td>
+                    <td>${escapeHtml(course.program || '')}</td>
+                    <td>${course.grade ? `<span class="grade">${escapeHtml(course.grade)}</span>` : '-'}</td>
+                    <td><span class="status-badge ${statusClass}">${escapeHtml(statusText)}</span></td>
+                `;
+                coursesTableBody.appendChild(tr);
             });
+        }
 
-            fetchCourses();
-        });
-        
-        (function() {
-            // Determine webapp context path (like earlier scripts)
-            function getContextPath() {
-              const p = window.location.pathname.split('/').filter(Boolean);
-              return p.length ? '/' + p[0] : '';
-            }
-            const ctx = getContextPath();
+        // Basic filtering (wired to controls)
+        function filterAndRender() {
+            let list = [...courses];
+            const sem = semesterFilter ? semesterFilter.value : 'all';
+            const st = statusFilter ? statusFilter.value : 'all';
+            const s = courseSearch ? courseSearch.value.trim().toLowerCase() : '';
+            const sort = sortFilter ? sortFilter.value : 'name';
 
-            const dropdown = document.getElementById('profileDropdown');
-            const profileBtn = document.getElementById('profileBtn');
-            const dropdownMenu = document.getElementById('dropdownMenu');
-            const logoutBtn = document.getElementById('logoutBtn');
-            const profileNameEl = document.getElementById('profileName');
-            const profilePicEl = document.getElementById('profilePic');
-            const profileRoleEl = document.getElementById('profileRole');
-
-            // Ensure backdrop exists (create if needed)
-            let backdrop = document.getElementById('dropdownBackdrop');
-            if (!backdrop) {
-              backdrop = document.createElement('div');
-              backdrop.id = 'dropdownBackdrop';
-              backdrop.className = 'dropdown-backdrop';
-              document.body.appendChild(backdrop);
+            if (sem !== 'all') list = list.filter(c => Number(c.semester) === Number(sem));
+            if (st !== 'all') list = list.filter(c => (c.status || '').toLowerCase() === st.toLowerCase());
+            if (s) {
+                list = list.filter(c => ((c.courseName||'') + ' ' + (c.courseID||'') + ' ' + (c.program||'') + ' ' + (c.grade||'')).toLowerCase().includes(s));
             }
 
-            function openMenu() {
-              dropdownMenu.classList.add('show');
-              profileBtn.classList.add('active');
-              backdrop.classList.add('active');
-              dropdown.classList.add('active');
-            }
-            function closeMenu() {
-              dropdownMenu.classList.remove('show');
-              profileBtn.classList.remove('active');
-              backdrop.classList.remove('active');
-              dropdown.classList.remove('active');
-            }
-            function toggleMenu() {
-              if (dropdownMenu.classList.contains('show')) closeMenu(); else openMenu();
-            }
+            if (sort === 'name') list.sort((a,b) => (a.courseName||'').localeCompare(b.courseName||''));
+            else if (sort === 'code') list.sort((a,b) => (a.courseID||'').localeCompare(b.courseID||''));
+            else if (sort === 'semester') list.sort((a,b) => (a.semester||0) - (b.semester||0));
+            else if (sort === 'credits') list.sort((a,b) => (b.creditHour||0) - (a.creditHour||0));
 
-            // Toggle when clicking profile button
-            if (profileBtn) {
-              profileBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                toggleMenu();
-              });
-            }
+            renderCourseCards(list);
+            renderTable(list);
+            // update stats as filters change? keep stats global (counts for all courses)
+        }
 
-            // Close when clicking outside or on backdrop
-            backdrop.addEventListener('click', function() {
-              closeMenu();
+        // Wire events
+        if (semesterFilter) semesterFilter.addEventListener('change', filterAndRender);
+        if (statusFilter) statusFilter.addEventListener('change', filterAndRender);
+        if (sortFilter) sortFilter.addEventListener('change', filterAndRender);
+        if (courseSearch) {
+            let to;
+            courseSearch.addEventListener('input', () => {
+                clearTimeout(to);
+                to = setTimeout(filterAndRender, 250);
             });
-            document.addEventListener('click', function(e) {
-              if (!dropdown.contains(e.target)) {
-                closeMenu();
-              }
-            });
+        }
 
-            // Close on Escape
-            document.addEventListener('keydown', function(e) {
-              if (e.key === 'Escape') closeMenu();
-            });
+        // Profile dropdown wiring similar to other pages
+        if (profileBtn && profileMenu) {
+            profileBtn.addEventListener('click', e => { e.stopPropagation(); profileMenu.classList.toggle('show'); profileBtn.classList.toggle('active'); });
+            document.addEventListener('click', e => { if (!profileBtn.contains(e.target) && !profileMenu.contains(e.target)) { profileMenu.classList.remove('show'); profileBtn.classList.remove('active'); }});
+        }
+        if (logoutBtn) logoutBtn.addEventListener('click', e => { e.preventDefault(); window.location.href = ctx + '/logout'; });
 
-            // Logout handler - calls existing logout path
-            if (logoutBtn) {
-              logoutBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                // Confirm optionally
-                if (!confirm('Are you sure you want to log out?')) return;
-                // Use context path so it works under /Academic-Advising or root
-                const url = ctx + '/logout';
-                // Use location.href to trigger servlet and redirect
-                window.location.href = url;
-              });
-            }
-
-            // Fill profile name and initials by calling /api/student/me if role is student
-            async function loadProfile() {
-              try {
-                const res = await fetch(ctx + '/api/student/me', { cache: 'no-store' });
-                if (!res.ok) {
-                  // not logged in or not student; leave static values
-                  return;
-                }
-                const json = await res.json();
-                const name = json.name || json.firstName || profileNameEl.textContent;
-                profileNameEl.textContent = name;
-                profileRoleEl.textContent = 'Student';
-
-                // create initials for avatar
-                let initials = '';
-                if (json.firstName || json.lastName) {
-                  const f = (json.firstName || '').trim();
-                  const l = (json.lastName || '').trim();
-                  initials = (f ? f.charAt(0) : '') + (l ? l.charAt(0) : '');
-                } else if (name) {
-                  const parts = name.trim().split(/\s+/);
-                  initials = parts[0].charAt(0) + (parts.length > 1 ? parts[parts.length-1].charAt(0) : '');
-                }
-                initials = initials.toUpperCase() || 'ME';
-                if (profilePicEl) profilePicEl.textContent = initials;
-              } catch (err) {
-                // ignore, show default
-                console.warn('Could not load profile info', err);
-              }
-            }
-
-            // Call once
-            loadProfile();
-          })();
+        // initial load
+        loadAll();
+    });
     </script>
 </body>
 </html>

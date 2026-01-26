@@ -7,22 +7,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-blue: #1e3a8a;
-            --secondary-blue: #0ea5e9;
-            --light-blue: #93c5fd;
-            --background-blue: #f0f9ff;
-            --dark-text: #1e293b;
-            --accent-blue: #3b82f6;
-            --card-white: #ffffff;
-            --sidebar-width: 250px;
-            --gradient-blue: linear-gradient(135deg, #1e3a8a, #3b82f6);
-            --success-green: #10b981;
-            --warning-yellow: #f59e0b;
-            --danger-red: #ef4444;
-            --info-cyan: #06b6d4;
-            --purple: #8b5cf6;
-            --pink: #ec4899;
-            --teal: #14b8a6;
+          --primary-blue: #1e3a8a;
+          --secondary-blue: #0ea5e9;
+          --light-blue: #93c5fd;
+          --background-blue: #f0f9ff;
+          --dark-text: #1e293b;
+          --accent-blue: #3b82f6;
+          --card-white: #ffffff;
+          --sidebar-width: 250px;
+          --gradient-blue: linear-gradient(135deg, #1e3a8a, #3b82f6);
+          --success-green: #10b981;
+          --warning-yellow: #f59e0b;
+          --danger-red: #ef4444;
+          --info-cyan: #06b6d4;
+          --purple: #8b5cf6;
         }
 
         * {
@@ -32,6 +30,29 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--light-blue);
+            border-radius: 8px;
+            font-size: 1rem;
+            color: var(--dark-text);
+            transition: all 0.3s ease;
+        }
+        .form-control:focus {
+          outline: none;
+          border-color: var(--secondary-blue);
+          box-shadow: 0 0 0 3px rgba(14,165,233,0.08);
+        }
+        textarea.form-control { min-height:120px; resize:vertical; }
+
+        .form-row { display:flex; gap:16px; flex-wrap:wrap; }
+        .form-row .form-group { flex:1; min-width:180px; }
+
+        @media (max-width: 600px) {
+          .modal-content { width: 96%; margin: 8px; }
+        }
+        
         body {
             background-color: var(--background-blue);
             color: var(--dark-text);
@@ -194,6 +215,13 @@
             box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
         }
 
+        .profile-area {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+        }
+
         .profile-dropdown {
             position: relative;
             cursor: pointer;
@@ -215,6 +243,11 @@
         .profile-btn:hover {
             background: rgba(255, 255, 255, 0.3);
             border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .profile-btn.active {
+            background: rgba(255, 255, 255, 0.35);
+            border-color: rgba(255, 255, 255, 0.7);
         }
 
         .profile-pic {
@@ -262,6 +295,76 @@
             font-size: 0.9rem;
             transition: transform 0.3s ease;
             flex-shrink: 0;
+        }
+
+        .profile-btn.active .dropdown-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Dropdown Menu */
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            min-width: 220px;
+            margin-top: 5px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1100;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: var(--dark-text);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .dropdown-menu a:last-child {
+            border-bottom: none;
+            color: var(--danger-red);
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f8fafc;
+            padding-left: 25px;
+        }
+
+        .dropdown-menu i {
+            margin-right: 12px;
+            color: var(--secondary-blue);
+            width: 20px;
+        }
+
+        /* Backdrop */
+        .dropdown-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1099;
+            display: none;
+        }
+
+        .dropdown-backdrop.active {
+            display: block;
         }
 
         /* Activity Stats */
@@ -590,11 +693,6 @@
         .status-upcoming {
             background: linear-gradient(135deg, #dbeafe, #bfdbfe);
             color: #1e40af;
-        }
-
-        .status-ongoing {
-            background: linear-gradient(135deg, #fef3c7, #fde68a);
-            color: #92400e;
         }
 
         .status-completed {
@@ -977,6 +1075,7 @@
     </style>
 </head>
 <body>
+    <div class="dropdown-backdrop" id="dropdownBackdrop"></div>
     <!-- Sidebar Navigation -->
     <nav class="sidebar">
         <div class="logo-container">
@@ -995,7 +1094,6 @@
 
     <!-- Main Content -->
     <div class="main-content">
-      <!-- Header -->
       <header class="header">
         <div class="page-title">
           <i class="fas fa-running"></i>
@@ -1005,23 +1103,24 @@
         <div class="profile-area">
           <div class="profile-dropdown" id="profileDropdown">
             <div class="profile-btn" id="profileBtn">
-              <div class="profile-pic" id="profilePic">MA</div>
+              <div class="profile-pic" id="profilePic">ME</div>
               <div class="profile-info">
-                <div class="profile-name" id="profileName">M. Amar Ghazali</div>
+                <div class="profile-name" id="profileName">Student</div>
                 <div class="profile-role" id="profileRole">Student</div>
               </div>
               <i class="fas fa-chevron-down dropdown-icon"></i>
             </div>
 
-            <div class="dropdown-menu" id="dropdownMenu">
-              <a href="Profile.html" class="dropdown-item"><i class="fas fa-user-circle"></i> My Profile</a>
-              <a href="#" class="dropdown-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <div class="profile-dropdown-menu" id="profileMenu">
+              <div class="dropdown-header" id="profileMenuHeader">Student</div>
+              <a href="Profile.html"><i class="fas fa-user-circle"></i> My Profile</a>
+              <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
           </div>
         </div>
       </header>
 
-      <!-- Activity Statistics (static markup; your script may update counts) -->
+      <!-- Stats (unchanged by filters) -->
       <div class="activity-stats">
         <div class="stat-card joined">
           <div class="stat-icon"><i class="fas fa-users"></i></div>
@@ -1030,7 +1129,6 @@
             <p>Activities Joined</p>
           </div>
         </div>
-
         <div class="stat-card upcoming">
           <div class="stat-icon"><i class="fas fa-calendar"></i></div>
           <div class="stat-content">
@@ -1038,7 +1136,6 @@
             <p>Upcoming Activities</p>
           </div>
         </div>
-
         <div class="stat-card completed">
           <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
           <div class="stat-content">
@@ -1046,7 +1143,6 @@
             <p>Completed Programs</p>
           </div>
         </div>
-
         <div class="stat-card points">
           <div class="stat-icon"><i class="fas fa-star"></i></div>
           <div class="stat-content">
@@ -1056,24 +1152,22 @@
         </div>
       </div>
 
-      <!-- Filters Bar -->
+      <!-- Filters -->
       <div class="filters-bar">
         <div class="filter-group">
-          <!-- IMPORTANT: id="activityCategory" is used by the script -->
-          <select class="filter-select" id="activityCategory">
+          <select class="filter-select" id="activityCategory" style="display:none;">
             <option value="all">All Categories</option>
             <option value="academic">Academic</option>
-            <option value="leadership">Leadership</option>
-            <option value="technical">Technical</option>
+            <option value="workshop">Workshops</option>
+            <option value="competition">Competitions</option>
+            <option value="club">Clubs & Societies</option>
             <option value="sports">Sports & Wellness</option>
-            <option value="cultural">Cultural</option>
             <option value="volunteer">Volunteer</option>
           </select>
 
           <select class="filter-select" id="statusFilter">
             <option value="all">All Status</option>
             <option value="upcoming">Upcoming</option>
-            <option value="ongoing">Ongoing</option>
             <option value="completed">Completed</option>
           </select>
 
@@ -1084,19 +1178,17 @@
             <option value="deadline">Near Deadline</option>
           </select>
 
-          <!-- Create activity button the script expects id="createActivityBtn" -->
           <button class="btn btn-success" id="createActivityBtn"><i class="fas fa-plus"></i> Create Activity</button>
         </div>
 
         <div class="search-box">
           <i class="fas fa-search"></i>
-          <!-- script expects id="activitySearch" -->
           <input type="text" id="activitySearch" placeholder="Search activities...">
         </div>
       </div>
 
-      <!-- Activity Categories (visual buttons, script doesn't strictly require ids here) -->
-      <div class="activity-categories">
+      <!-- Category buttons -->
+      <div class="activity-categories" id="categoryButtons">
         <button class="category-btn active" data-category="all"><i class="fas fa-th-large"></i> All Activities</button>
         <button class="category-btn" data-category="academic"><i class="fas fa-graduation-cap"></i> Academic</button>
         <button class="category-btn" data-category="workshop"><i class="fas fa-laptop-code"></i> Workshops</button>
@@ -1106,26 +1198,22 @@
         <button class="category-btn" data-category="volunteer"><i class="fas fa-hands-helping"></i> Volunteer</button>
       </div>
 
-      <!-- Activity Grid: script will render into this container (id expected by script: activitiesContainer) -->
-      <div class="activity-grid" id="activitiesContainer">
-        <!-- Initially empty — your script will populate activities here -->
-      </div>
+      <!-- Grid container -->
+      <div class="activity-grid" id="activitiesContainer"></div>
 
-      <!-- My Registered Activities (optional static fallback) -->
+      <!-- My Registered Activities (populated by JS) -->
       <div class="my-activities">
         <h3 class="section-title"><i class="fas fa-clipboard-list"></i> My Registered Activities</h3>
-        <div class="my-activities-list" id="myActivitiesList">
-          <!-- Script may populate this; kept as placeholder for now -->
-        </div>
+        <div class="my-activities-list" id="myActivitiesList"></div>
       </div>
 
       <footer>
-        <p><strong>Academic Advising & Progress Tracking System</strong> | UiTM Terengganu, Campus Chendering</p>
+        <p><strong>Academic Advising & Progress Tracking System</strong> | UiTM Terengganu</p>
         <p>© 2025 CSC584 - Enterprise Programming</p>
       </footer>
     </div>
 
-    <!-- Create / Edit Activity Modal -->
+    <!-- Create/Edit modal -->
     <div class="modal" id="createActivityModal">
       <div class="modal-content">
         <div class="modal-header">
@@ -1160,9 +1248,28 @@
                 <label class="form-label" for="capacity">Capacity</label>
                 <input class="form-control" name="capacity" id="capacity" type="number" min="1" />
               </div>
+
               <div class="form-group">
-                <label class="form-label" for="category">Category</label>
-                <input class="form-control" name="category" id="category" />
+                <label class="form-label" for="categorySelect">Category</label>
+                <select class="form-control" name="category" id="categorySelect">
+                  <option value="Academic">Academic</option>
+                  <option value="Workshop">Workshops</option>
+                  <option value="Competition">Competitions</option>
+                  <option value="Club">Clubs & Societies</option>
+                  <option value="Sports">Sports & Wellness</option>
+                  <option value="Volunteer">Volunteer</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="points">Co-curricular Points</label>
+                <input class="form-control" name="points" id="points" type="number" min="0" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="host">Host / Organizer</label>
+                <input class="form-control" name="host" id="host" placeholder="e.g. Department / Club / Person" />
               </div>
             </div>
 
@@ -1175,276 +1282,683 @@
       </div>
     </div>
 
-    <!-- Activity Details Modal (script expects id="activityDetailModal", body id="activityDetailBody") -->
+    <!-- Activity Details -->
     <div class="modal" id="activityDetailModal">
       <div class="modal-content">
         <div class="modal-header">
           <h3 class="modal-title" id="modalActivityTitle">Activity Details</h3>
           <button class="modal-close" id="activityDetailClose">&times;</button>
         </div>
-        <div class="modal-body" id="activityDetailBody">
-          <!-- Filled by script -->
-        </div>
+        <div class="modal-body" id="activityDetailBody"></div>
       </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-          const ctx = (function(){ const p = window.location.pathname.split('/').filter(Boolean); return p.length?'/'+p[0]:''; })();
+    document.addEventListener('DOMContentLoaded', function () {
+      const ctx = (function () {
+        const p = window.location.pathname.split('/').filter(Boolean);
+        return p.length ? '/' + p[0] : '';
+      })();
 
-          // Elements
-          const activitiesContainer = document.getElementById('activitiesContainer');
-          const activitySearch = document.getElementById('activitySearch');
-          const activityCategory = document.getElementById('activityCategory'); // optional filter select if present
-          const createBtn = document.getElementById('createActivityBtn');
-          const createModal = document.getElementById('createActivityModal');
-          const createForm = document.getElementById('createActivityForm');
-          const createClose = document.getElementById('createModalClose');
-          const dropdownBackdrop = document.getElementById('dropdownBackdrop');
+      // --- Utility helpers ---
+      function q(id) { return document.getElementById(id); }
+      function parseDate(dt) {
+        if (!dt) return null;
+        try { return new Date(String(dt).replace(' ', 'T')); } catch (e) { return null; }
+      }
+      function escapeHtml(t) { if (!t) return ''; return String(t).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
-          // details modal
-          const activityDetailModal = document.getElementById('activityDetailModal');
-          const activityDetailBody = document.getElementById('activityDetailBody');
-          const activityDetailClose = document.getElementById('activityDetailClose');
+      function getCategoryGradient(category) {
+        const c = String(category || '').toLowerCase();
+        switch (c) {
+          case 'academic': return 'linear-gradient(135deg,#06b6d4,#0891b2)';
+          case 'workshop': return 'linear-gradient(135deg,#8b5cf6,#7c3aed)';
+          case 'competition': return 'linear-gradient(135deg,#f97316,#dc2626)';
+          case 'club': return 'linear-gradient(135deg,#10b981,#059669)';
+          case 'sports': return 'linear-gradient(135deg,#ef4444,#dc2626)';
+          case 'volunteer': return 'linear-gradient(135deg,#f59e0b,#d97706)';
+          default: return 'linear-gradient(135deg,#3b82f6,#1e40af)';
+        }
+      }
 
-          let activities = []; // all activities
+      // Allow leaving only if activity not completed AND start > 24 hours from now
+      function isLeaveAllowed(activity) {
+        if (!activity) return false;
+        const status = (activity.status || '').toLowerCase();
+        if (status === 'completed') return false;
+        const dt = parseDate(activity.dateTime);
+        if (!dt || isNaN(dt.getTime())) return false;
+        const diff = dt.getTime() - Date.now();
+        const oneDay = 24 * 60 * 60 * 1000;
+        if (diff <= oneDay) return false; // within 24 hours or past
+        return true;
+      }
 
-          async function apiGet(path) {
-            const res = await fetch(ctx + path, { cache: 'no-store' });
-            if (!res.ok) throw new Error('GET ' + path + ' returned ' + res.status);
-            return res.json();
-          }
-          async function apiPost(path, body) {
-            const res = await fetch(ctx + path, { method:'POST', body: body, headers: { 'Content-Type':'application/x-www-form-urlencoded' }});
-            if (!res.ok) {
-              const txt = await res.text().catch(()=>null);
-              throw new Error('POST ' + path + ' returned ' + res.status + ' ' + txt);
-            }
-            return res.json();
-          }
+      // Permission: only those who joined AND the activity is marked completed can view past activity details
+      function isPast(activity) {
+        const dt = parseDate(activity.dateTime);
+        return dt && dt.getTime() <= Date.now();
+      }
+      function canViewPastActivity(activity) {
+        if (!isPast(activity)) return true;
+        // require that user joined and activity status === completed (case-insensitive)
+        return !!(activity.joined && String(activity.status || '').toLowerCase() === 'completed');
+      }
 
-          // load & render
-          async function loadActivities() {
+      // --- DOM elements (guarded) ---
+      const activitiesContainer = q('activitiesContainer');
+      const myActivitiesList = q('myActivitiesList');
+      const activitySearch = q('activitySearch');
+      const activityCategory = q('activityCategory');
+      const statusFilterEl = q('statusFilter');
+      const sortFilterEl = q('sortFilter');
+      const createBtn = q('createActivityBtn');
+      const createModal = q('createActivityModal');
+      const createForm = q('createActivityForm');
+      const createClose = q('createModalClose');
+      const createCancelBtn = q('createCancelBtn');
+      const dropdownBackdrop = q('dropdownBackdrop');
+      const activityDetailModal = q('activityDetailModal');
+      const activityDetailBody = q('activityDetailBody');
+      const activityDetailClose = q('activityDetailClose');
+
+      const statJoined = q('statJoined');
+      const statUpcoming = q('statUpcoming');
+      const statCompleted = q('statCompleted');
+      const statPoints = q('statPoints');
+
+      const profileBtn = q('profileBtn');
+      const profileMenu = q('profileMenu');
+      const profileNameEl = q('profileName');
+      const profilePicEl = q('profilePic');
+      const logoutBtn = q('logoutBtn');
+
+      const categoryButtons = q('categoryButtons');
+
+      // Form fields inside createForm
+      const cf = {
+        title: createForm ? createForm.querySelector('[name="title"]') : null,
+        description: createForm ? createForm.querySelector('[name="description"]') : null,
+        dateTime: q('dateTime'),
+        location: createForm ? createForm.querySelector('[name="location"]') : null,
+        capacity: q('capacity'),
+        categorySelect: q('categorySelect'),
+        points: q('points'),
+        host: q('host')
+      };
+
+      // --- state ---
+      let allActivities = [];
+      let profile = null; // profile object returned by /api/student/me
+
+      // Keep track of attempts to auto-finalize so we don't spam the server repeatedly
+      const attemptedFinalize = new Set();
+
+      // --- fetch helpers ---
+      async function apiGet(path) {
+        const res = await fetch(ctx + path, { cache: 'no-store' });
+        if (!res.ok) throw new Error('GET ' + path + ' ' + res.status);
+        return res.json();
+      }
+      async function apiPost(path, body) {
+        const res = await fetch(ctx + path, { method: 'POST', body: body, headers: { 'Content-Type': 'application/x-www-form-urlencoded' }});
+        if (!res.ok) {
+          const txt = await res.text().catch(()=>null);
+          throw new Error('POST ' + path + ' ' + res.status + ' ' + txt);
+        }
+        return res.json();
+      }
+
+      // --- profile load ---
+        async function loadProfile() {
             try {
-              const json = await apiGet('/api/activities');
-              activities = json.activities || [];
-              renderActivities(activities);
+              const res = await fetch(ctx + '/api/student/me', { cache: 'no-store' });
+              if (!res.ok) return; // not logged or not student
+              const json = await res.json();
+              profile = json;
+              const name = json.name || (json.firstName ? (json.firstName + (json.lastName ? ' ' + json.lastName : '')) : profileNameEl.textContent);
+              profileNameEl.textContent = name;
+              profileRoleEl.textContent = 'Student';
+              // initials
+              let initials = '';
+              if (json.firstName || json.lastName) {
+                initials = (json.firstName || '').charAt(0) + (json.lastName || '').charAt(0);
+              } else if (name) {
+                const parts = name.trim().split(/\s+/);
+                initials = parts[0].charAt(0) + (parts.length > 1 ? parts[parts.length-1].charAt(0) : '');
+              }
+              profilePicEl.textContent = (initials || 'ME').toUpperCase();
             } catch (e) {
-              console.error(e);
-              activitiesContainer.innerHTML = '<div style="padding:20px;color:#666">Unable to load activities.</div>';
+              // ignore
+              console.warn('Could not load profile', e);
             }
+        }
+
+      // --- load activities ---
+      async function loadActivities() {
+        try {
+          const j = await apiGet('/api/activities');
+          allActivities = (j.activities || []).map(a => {
+            a.participantCount = Number(a.participantCount || 0);
+            a.joined = !!a.joined;
+            // normalize points_awarded (DB might return 0/1, true/false, or missing)
+            a.points_awarded = (a.points_awarded === true || a.points_awarded === 1 || a.points_awarded === '1' || a.points_awarded === 'true');
+            return a;
+          });
+          updateStats(allActivities);
+          renderActivities(allActivities);
+          renderMyActivities(allActivities);
+
+          // After activities are loaded, try to finalize any that have passed
+          autoFinalizeActivities();
+        } catch (e) {
+          console.error('loadActivities', e);
+          if (activitiesContainer) activitiesContainer.innerHTML = '<div style="padding:20px;color:#666">Unable to load activities.</div>';
+          if (myActivitiesList) myActivitiesList.innerHTML = '<div style="padding:12px;color:#666">Unable to load registered activities.</div>';
+        }
+      }
+
+      // --- update aggregated stats ---
+        function updateStats(list) {
+          if (!Array.isArray(list)) return;
+          let joined = 0, upcoming = 0, completedPrograms = 0;
+          const now = Date.now();
+
+          list.forEach(a => {
+            // joined count (activities the current student has joined)
+            if (a.joined) joined++;
+
+            // Use server-provided isCompleted flag when available
+            const serverIsCompleted = (typeof a.isCompleted !== 'undefined') ? Boolean(a.isCompleted) : null;
+
+            if (serverIsCompleted !== null) {
+              // if server says completed, consider it completed; otherwise upcoming if dateTime > now
+              if (serverIsCompleted) {
+                // only count completed programs if student joined
+                if (a.joined) completedPrograms++;
+              } else {
+                const dt = parseDate(a.dateTime);
+                if (dt && dt.getTime() > now) upcoming++;
+              }
+            } else {
+              // fallback: derive from dateTime
+              const dt = parseDate(a.dateTime);
+              if (dt) {
+                if (dt.getTime() > now) upcoming++;
+                else {
+                  if (a.joined) completedPrograms++; // past activity and student joined
+                }
+              }
+            }
+          });
+
+          if (statJoined) statJoined.textContent = joined;
+          if (statUpcoming) statUpcoming.textContent = upcoming;
+          if (statCompleted) statCompleted.textContent = completedPrograms;
+
+          // statPoints: prefer student's accumulated points if profile loaded (unchanged)
+          if (profile && profile.co_curricular_points != null) {
+            if (statPoints) statPoints.textContent = profile.co_curricular_points;
+          } else {
+            // fallback: sum points from completed activities that have points and were completed
+            const totalPoints = list.reduce((acc, a) => {
+              constpts = Number(a.points || 0);
+              // count points only for completed activities that were completed (server flag) - and optionally only for joined ones
+              const completed = (typeof a.isCompleted !== 'undefined') ? Boolean(a.isCompleted) : (parseDate(a.dateTime) || 0) <= Date.now();
+              if (completed) return acc + (isNaN(constpts) ? 0 : constpts);
+              return acc;
+            }, 0);
+            if (statPoints) statPoints.textContent = totalPoints;
+          }
+        }
+
+      // --- Automatically finalize activities that reached their datetime ---
+      // This will set status=completed by calling the update endpoint so UpdateActivityServlet
+      // can award points to participants. Runs once on load and then periodically.
+      async function autoFinalizeActivities() {
+        if (!Array.isArray(allActivities) || allActivities.length === 0) return;
+        const now = Date.now();
+        // look for activities that have passed (datetime <= now) and are not marked completed
+        const toFinalize = allActivities.filter(a => {
+          try {
+            const dt = parseDate(a.dateTime);
+            return dt && !isNaN(dt.getTime()) && dt.getTime() <= now && String((a.status||'')).toLowerCase() !== 'completed' && !attemptedFinalize.has(String(a.activityID));
+          } catch (e) { return false; }
+        });
+
+        if (toFinalize.length === 0) return;
+
+        // finalize sequentially to avoid spikes; small delay between requests
+        for (const a of toFinalize) {
+          try {
+            // mark as attempted to avoid repeated tries
+            attemptedFinalize.add(String(a.activityID));
+
+            const body = new URLSearchParams();
+            body.append('activityID', a.activityID);
+            body.append('status', 'completed');
+            // include points (if present) so server has the value if needed
+            if (typeof a.points !== 'undefined' && a.points !== null) body.append('points', String(a.points));
+
+            // call update endpoint - UpdateActivityServlet will award points when transitioning to completed
+            const res = await apiPost('/api/activity/update', body);
+            // if success, reload activities to reflect updated status and awarded points
+            if (res && res.success) {
+              // refresh profile to pick up awarded co_curricular_points (if StudentDataServlet exposes it)
+              await loadProfile().catch(() => {});
+              await loadActivities(); // reload list and re-render
+            } else {
+              // If server responded but not success, we'll retry later (do not remove attemptedFinalize)
+              console.warn('autoFinalize update returned not-success', res);
+            }
+          } catch (err) {
+            console.warn('autoFinalizeActivities error for activity', a.activityID, err);
+            // leave attemptedFinalize entry so we don't spam; next reload or manual admin action can change status
+          }
+          // short delay to avoid overwhelming the server
+          await new Promise(r => setTimeout(r, 350));
+        }
+      }
+
+      // run autoFinalize periodically (every 60s)
+      setInterval(autoFinalizeActivities, 60 * 1000);
+
+      // --- render main grid ---
+      function renderActivities(sourceList) {
+        if (!activitiesContainer) return;
+        const cat = (activityCategory && activityCategory.value) || 'all';
+        const status = (statusFilterEl && statusFilterEl.value) || 'all';
+        const sort = (sortFilterEl && sortFilterEl.value) || 'newest';
+        const q = (activitySearch && activitySearch.value) ? activitySearch.value.trim().toLowerCase() : '';
+
+        let list = sourceList.slice();
+
+        // IMPORTANT: hide past activities from users who didn't participate and from new users.
+        // Only show past activities if the user joined AND the activity is marked completed.
+        const now = Date.now();
+        list = list.filter(a => {
+          const dt = parseDate(a.dateTime);
+          const is_past = dt ? dt.getTime() <= now : false;
+          if (is_past) {
+            // allow only if user joined and activity status is 'completed'
+            if (!canViewPastActivity(a)) return false;
+          }
+          return true;
+        });
+
+        if (cat !== 'all') list = list.filter(a => (a.category || '').toLowerCase() === cat.toLowerCase());
+        if (status !== 'all') {
+          const now = Date.now();
+          list = list.filter(a => {
+            const dt = parseDate(a.dateTime);
+            if (status === 'upcoming') return dt && dt.getTime() > now;
+            if (status === 'completed') return dt && dt.getTime() <= now;
+            return true;
+          });
+        }
+        if (q) {
+          list = list.filter(a => (((a.title||'') + ' ' + (a.description||'') + ' ' + (a.location||'') + ' ' + (a.category||'') + ' ' + (a.host||'') + ' ' + (a.ownerName||'')).toLowerCase().includes(q)));
+        }
+
+        if (sort === 'newest') list.sort((a,b)=> new Date(b.dateTime||0) - new Date(a.dateTime||0));
+        else if (sort === 'oldest') list.sort((a,b)=> new Date(a.dateTime||0) - new Date(b.dateTime||0));
+        else if (sort === 'popular') list.sort((a,b)=> (b.participantCount||0) - (a.participantCount||0));
+        else if (sort === 'deadline') list.sort((a,b)=> new Date(a.dateTime||0) - new Date(b.dateTime||0));
+
+        activitiesContainer.innerHTML = '';
+        if (list.length === 0) { activitiesContainer.innerHTML = '<div style="padding:20px;color:#666">No activities found.</div>'; return; }
+
+        list.forEach(a => {
+          const headerStyle = `background: ${getCategoryGradient(a.category)}; padding:18px;`;
+          const dt = parseDate(a.dateTime);
+          const dateStr = dt ? dt.toLocaleDateString() : '';
+          const timeStr = dt ? dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
+          const spots = (a.capacity != null && a.capacity !== '') ? `${a.participantCount || 0}/${a.capacity}` : `${a.participantCount || 0}`;
+          const hostLabel = a.host || a.ownerName || a.ownerID || '';
+
+          // join/leave button rendering
+          let joinHtml = '';
+          if (a.joined) {
+            if (isLeaveAllowed(a)) joinHtml = `<button class="btn btn-sm btn-outline leave-activity" data-id="${a.activityID}">Leave</button>`;
+            else joinHtml = `<button class="btn btn-sm btn-disabled" disabled title="Cannot leave within 24 hours or after completion">Leave</button>`;
+          } else {
+            // If activity is past and user didn't join, we should not show join button (we already filtered past ones out).
+            joinHtml = `<button class="btn btn-sm btn-primary join-activity" data-id="${a.activityID}">Join</button>`;
           }
 
-          function renderActivities(list) {
-            // apply client-side search/category filter
-            const q = activitySearch ? (activitySearch.value || '').toLowerCase().trim() : '';
-            const cat = activityCategory ? (activityCategory.value || 'all') : 'all';
-            const filtered = list.filter(a=>{
-              if (cat !== 'all' && a.category && a.category.toLowerCase() !== cat.toLowerCase()) return false;
-              if (!q) return true;
-              return (a.title && a.title.toLowerCase().includes(q)) || (a.description && a.description.toLowerCase().includes(q)) || (a.location && a.location.toLowerCase().includes(q));
-            });
+          const isOwner = (a.ownerID && profile && String(a.ownerID) === String(profile.userID));
+          const manageHtml = isOwner ? `<button class="btn btn-sm btn-outline edit-activity" data-id="${a.activityID}">Edit</button>
+                                       <button class="btn btn-sm btn-outline delete-activity" data-id="${a.activityID}">Delete</button>` : '';
 
-            if (!activitiesContainer) return;
-            activitiesContainer.innerHTML = '';
-            if (filtered.length === 0) {
-              activitiesContainer.innerHTML = '<div style="padding:20px;color:#666">No activities found.</div>';
-              return;
-            }
+          const card = document.createElement('div');
+          card.className = 'activity-card';
+          if (a.featured) card.classList.add('featured');
 
-            filtered.forEach(a => {
-              const card = document.createElement('div');
-              card.className = 'activity-card';
-              const dt = a.dateTime ? new Date(String(a.dateTime).replace(' ', 'T')) : null;
-              const dateStr = dt ? dt.toLocaleDateString() : '';
-              const timeStr = dt ? dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
-              const spots = a.capacity && a.capacity !== null ? `${a.participantCount}/${a.capacity}` : `${a.participantCount}`;
-              const joinBtn = a.joined ? `<button class="btn btn-sm btn-outline leave-activity" data-id="${a.activityID}">Leave</button>` : `<button class="btn btn-sm btn-primary join-activity" data-id="${a.activityID}">Join</button>`;
-              // if the logged-in user is owner, show manage buttons (edit/delete)
-              const isOwner = (a.ownerID && typeof a.ownerID !== 'undefined') && (a.ownerID === (window.loggedInUserId || a.ownerID)); // best-effort
-              const manageBtns = isOwner ? `<button class="btn btn-sm btn-outline edit-activity" data-id="${a.activityID}">Edit</button>
-                                           <button class="btn btn-sm btn-outline delete-activity" data-id="${a.activityID}">Delete</button>` : '';
-
-              card.innerHTML = `
-                <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
-                  <div style="font-weight:700">${escapeHtml(a.title)}</div>
-                  <div style="color:#64748b">${dateStr} ${timeStr}</div>
-                </div>
-                <div style="margin:8px 0;color:#475569">${escapeHtml(a.location)} ${a.category ? ' • ' + escapeHtml(a.category) : ''}</div>
-                <div style="margin:8px 0;color:#0f172a;opacity:0.9">${escapeHtml(a.description ? (a.description.length>120 ? a.description.substring(0,120)+'...' : a.description) : '')}</div>
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
-                  <div style="color:#0f172a;opacity:0.85">Participants: ${spots}</div>
-                  <div style="display:flex;gap:8px;align-items:center;">
+          card.innerHTML = `
+            <div class="activity-header" style="${headerStyle}">
+              <div class="activity-type">${escapeHtml(a.category || 'General')}</div>
+              <div class="activity-title" style="color:white; font-size:1.2rem; font-weight:700;">${escapeHtml(a.title)}</div>
+              <div class="activity-meta" style="color:white; opacity:0.95; margin-top:8px;">
+                <span><i class="far fa-calendar"></i> ${escapeHtml(dateStr)}</span>
+                <span style="margin-left:12px;"><i class="far fa-clock"></i> ${escapeHtml(timeStr)}</span>
+                <span style="margin-left:12px;"><i class="fas fa-user-friends"></i> ${escapeHtml(spots)}</span>
+              </div>
+            </div>
+            <div class="activity-body" style="padding:16px;">
+              <div style="margin-bottom:10px;color:#475569">Host: ${escapeHtml(hostLabel)}</div>
+              <div class="activity-description" style="margin-bottom:12px;">${escapeHtml(a.description || '')}</div>
+              <div style="margin-bottom:6px;color:#475569"><strong>Points:</strong> ${a.points || 0}</div>
+                <div class="activity-footer" style="display:flex; flex-direction:column; gap: 8px;">
+                  <div style="color:#0f172a; opacity:0.85; align-self: flex-start;">${escapeHtml(a.location || '')}</div>
+                  <div style="display:flex; gap:8px; align-items:center; justify-content:flex-end;">
                     <button class="btn btn-sm btn-outline details-activity" data-id="${a.activityID}">Details</button>
-                    ${joinBtn}
-                    ${manageBtns}
+                    ${joinHtml}
+                    ${manageHtml}
                   </div>
                 </div>
-              `;
-              activitiesContainer.appendChild(card);
-            });
+            </div>
+          `;
+          activitiesContainer.appendChild(card);
+        });
 
-            // bind buttons
-            document.querySelectorAll('.join-activity').forEach(b => b.addEventListener('click', async function() {
-              const id = this.dataset.id;
-              try {
-                const body = new URLSearchParams(); body.append('activityID', id);
-                const res = await apiPost('/api/activity/join', body);
-                if (res.success) await loadActivities();
-                else alert(res.error || 'Could not join');
-              } catch (e) { console.error(e); alert('Error joining activity'); }
-            }));
-            document.querySelectorAll('.leave-activity').forEach(b => b.addEventListener('click', async function() {
-              const id = this.dataset.id;
-              if (!confirm('Leave this activity?')) return;
-              try {
-                const body = new URLSearchParams(); body.append('activityID', id);
-                const res = await apiPost('/api/activity/leave', body);
-                if (res.success) await loadActivities();
-                else alert(res.error || 'Could not leave');
-              } catch (e) { console.error(e); alert('Error leaving activity'); }
-            }));
-            document.querySelectorAll('.details-activity').forEach(b => b.addEventListener('click', function() {
-              const id = this.dataset.id;
-              openDetailModal(id);
-            }));
-            document.querySelectorAll('.edit-activity').forEach(b => b.addEventListener('click', function() {
-              const id = this.dataset.id;
-              openEditModal(id);
-            }));
-            document.querySelectorAll('.delete-activity').forEach(b => b.addEventListener('click', async function() {
-              const id = this.dataset.id;
-              if (!confirm('Delete this activity?')) return;
-              try {
-                const body = new URLSearchParams(); body.append('activityID', id);
-                const res = await apiPost('/api/activity/delete', body);
-                if (res.success) await loadActivities();
-                else alert(res.error || 'Could not delete');
-              } catch (e) { console.error(e); alert('Error deleting activity'); }
-            }));
+        // bind actions (only for active buttons)
+        document.querySelectorAll('.join-activity').forEach(b => b.addEventListener('click', async function() {
+          const id = this.dataset.id;
+          try {
+            const body = new URLSearchParams(); body.append('activityID', id);
+            const res = await apiPost('/api/activity/join', body);
+            if (res.success) { await loadActivities(); } else alert(res.error || 'Cannot join');
+          } catch (e) { console.error(e); alert('Error joining'); }
+        }));
+
+        document.querySelectorAll('.leave-activity').forEach(b => b.addEventListener('click', async function() {
+          const id = this.dataset.id;
+          if (!confirm('Leave this activity?')) return;
+          try {
+            const body = new URLSearchParams(); body.append('activityID', id);
+            const res = await apiPost('/api/activity/leave', body);
+            if (res.success) { await loadActivities(); } else alert(res.error || 'Cannot leave');
+          } catch (e) { console.error(e); alert('Error leaving'); }
+        }));
+
+        document.querySelectorAll('.details-activity').forEach(b => b.addEventListener('click', function() {
+          openDetailModal(this.dataset.id);
+        }));
+
+        document.querySelectorAll('.edit-activity').forEach(b => b.addEventListener('click', function() {
+          openEditModal(this.dataset.id);
+        }));
+
+        document.querySelectorAll('.delete-activity').forEach(b => b.addEventListener('click', async function() {
+          const id = this.dataset.id;
+          if (!confirm('Delete this activity?')) return;
+          try {
+            const body = new URLSearchParams(); body.append('activityID', id);
+            const res = await apiPost('/api/activity/delete', body);
+            if (res.success) await loadActivities();
+            else alert(res.error || 'Could not delete');
+          } catch (e) { console.error(e); alert('Error deleting'); }
+        }));
+      }
+
+      // --- render My Registered Activities (includes status) ---
+      function renderMyActivities(sourceList) {
+        if (!myActivitiesList) return;
+        const mine = (sourceList || []).filter(a => a.joined);
+        myActivitiesList.innerHTML = '';
+        if (mine.length === 0) { myActivitiesList.innerHTML = '<div style="padding:12px;color:#666">You are not registered for any activities.</div>'; return; }
+
+        mine.forEach(a => {
+          const dt = parseDate(a.dateTime);
+          const dateStr = dt ? dt.toLocaleDateString() : '';
+          const timeStr = dt ? dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
+          const hostLabel = a.host || a.ownerName || a.ownerID || '';
+          const leaveAllowed = isLeaveAllowed(a);
+          const statusLabel = a.status ? String(a.status).toUpperCase() : '';
+          const past = isPast(a);
+          const allowedToViewPast = canViewPastActivity(a);
+
+          const item = document.createElement('div');
+          item.className = 'my-activity-item';
+          item.innerHTML = `
+            <div class="my-activity-info">
+              <h4>${escapeHtml(a.title)}</h4>
+              <div class="my-activity-details">
+                <span><i class="far fa-calendar"></i> ${escapeHtml(dateStr)} ${escapeHtml(timeStr)}</span>
+                <span><i class="far fa-clock"></i> ${escapeHtml(a.location || '')}</span>
+                <span><i class="fas fa-star"></i> ${escapeHtml(a.points || 0)} pts</span>
+                <span style="margin-left:8px;color:#64748b">Host: ${escapeHtml(hostLabel)}</span>
+                <span style="margin-left:8px;color:#64748b"><strong>Status:</strong> ${escapeHtml(statusLabel)}</span>
+              </div>
+            </div>
+            <div class="my-activity-actions">
+              <button class="btn btn-outline view-details" data-id="${a.activityID}"><i class="fas fa-eye"></i> Details</button>
+              ${leaveAllowed ? `<button class="btn btn-outline leave-activity" data-id="${a.activityID}"><i class="fas fa-times"></i> Leave</button>` : `<button class="btn btn-disabled" disabled title="Cannot leave within 24 hours or after completion">Leave</button>`}
+            </div>
+          `;
+          myActivitiesList.appendChild(item);
+
+          // If the activity is past but the user didn't complete it, hide or disable details button
+          if (past && !allowedToViewPast) {
+            const detailsBtn = item.querySelector('.view-details');
+            if (detailsBtn) {
+              detailsBtn.textContent = 'Details (restricted)';
+              detailsBtn.disabled = true;
+              detailsBtn.classList.add('btn-disabled');
+              detailsBtn.classList.remove('btn-outline');
+              detailsBtn.title = 'Past activity details are only available to participants who completed the activity';
+            }
           }
+        });
 
-          // details modal
-          async function openDetailModal(activityID) {
-            const a = (activities || []).find(x => String(x.activityID) === String(activityID));
-            if (!a) return;
-            const dt = a.dateTime ? new Date(String(a.dateTime).replace(' ', 'T')) : null;
-            const dateStr = dt ? dt.toLocaleDateString() : '';
-            const timeStr = dt ? dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
-            activityDetailBody.innerHTML = `
-              <h3>${escapeHtml(a.title)}</h3>
-              <div style="color:#64748b">${dateStr} ${timeStr} • ${escapeHtml(a.location || '')}</div>
-              <div style="margin-top:12px">${escapeHtml(a.description || '')}</div>
-              <div style="margin-top:12px;color:#0f172a">Category: ${escapeHtml(a.category || '')}</div>
-              <div style="margin-top:12px;color:#0f172a">Participants: ${a.participantCount}${a.capacity ? ' / ' + a.capacity : ''}</div>
-            `;
-            activityDetailModal.classList.add('show');
-            dropdownBackdrop.classList.add('active');
-          }
+        // bind actions inside myActivitiesList
+        myActivitiesList.querySelectorAll('.view-details').forEach(b => b.addEventListener('click', function() {
+          openDetailModal(this.dataset.id);
+        }));
+        myActivitiesList.querySelectorAll('.leave-activity').forEach(b => b.addEventListener('click', async function() {
+          const id = this.dataset.id;
+          if (!confirm('Leave this activity?')) return;
+          try {
+            const body = new URLSearchParams(); body.append('activityID', id);
+            const res = await apiPost('/api/activity/leave', body);
+            if (res.success) await loadActivities();
+            else alert(res.error || 'Cannot leave');
+          } catch (e) { console.error(e); alert('Error leaving'); }
+        }));
+      }
 
-          // create/edit modal helpers
-          function openCreateModal() {
-            if (!createModal) return;
-            createForm.setAttribute('data-edit-id', ''); // new
-            createForm.title.value = '';
-            createForm.description.value = '';
-            createForm.dateTime.value = '';
-            createForm.location.value = '';
-            createForm.capacity.value = '';
-            createForm.category.value = '';
-            createModal.classList.add('show'); dropdownBackdrop.classList.add('active');
-          }
+      // --- detail modal ---
+      function openDetailModal(activityID) {
+        const a = allActivities.find(x => String(x.activityID) === String(activityID));
+        if (!a || !activityDetailBody) return;
 
-          function openEditModal(id) {
-            const a = (activities || []).find(x => String(x.activityID) === String(id));
-            if (!a) return;
-            createForm.setAttribute('data-edit-id', id);
-            createForm.title.value = a.title || '';
-            createForm.description.value = a.description || '';
-            // convert DB datetime string to input datetime-local format (YYYY-MM-DDTHH:MM)
-            if (a.dateTime) {
-              const dt = new Date(String(a.dateTime).replace(' ', 'T'));
+        // Enforce server-side intended policy on the client too:
+        // If activity is past and the current user didn't both join and see it completed -> deny
+        if (isPast(a) && !canViewPastActivity(a)) {
+          alert('You are not authorized to view details of past activities unless you participated and the activity is marked completed.');
+          return;
+        }
+
+        const dt = parseDate(a.dateTime);
+        const dateStr = dt ? dt.toLocaleDateString() : '';
+        const timeStr = dt ? dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
+        const hostLabel = a.host || a.ownerName || a.ownerID || '';
+        activityDetailBody.innerHTML = `
+          <h3>${escapeHtml(a.title)}</h3>
+          <div style="color:#64748b">${escapeHtml(dateStr)} • ${escapeHtml(timeStr)} • ${escapeHtml(a.location || '')}</div>
+          <div style="margin-top:12px">${escapeHtml(a.description || '')}</div>
+          <div style="margin-top:12px"><strong>Category:</strong> ${escapeHtml(a.category || '')}</div>
+          <div style="margin-top:6px"><strong>Host:</strong> ${escapeHtml(hostLabel)}</div>
+          <div style="margin-top:6px"><strong>Participants:</strong> ${a.participantCount || 0}${a.capacity ? ' / ' + a.capacity : ''}</div>
+          <div style="margin-top:6px"><strong>Points:</strong> ${a.points || 0}</div>
+          <div style="margin-top:6px"><strong>Status:</strong> ${escapeHtml(a.status || '')}</div>
+        `;
+        if (activityDetailModal) activityDetailModal.classList.add('show');
+        if (dropdownBackdrop) dropdownBackdrop.classList.add('active');
+      }
+
+      // --- create / edit modal helpers (unchanged) ---
+      function openCreateModal() {
+        if (!createModal || !createForm) return;
+        createForm.setAttribute('data-edit-id','');
+        if (cf.title) cf.title.value = '';
+        if (cf.description) cf.description.value = '';
+        if (cf.dateTime) cf.dateTime.value = '';
+        if (cf.location) cf.location.value = '';
+        if (cf.capacity) cf.capacity.value = '';
+        if (cf.categorySelect) cf.categorySelect.value = 'academic';
+        if (cf.points) cf.points.value = '';
+        if (cf.host) cf.host.value = '';
+        createModal.classList.add('show');
+        if (dropdownBackdrop) dropdownBackdrop.classList.add('active');
+      }
+
+      function openEditModal(id) {
+        if (!createModal || !createForm) return;
+        const a = allActivities.find(x => String(x.activityID) === String(id));
+        if (!a) return;
+        createForm.setAttribute('data-edit-id', id);
+        if (cf.title) cf.title.value = a.title || '';
+        if (cf.description) cf.description.value = a.description || '';
+        if (cf.dateTime) {
+          if (a.dateTime) {
+            const dt = parseDate(a.dateTime);
+            if (!isNaN(dt)) {
               const yyyy = dt.getFullYear();
               const mm = String(dt.getMonth()+1).padStart(2,'0');
               const dd = String(dt.getDate()).padStart(2,'0');
               const hh = String(dt.getHours()).padStart(2,'0');
               const min = String(dt.getMinutes()).padStart(2,'0');
-              createForm.dateTime.value = `${yyyy}-${mm}-${dd}T${hh}:${min}`;
-            } else createForm.dateTime.value = '';
-            createForm.location.value = a.location || '';
-            createForm.capacity.value = a.capacity || '';
-            createForm.category.value = a.category || '';
-            createForm.description.value = a.description || '';
-            createModal.classList.add('show'); dropdownBackdrop.classList.add('active');
-          }
+              cf.dateTime.value = `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+            } else cf.dateTime.value = '';
+          } else cf.dateTime.value = '';
+        }
+        if (cf.location) cf.location.value = a.location || '';
+        if (cf.capacity) cf.capacity.value = a.capacity || '';
+        if (cf.categorySelect) cf.categorySelect.value = a.category || 'academic';
+        if (cf.points) cf.points.value = a.points || '';
+        if (cf.host) cf.host.value = a.host || a.ownerName || '';
+        createModal.classList.add('show');
+        if (dropdownBackdrop) dropdownBackdrop.classList.add('active');
+      }
 
-          if (createClose) createClose.addEventListener('click', ()=>{ createModal.classList.remove('show'); dropdownBackdrop.classList.remove('active'); });
-          if (activityDetailClose) activityDetailClose.addEventListener('click', ()=>{ activityDetailModal.classList.remove('show'); dropdownBackdrop.classList.remove('active'); });
-
-          // create/edit submit
-          if (createForm) {
-            createForm.addEventListener('submit', async function(e) {
-              e.preventDefault();
-              const editId = createForm.getAttribute('data-edit-id');
-              const title = createForm.title.value.trim();
-              const description = createForm.description.value.trim();
-              const dateTime = createForm.dateTime.value.trim();
-              const location = createForm.location.value.trim();
-              const capacity = createForm.capacity.value.trim();
-              const category = createForm.category.value.trim();
-
-              if (!title || !dateTime) { alert('Title and date/time required'); return; }
-
-              try {
-                const body = new URLSearchParams();
-                body.append('title', title);
-                body.append('description', description);
-                body.append('dateTime', dateTime);
-                body.append('location', location);
-                if (capacity) body.append('capacity', capacity);
-                body.append('category', category);
-
-                if (!editId) {
-                  // create
-                  const res = await apiPost('/api/activity/create', body);
-                  if (res.success) {
-                    alert('Activity created');
-                    createModal.classList.remove('show'); dropdownBackdrop.classList.remove('active');
-                    await loadActivities();
-                  } else alert(res.error || 'Create failed');
-                } else {
-                  body.append('activityID', editId);
-                  const res = await apiPost('/api/activity/update', body);
-                  if (res.success) {
-                    alert('Activity updated');
-                    createModal.classList.remove('show'); dropdownBackdrop.classList.remove('active');
-                    await loadActivities();
-                  } else alert(res.error || 'Update failed');
-                }
-              } catch (err) {
-                console.error(err);
-                alert('Error saving activity');
-              }
-            });
-          }
-
-          // search filter
-          if (activitySearch) {
-            let t;
-            activitySearch.addEventListener('input', function() {
-              clearTimeout(t);
-              t = setTimeout(()=> renderActivities(activities), 200);
-            });
-          }
-
-          if (createBtn) createBtn.addEventListener('click', openCreateModal);
-
-          // utility
-          function escapeHtml(t){ if(!t) return ''; return String(t).replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]); }); }
-
-          // initial
-          loadActivities();
+      // --- modal close bindings (safe) ---
+      if (createClose) createClose.addEventListener('click', () => { createModal.classList.remove('show'); if (dropdownBackdrop) dropdownBackdrop.classList.remove('active'); });
+      if (createCancelBtn) createCancelBtn.addEventListener('click', () => { createModal.classList.remove('show'); if (dropdownBackdrop) dropdownBackdrop.classList.remove('active'); });
+      if (activityDetailClose) activityDetailClose.addEventListener('click', () => { activityDetailModal.classList.remove('show'); if (dropdownBackdrop) dropdownBackdrop.classList.remove('active'); });
+      if (dropdownBackdrop) {
+        dropdownBackdrop.addEventListener('click', function() {
+          if (createModal) createModal.classList.remove('show');
+          if (activityDetailModal) activityDetailModal.classList.remove('show');
+          this.classList.remove('active');
         });
+      }
+
+      // --- create/edit submit ---
+      if (createForm) {
+        createForm.addEventListener('submit', async function (e) {
+          e.preventDefault();
+          const editId = createForm.getAttribute('data-edit-id');
+          const title = (cf.title && cf.title.value || '').trim();
+          const description = (cf.description && cf.description.value || '').trim();
+          const dateTime = (cf.dateTime && cf.dateTime.value || '').trim();
+          const location = (cf.location && cf.location.value || '').trim();
+          const capacity = (cf.capacity && cf.capacity.value || '').trim();
+          const category = (cf.categorySelect && cf.categorySelect.value || '').trim();
+          const points = (cf.points && cf.points.value || '').trim();
+          const host = (cf.host && cf.host.value || '').trim();
+
+          if (!title || !dateTime) { alert('Title and date/time required'); return; }
+
+          try {
+            const body = new URLSearchParams();
+            body.append('title', title);
+            body.append('description', description);
+            body.append('dateTime', dateTime);
+            body.append('location', location);
+            if (capacity) body.append('capacity', capacity);
+            body.append('category', category);
+            if (points) body.append('points', points);
+            if (host) body.append('host', host);
+
+            let res;
+            if (!editId) {
+              res = await apiPost('/api/activity/create', body);
+              if (res.success) { alert('Activity created'); createModal.classList.remove('show'); if (dropdownBackdrop) dropdownBackdrop.classList.remove('active'); await loadActivities(); }
+              else alert(res.error || 'Create failed');
+            } else {
+              body.append('activityID', editId);
+              res = await apiPost('/api/activity/update', body);
+              if (res.success) { alert('Activity updated'); createModal.classList.remove('show'); if (dropdownBackdrop) dropdownBackdrop.classList.remove('active'); await loadActivities(); }
+              else alert(res.error || 'Update failed');
+            }
+          } catch (err) { console.error(err); alert('Error saving activity'); }
+        });
+      }
+
+      // --- search & filters bindings ---
+      if (activitySearch) { let t; activitySearch.addEventListener('input', function() { clearTimeout(t); t = setTimeout(() => renderActivities(allActivities), 200); }); }
+      if (activityCategory) activityCategory.addEventListener('change', () => renderActivities(allActivities));
+      if (statusFilterEl) statusFilterEl.addEventListener('change', () => renderActivities(allActivities));
+      if (sortFilterEl) sortFilterEl.addEventListener('change', () => renderActivities(allActivities));
+
+      // category quick buttons
+      if (categoryButtons) {
+        categoryButtons.addEventListener('click', function (e) {
+          const b = e.target.closest('.category-btn');
+          if (!b) return;
+          categoryButtons.querySelectorAll('.category-btn').forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          const cat = b.getAttribute('data-category') || 'all';
+          if (activityCategory) activityCategory.value = cat;
+          renderActivities(allActivities);
+        });
+      }
+
+      // create button
+      if (createBtn) createBtn.addEventListener('click', openCreateModal);
+
+      // profile dropdown (already wired previously, keep safe)
+      if (profileBtn && profileMenu) {
+        profileBtn.addEventListener('click', e => { e.stopPropagation(); profileMenu.classList.toggle('show'); profileBtn.classList.toggle('active'); });
+        document.addEventListener('click', e => { if (!profileBtn.contains(e.target) && !profileMenu.contains(e.target)) { profileMenu.classList.remove('show'); profileBtn.classList.remove('active'); }}); 
+      }
+      if (logoutBtn) logoutBtn.addEventListener('click', e => { e.preventDefault(); window.location.href = ctx + '/logout'; });
+
+      // set nav active based on filename
+      (function setActiveNav() {
+        try {
+          const links = document.querySelectorAll('.nav-links a');
+          const current = window.location.pathname.split('/').pop() || 'Activity.html';
+          links.forEach(a => {
+            const href = (a.getAttribute('href') || '').split('/').pop();
+            if (href === current) a.classList.add('active'); else a.classList.remove('active');
+          });
+        } catch (e) {}
+      })();
+
+      async function refreshProfile() {
+        try {
+          const data = await apiGet('/api/student/me');
+          if (!data) return;
+          const statPointsEl = document.getElementById('statPoints');
+          if (statPointsEl && typeof data.co_curricular_points !== 'undefined' && data.co_curricular_points !== null) {
+            statPointsEl.textContent = data.co_curricular_points;
+          }
+          const profileNameEl = document.getElementById('profileName');
+          if (profileNameEl && data.name) profileNameEl.textContent = data.name;
+          profile = data;
+          if (typeof loadActivities === 'function') await loadActivities();
+        } catch (e) {
+          console.warn('refreshProfile failed', e);
+        }
+      }
+
+      // initial load
+      loadProfile();
+      loadActivities();
+      refreshProfile();
+    });
     </script>
 </body>
 </html>

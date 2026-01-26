@@ -3,10 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-/**
- *
- * @author Xander
- */
 package com.advising.controller;
 
 import jakarta.servlet.*;
@@ -15,6 +11,11 @@ import jakarta.servlet.annotation.*;
 import java.io.IOException;
 import java.sql.*;
 import org.json.JSONObject;
+
+/**
+ *
+ * @author Xander
+ */
 
 @WebServlet("/api/student/me")
 public class StudentDataServlet extends HttpServlet {
@@ -44,7 +45,6 @@ public class StudentDataServlet extends HttpServlet {
         String userID = String.valueOf(userIdObj);
 
         try (Connection conn = DBConnection.getConnection()) {
-            // Defensive: select all columns and read only those present
             String sql = "SELECT * FROM student WHERE studentID = ?";
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, userID);
@@ -72,18 +72,38 @@ public class StudentDataServlet extends HttpServlet {
                     json.put("semester", safeGetInt(rs, md, "semester", 0));
 
                     Integer advisorID = safeGetNullableInt(rs, md, "advisorID");
-                    if (advisorID == null) {
-                        json.put("advisorID", JSONObject.NULL);
-                    } else {
-                        json.put("advisorID", advisorID);
-                    }
+                    if (advisorID == null) json.put("advisorID", JSONObject.NULL); else json.put("advisorID", advisorID);
 
                     json.put("phoneNum", safeGetString(rs, md, "phoneNum", ""));
 
-                    // Compute CGPA & creditsCompleted on-the-fly
+                    // Prefer stored values if present
+                    Double storedCgpa = null;
+                    try {
+                        if (hasColumn(md, "cgpa")) {
+                            double cg = rs.getDouble("cgpa");
+                            if (!rs.wasNull()) storedCgpa = cg;
+                        }
+                    } catch (SQLException e) { /* ignore */ }
+
+                    Integer storedCredits = null;
+                    try {
+                        if (hasColumn(md, "creditscompleted")) {
+                            int cc = rs.getInt("creditscompleted");
+                            if (!rs.wasNull()) storedCredits = cc;
+                        }
+                    } catch (SQLException e) { /* ignore */ }
+
+                    Integer storedPoints = null;
+                    try {
+                        if (hasColumn(md, "co_curricular_points")) {
+                            int pts = rs.getInt("co_curricular_points");
+                            if (!rs.wasNull()) storedPoints = pts;
+                        }
+                    } catch (SQLException e) { /* ignore */ }
+
+                    // Compute CGPA & creditsCompleted on-the-fly (as fallback)
                     double cgpa = 0.0;
                     int creditsCompleted = 0;
-                    // We'll compute weighted average: sum(gradePoint * credits) / sum(credits)
                     String gradeSql = "SELECT sp.grade, c.creditHour " +
                                       "FROM student_progress sp " +
                                       "JOIN course c ON sp.courseID = c.courseID " +
@@ -99,25 +119,69 @@ public class StudentDataServlet extends HttpServlet {
                                 Double gp = letterGradeToPoint(grade);
                                 if (gp != null) {
                                     totalWeighted += gp * credit;
+                                    totalCredits += credit;
                                 }
                                 // Count creditsCompleted if grade not NT and not null
                                 if (grade != null && !grade.trim().equalsIgnoreCase("NT")) {
                                     creditsCompleted += credit;
                                 }
-                                totalCredits += credit;
                             }
                             if (totalCredits > 0) {
                                 cgpa = totalWeighted / totalCredits;
                                 cgpa = Math.round(cgpa * 100.0) / 100.0;
+                            } else {
+                                cgpa = 0.0;
                             }
                         }
                     } catch (SQLException ex) {
-                        // If student_progress or course not found, we default to zeros
                         ex.printStackTrace();
                     }
 
-                    json.put("cgpa", cgpa);
-                    json.put("creditsCompleted", creditsCompleted);
+                    // Prefer stored DB values, but update DB if stored values are missing or zero (helps keep DB in sync)
+                    boolean wroteBack = false;
+                    try {
+                        if ((storedCgpa == null || storedCgpa == 0.0) || (storedCredits == null || storedCredits == 0)) {
+                            String updateSql = "UPDATE student SET cgpa = ?, creditscompleted = ? WHERE studentID = ?";
+                            try (PreparedStatement ups = conn.prepareStatement(updateSql)) {
+                                ups.setDouble(1, cgpa);
+                                ups.setInt(2, creditsCompleted);
+                                ups.setString(3, userID);
+                                ups.executeUpdate();
+                                wroteBack = true;
+                            }
+                        }
+                    } catch (SQLException ex) {
+                        // If update fails, log but don't break response
+                        ex.printStackTrace();
+                    }
+
+                    // Final JSON values: prefer DB stored values when present (non-null)
+                    if (storedCgpa != null && !Double.isNaN(storedCgpa)) json.put("cgpa", storedCgpa);
+                    else json.put("cgpa", cgpa);
+
+                    if (storedCredits != null) json.put("creditsCompleted", storedCredits);
+                    else json.put("creditsCompleted", creditsCompleted);
+
+                    // co-curricular points
+                    if (storedPoints != null) json.put("co_curricular_points", storedPoints);
+                    else {
+                        // fallback: compute sum of points from completed activities (if you want)
+                        try {
+                            String ptsSql = "SELECT SUM(a.points) AS total FROM activity a JOIN activity_registration ar ON a.activityID = ar.activityID WHERE ar.studentID = ? AND a.status = 'completed'";
+                            try (PreparedStatement pps = conn.prepareStatement(ptsSql)) {
+                                pps.setString(1, userID);
+                                try (ResultSet prs = pps.executeQuery()) {
+                                    if (prs.next()) {
+                                        int total = prs.getInt("total");
+                                        if (prs.wasNull()) total = 0;
+                                        json.put("co_curricular_points", total);
+                                    } else json.put("co_curricular_points", 0);
+                                }
+                            }
+                        } catch (SQLException e) {
+                            json.put("co_curricular_points", 0);
+                        }
+                    }
 
                     // advisor name lookup (defensive)
                     if (advisorID != null) {
@@ -142,6 +206,9 @@ public class StudentDataServlet extends HttpServlet {
                         json.put("advisorName", "");
                     }
 
+                    // convenience: include userID (front-end uses profile.userID)
+                    json.put("userID", userID);
+
                     response.getWriter().write(json.toString());
                     return;
                 }
@@ -149,7 +216,6 @@ public class StudentDataServlet extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            // For development return a short message; do not leak stack in production
             JSONObject err = new JSONObject();
             err.put("error", "Database error");
             err.put("message", e.getMessage());

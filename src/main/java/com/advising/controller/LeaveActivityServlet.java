@@ -45,6 +45,41 @@ public class LeaveActivityServlet extends HttpServlet {
         }
 
         try (Connection conn = DBConnection.getConnection()) {
+            // check activity date/time and status
+            String sel = "SELECT dateTime, status FROM activity WHERE activityID = ?";
+            try (PreparedStatement ps = conn.prepareStatement(sel)) {
+                ps.setInt(1, activityID);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.next()) {
+                        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                        response.getWriter().write("{\"error\":\"Activity not found\"}");
+                        return;
+                    }
+                    Timestamp ts = rs.getTimestamp("dateTime");
+                    String status = rs.getString("status");
+                    if (status != null && "completed".equalsIgnoreCase(status)) {
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        response.getWriter().write("{\"error\":\"Cannot leave a completed activity\"}");
+                        return;
+                    }
+                    if (ts != null) {
+                        long diff = ts.getTime() - System.currentTimeMillis();
+                        long oneDay = 24L * 60L * 60L * 1000L;
+                        if (diff <= 0) {
+                            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                            response.getWriter().write("{\"error\":\"Cannot leave a past activity\"}");
+                            return;
+                        }
+                        if (diff <= oneDay) {
+                            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                            response.getWriter().write("{\"error\":\"Cannot leave an activity within 24 hours of start\"}");
+                            return;
+                        }
+                    }
+                }
+            }
+
+            // remove registration
             String del = "DELETE FROM activity_registration WHERE activityID = ? AND studentID = ?";
             try (PreparedStatement ps = conn.prepareStatement(del)) {
                 ps.setInt(1, activityID);

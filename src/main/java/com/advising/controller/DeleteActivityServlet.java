@@ -37,7 +37,7 @@ public class DeleteActivityServlet extends HttpServlet {
 
         try (Connection conn = DBConnection.getConnection()) {
             // verify owner
-            String sel = "SELECT studentID FROM activity WHERE activityID = ?";
+            String sel = "SELECT studentID, status FROM activity WHERE activityID = ?";
             try (PreparedStatement ps = conn.prepareStatement(sel)) {
                 ps.setInt(1, activityID);
                 try (ResultSet rs = ps.executeQuery()) {
@@ -45,23 +45,22 @@ public class DeleteActivityServlet extends HttpServlet {
                     String owner = rs.getString("studentID");
                     if (!String.valueOf(owner).equals(String.valueOf(studentID))) {
                         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                        response.getWriter().write("{\"error\":\"Not allowed to delete\"}");
+                        response.getWriter().write("{\"error\":\"Not allowed to archive\"}");
                         return;
                     }
                 }
             }
 
-            // delete registrations then activity
-            try (PreparedStatement delReg = conn.prepareStatement("DELETE FROM activity_registration WHERE activityID = ?")) {
-                delReg.setInt(1, activityID);
-                delReg.executeUpdate();
+            // Soft-delete: set status = 'archived'
+            try (PreparedStatement upd = conn.prepareStatement("UPDATE activity SET status = ? WHERE activityID = ?")) {
+                upd.setString(1, "archived");
+                upd.setInt(2, activityID);
+                upd.executeUpdate();
             }
-            try (PreparedStatement delAct = conn.prepareStatement("DELETE FROM activity WHERE activityID = ?")) {
-                delAct.setInt(1, activityID);
-                delAct.executeUpdate();
-            }
+
             JSONObject out = new JSONObject();
             out.put("success", true);
+            out.put("archived", true);
             response.getWriter().write(out.toString());
         } catch (SQLException e) {
             e.printStackTrace();

@@ -8,6 +8,7 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.*;
 
 /**
@@ -24,6 +25,9 @@ public class RegisterServlet extends HttpServlet {
         String password = request.getParameter("password");
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
+
+        // Debug log to help track registration failures
+        System.out.println("[RegisterServlet] incoming registration attempt: role=" + role + " username=" + username + " email=" + email + " firstName=" + firstName + " lastName=" + lastName);
 
         try (Connection conn = DBConnection.getConnection()) {
             String sql;
@@ -44,6 +48,7 @@ public class RegisterServlet extends HttpServlet {
 
                             if (rowsUpdated == 0) {
                                 // Advisor is full or doesn't exist
+                                System.out.println("[RegisterServlet] advisor update failed for advisorID=" + advisorID);
                                 response.sendRedirect("index.html?error=advisor_full");
                                 return;
                             }
@@ -56,15 +61,22 @@ public class RegisterServlet extends HttpServlet {
 
                 sql = "INSERT INTO student (studentID, username, firstName, lastName, email, password, program, yearOfStudy, semester, advisorID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 PreparedStatement ps = conn.prepareStatement(sql);
-                ps.setString(1, request.getParameter("studentID"));
+                // Debug incoming student-only fields
+                String studentID = request.getParameter("studentID");
+                String program = request.getParameter("program");
+                String yearStr = request.getParameter("yearOfStudy");
+                String semStr = request.getParameter("semester");
+                System.out.println("[RegisterServlet] student fields: studentID=" + studentID + " program=" + program + " year=" + yearStr + " semester=" + semStr + " advisorID=" + advisorID);
+
+                ps.setString(1, studentID);
                 ps.setString(2, username);
                 ps.setString(3, firstName);
                 ps.setString(4, lastName);
                 ps.setString(5, email);
                 ps.setString(6, password);
-                ps.setString(7, request.getParameter("program"));
-                ps.setInt(8, Integer.parseInt(request.getParameter("yearOfStudy")));
-                ps.setInt(9, Integer.parseInt(request.getParameter("semester")));
+                ps.setString(7, program);
+                ps.setInt(8, Integer.parseInt(yearStr));
+                ps.setInt(9, Integer.parseInt(semStr));
 
                 if (advisorID != null) {
                     ps.setInt(10, advisorID);
@@ -74,22 +86,37 @@ public class RegisterServlet extends HttpServlet {
 
                 ps.executeUpdate();
             } else {
-                sql = "INSERT INTO advisor (advisorID, username, firstName, lastName, email, password, phoneNum, department) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                sql = "INSERT INTO advisor (username, firstName, lastName, email, password, phoneNum, department) VALUES (?, ?, ?, ?, ?, ?, ?)";
                 PreparedStatement ps = conn.prepareStatement(sql);
-                ps.setString(1, request.getParameter("advisorID"));
-                ps.setString(2, username);
-                ps.setString(3, firstName);
-                ps.setString(4, lastName);
-                ps.setString(5, email);
-                ps.setString(6, password);
-                ps.setString(7, request.getParameter("phoneNum"));
-                ps.setString(8, request.getParameter("department"));
+
+                String advisorID = request.getParameter("advisorID");
+                String phone = request.getParameter("phoneNum");
+                String department = request.getParameter("department");
+
+                System.out.println("[RegisterServlet] advisor fields: advisorID=" + advisorID + " phone=" + phone + " dept=" + department);
+
+                ps.setString(1, username);
+                ps.setString(2, firstName);
+                ps.setString(3, lastName);
+                ps.setString(4, email);
+                ps.setString(5, password);
+                ps.setString(6, phone);
+                ps.setString(7, department);
                 ps.executeUpdate();
             }
             response.sendRedirect("index.html?reg=success");
         } catch (SQLException e) {
-            e.printStackTrace();
-            response.sendRedirect("index.html?error=reg_failed");
-        }
+        e.printStackTrace();
+        // Send detailed error to browser for debugging
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+        out.println("<h3>Registration Failed - Debug Info</h3>");
+        out.println("<pre>");
+        out.println("Error: " + e.getMessage());
+        out.println("SQL State: " + e.getSQLState());
+        out.println("Error Code: " + e.getErrorCode());
+        out.println("</pre>");
+        out.close();
+    }
     }
 }
