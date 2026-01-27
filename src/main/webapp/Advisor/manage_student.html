@@ -558,7 +558,6 @@
                 <h1>My Students - Advisor Dashboard</h1>
                 <div class="header-actions">
                     <button class="btn btn-success" id="addAdviseeBtn"><i class="fas fa-user-plus"></i> Add Advisee</button>
-                    <button class="btn btn-primary" id="createSessionBtn"><i class="fas fa-calendar-plus"></i> Create Session</button>
                     <a href="advisor_profile.html" class="profile-btn" title="Advisor Profile">👤</a>
                     <button class="logout-btn" id="logoutBtn" title="Logout">🚪</button>
                 </div>
@@ -621,69 +620,6 @@
                         </p>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Create Session Modal -->
-    <div class="modal" id="createSessionModal" aria-hidden="true" role="dialog" aria-modal="true">
-        <div class="modal-content" role="document">
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border);">
-                <h3 style="margin:0;color:var(--blue-primary)">Create Advising Session</h3>
-                <button id="closeCreateModal" class="close-modal" aria-label="Close" style="background:none;border:0;font-size:22px;cursor:pointer">&times;</button>
-            </div>
-
-            <div style="padding:18px;">
-                <form id="createSessionForm">
-                    <div style="margin-bottom:12px">
-                        <label for="sessionStudent" style="display:block;margin-bottom:4px;font-weight:600">Select Student</label>
-                        <select id="sessionStudent" name="sessionStudent" required style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px">
-                            <option value="">-- Choose a student --</option>
-                        </select>
-                    </div>
-
-                    <div style="margin-bottom:12px">
-                        <label for="sessionTitle" style="display:block;margin-bottom:4px;font-weight:600">Session Title</label>
-                        <input type="text" id="sessionTitle" name="sessionTitle" required placeholder="e.g., Academic Planning" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px">
-                    </div>
-
-                    <div style="margin-bottom:12px;display:flex;gap:12px">
-                        <div style="flex:1">
-                            <label for="sessionDate" style="display:block;margin-bottom:4px;font-weight:600">Date</label>
-                            <input type="date" id="sessionDate" name="sessionDate" required style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px">
-                        </div>
-                        <div style="flex:1">
-                            <label for="sessionTime" style="display:block;margin-bottom:4px;font-weight:600">Time</label>
-                            <input type="time" id="sessionTime" name="sessionTime" required style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px">
-                        </div>
-                    </div>
-
-                    <div style="margin-bottom:12px">
-                        <label for="sessionNotes" style="display:block;margin-bottom:4px;font-weight:600">Notes (Optional)</label>
-                        <textarea id="sessionNotes" name="sessionNotes" rows="3" placeholder="Additional details..." style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px"></textarea>
-                    </div>
-
-                    <div style="margin-bottom:12px">
-                        <label for="sessionMeetLink" style="display:block;margin-bottom:4px;font-weight:600">Google Meet Link (Optional)</label>
-                        <input type="url" id="sessionMeetLink" name="sessionMeetLink" placeholder="https://meet.google.com/..." style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px">
-                    </div>
-
-                    <div style="margin-bottom:12px">
-                        <label for="sessionType" style="display:block;margin-bottom:4px;font-weight:600">Session Type</label>
-                        <select id="sessionType" name="sessionType" required style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px">
-                            <option value="">-- Select type --</option>
-                            <option value="academic">Academic Advising</option>
-                            <option value="career">Career Counseling</option>
-                            <option value="personal">Personal Support</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-
-                    <div style="display:flex;gap:8px">
-                        <button type="submit" class="btn btn-primary"><i class="fas fa-calendar-plus"></i> Create Session</button>
-                        <button type="button" id="cancelCreateBtn" class="btn btn-secondary">Cancel</button>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
@@ -1061,29 +997,6 @@
             selectedCandidate = null;
         }
 
-        // Create session modal functions
-        function openCreateSessionModal(){
-            createSessionModal.classList.add('show');
-            createSessionModal.setAttribute('aria-hidden','false');
-            populateStudentDropdown();
-            createSessionForm.reset();
-        }
-
-        function closeCreateSessionModal(){
-            createSessionModal.classList.remove('show');
-            createSessionModal.setAttribute('aria-hidden','true');
-        }
-
-        function populateStudentDropdown(){
-            sessionStudent.innerHTML = '<option value="">-- Choose a student --</option>';
-            advisees.forEach(s => {
-                const option = document.createElement('option');
-                option.value = s.studentID;
-                option.textContent = `${s.name || s.firstName + ' ' + s.lastName} (${s.studentID})`;
-                sessionStudent.appendChild(option);
-            });
-        }
-
         // debounce helper
         function debounce(fn, wait=300){
             let t;
@@ -1104,11 +1017,6 @@
             closeAddModal.addEventListener('click', closeAddAdviseeModal);
             cancelAddBtn.addEventListener('click', closeAddAdviseeModal);
 
-            // Create Session modal triggers
-            createSessionBtn.addEventListener('click', openCreateSessionModal);
-            closeCreateModal.addEventListener('click', closeCreateSessionModal);
-            cancelCreateBtn.addEventListener('click', closeCreateSessionModal);
-
             // candidate search (live)
             candidateSearch.addEventListener('input', debounce(async function(e){
                 const q = e.target.value.trim();
@@ -1128,40 +1036,6 @@
                 const action = isAssigned ? 'Reassign' : 'Assign';
                 if (!confirm(action + ' ' + (selectedCandidate.name || selectedCandidate.studentID) + ' as your advisee?')) return;
                 await addAdvisee(selectedCandidate.studentID);
-            });
-
-            // create session form submit
-            createSessionForm.addEventListener('submit', async function(e){
-                e.preventDefault();
-                const formData = new FormData(this);
-                const data = {
-                    studentID: formData.get('sessionStudent'),
-                    title: formData.get('sessionTitle'),
-                    sessionDate: formData.get('sessionDate'),
-                    sessionTime: formData.get('sessionTime'),
-                    notes: formData.get('sessionNotes') || '',
-                    meetLink: formData.get('sessionMeetLink') || '',
-                    sessionType: formData.get('sessionType') || ''
-                };
-
-                try {
-                    const res = await fetch(ctx + '/api/sessions/create', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data)
-                    });
-
-                    if (res.ok) {
-                        showToast('Session created successfully');
-                        closeCreateSessionModal();
-                        // Optionally reload sessions or advisees
-                    } else {
-                        const txt = await res.text();
-                        showToast('Failed to create session: ' + txt, 'error');
-                    }
-                } catch (err) {
-                    showToast('Network error while creating session', 'error');
-                }
             });
 
             // logout button

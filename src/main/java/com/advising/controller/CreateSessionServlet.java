@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -45,7 +46,20 @@ public class CreateSessionServlet extends HttpServlet {
         String sessionTime = json.optString("sessionTime", "").trim();
         String notes = json.optString("notes", "").trim();
         String meetLink = json.optString("meetLink", "").trim();
+        String location = json.optString("location", "").trim();
         String sessionType = json.optString("sessionType", "").trim();
+        
+        // Get students array for multi-student support
+        JSONArray studentsArray = json.optJSONArray("students");
+        String[] students = null;
+        if (studentsArray != null && studentsArray.length() > 0) {
+            students = new String[studentsArray.length()];
+            for (int i = 0; i < studentsArray.length(); i++) {
+                students[i] = studentsArray.getString(i);
+            }
+        } else {
+            students = new String[] { studentID };
+        }
 
         if (studentID.isEmpty() || title.isEmpty() || sessionDate.isEmpty() || sessionTime.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -54,7 +68,7 @@ public class CreateSessionServlet extends HttpServlet {
         }
 
         try (Connection conn = DBConnection.getConnection()) {
-            // Check if student is assigned to this advisor
+            // Check if first student is assigned to this advisor
             String checkSql = "SELECT advisorID FROM student WHERE studentID = ?";
             try (PreparedStatement checkPs = conn.prepareStatement(checkSql)) {
                 checkPs.setString(1, studentID);
@@ -75,22 +89,50 @@ public class CreateSessionServlet extends HttpServlet {
 
             // Insert session
             String sessionDateTime = sessionDate + " " + sessionTime + ":00"; // Assume HH:MM format, add seconds
-            String insertSql = "INSERT INTO advising_session (title, sessionDateTime, notes, meetLink, sessionType, status, advisorID, studentID) VALUES (?, ?, ?, ?, ?, 'scheduled', ?, ?)";
-            try (PreparedStatement insertPs = conn.prepareStatement(insertSql)) {
+            String insertSql = "INSERT INTO advising_session (title, sessionDateTime, notes, meetLink, location, sessionType, status, advisorID, studentID) VALUES (?, ?, ?, ?, ?, ?, 'scheduled', ?, ?)";
+            int generatedSessionID;
+            try (PreparedStatement insertPs = conn.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
                 insertPs.setString(1, title);
                 insertPs.setString(2, sessionDateTime);
                 insertPs.setString(3, notes);
                 insertPs.setString(4, meetLink);
-                insertPs.setString(5, sessionType);
-                insertPs.setString(6, advisorID);
-                insertPs.setString(7, studentID);
+                insertPs.setString(5, location);
+                insertPs.setString(6, sessionType);
+                insertPs.setString(7, advisorID);
+                insertPs.setString(8, studentID);
                 insertPs.executeUpdate();
+                
+                // Get generated session ID
+                try (ResultSet generatedKeys = insertPs.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        generatedSessionID = generatedKeys.getInt(1);
+                    } else {
+                        throw new SQLException("Failed to get generated session ID");
+                    }
+                }
+            }
+            
+            // Insert participants into session_participant junction table
+            if (students != null && students.length > 0) {
+                String insertParticipantSql = "INSERT INTO session_participant (sessionID, studentID) VALUES (?, ?)";
+                try (PreparedStatement participantPs = conn.prepareStatement(insertParticipantSql)) {
+                    for (String student : students) {
+                        String trimmedStudent = student.trim();
+                        if (!trimmedStudent.isEmpty()) {
+                            participantPs.setInt(1, generatedSessionID);
+                            participantPs.setString(2, trimmedStudent);
+                            participantPs.addBatch();
+                        }
+                    }
+                    participantPs.executeBatch();
+                }
             }
 
             // Success
             JSONObject success = new JSONObject();
             success.put("success", true);
             success.put("message", "Session created successfully");
+            success.put("sessionID", generatedSessionID);
             response.getWriter().write(success.toString());
 
         } catch (SQLException e) {

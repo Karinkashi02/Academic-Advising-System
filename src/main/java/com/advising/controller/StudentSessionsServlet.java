@@ -42,13 +42,17 @@ public class StudentSessionsServlet extends HttpServlet {
         }
 
         try (Connection conn = DBConnection.getConnection()) {
-            String sql = "SELECT s.sessionID, s.title, s.sessionDateTime, s.notes, s.meetLink, s.sessionType, s.status, s.advisorID, s.studentID, s.cancelReason, " +
+            String sql = "SELECT DISTINCT s.sessionID, s.title, s.sessionDateTime, s.notes, s.meetLink, s.sessionType, s.status, s.advisorID, s.cancelReason, " +
                          "a.firstName AS advisorFirst, a.lastName AS advisorLast " +
-                         "FROM advising_session s LEFT JOIN advisor a ON s.advisorID = a.advisorID " +
-                         "WHERE s.studentID = ? ORDER BY s.sessionDateTime DESC";
+                         "FROM advising_session s " +
+                         "LEFT JOIN session_participant sp ON s.sessionID = sp.sessionID " +
+                         "LEFT JOIN advisor a ON s.advisorID = a.advisorID " +
+                         "WHERE sp.studentID = ? OR s.studentID = ? " +
+                         "ORDER BY s.sessionDateTime DESC";
 
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, studentID);
+                ps.setString(2, studentID);
                 try (ResultSet rs = ps.executeQuery()) {
                     JSONArray arr = new JSONArray();
                     while (rs.next()) {
@@ -66,7 +70,6 @@ public class StudentSessionsServlet extends HttpServlet {
                         String al = rs.getString("advisorLast");
                         String advisorName = ((af == null ? "" : af) + " " + (al == null ? "" : al)).trim();
                         o.put("advisorName", advisorName);
-                        o.put("studentID", rs.getString("studentID"));
                         o.put("cancelReason", rs.getString("cancelReason") != null ? rs.getString("cancelReason") : "");
                         arr.put(o);
                     }
