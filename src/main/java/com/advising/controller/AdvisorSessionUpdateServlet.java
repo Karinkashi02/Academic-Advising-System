@@ -55,6 +55,8 @@ public class AdvisorSessionUpdateServlet extends HttpServlet {
             return;
         }
 
+        String meetLink = request.getParameter("meetLink");
+
         action = action.trim().toLowerCase();
 
         try (Connection conn = DBConnection.getConnection()) {
@@ -78,10 +80,11 @@ public class AdvisorSessionUpdateServlet extends HttpServlet {
             }
 
             if ("accept".equals(action)) {
-                String upd = "UPDATE advising_session SET status = ? WHERE sessionID = ?";
+                String upd = "UPDATE advising_session SET status = ?, meetLink = ? WHERE sessionID = ?";
                 try (PreparedStatement ps = conn.prepareStatement(upd)) {
                     ps.setString(1, "confirmed");
-                    ps.setInt(2, sessionID);
+                    ps.setString(2, meetLink != null ? meetLink.trim() : null);
+                    ps.setInt(3, sessionID);
                     int updated = ps.executeUpdate();
                     if (updated > 0) {
                         response.getWriter().write("{\"success\":true, \"message\":\"Session confirmed\"}");

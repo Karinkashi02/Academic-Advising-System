@@ -1452,182 +1452,43 @@
     </div>
 
     <script>
-        // Database for "My Advising Sessions"
-        const mySessions = [
-            {
-                id: 101,
-                name: "Graduation Planning",
-                type: "Graduation Planning",
-                duration: "60 mins",
-                students: [
-                    { name: "Sarah Johnson", major: "Computer Science", year: "Senior", avatar: "S" },
-                    { name: "Emily Davis", major: "Information Systems", year: "Senior", avatar: "E" }
-                ],
-                date: "2023-10-25",
-                time: "10:00",
-                notes: "Review graduation requirements and plan final semester courses. Ensure all prerequisites are met.",
-                location: "Room 205, Building A",
-                status: "upcoming"
-            },
-            {
-                id: 102,
-                name: "Academic Progress Review",
-                type: "Academic Advising",
-                duration: "45 mins",
-                students: [
-                    { name: "Michael Chen", major: "Data Science", year: "Junior", avatar: "M" }
-                ],
-                date: "2023-10-26",
-                time: "14:00",
-                notes: "Mid-semester progress check and course adjustment discussion. Review current grades.",
-                location: "Virtual Meeting",
-                status: "upcoming"
-            },
-            {
-                id: 103,
-                name: "Research Guidance",
-                type: "Research Guidance",
-                duration: "90 mins",
-                students: [
-                    { name: "Olivia Taylor", major: "Artificial Intelligence", year: "Senior", avatar: "O" }
-                ],
-                date: "2023-10-27",
-                time: "11:30",
-                notes: "Discuss research opportunities in AI ethics and machine learning. Review project proposals.",
-                location: "Research Lab 3",
-                status: "upcoming"
-            },
-            {
-                id: 104,
-                name: "Study Abroad Planning",
-                type: "Academic Advising",
-                duration: "45 mins",
-                students: [
-                    { name: "Amanda Wilson", major: "Computer Science", year: "Junior", avatar: "A" }
-                ],
-                date: "2023-10-28",
-                time: "15:15",
-                notes: "Explore study abroad options for next academic year. Review partner universities.",
-                location: "Room 102",
-                status: "completed"
-            },
-            {
-                id: 105,
-                name: "Capstone Project Review",
-                type: "Research Guidance",
-                duration: "60 mins",
-                students: [
-                    { name: "Thomas Anderson", major: "Software Engineering", year: "Senior", avatar: "T" }
-                ],
-                date: "2023-10-29",
-                time: "09:00",
-                notes: "Review capstone project proposal and timeline. Discuss technical requirements.",
-                location: "Project Room 1",
-                status: "upcoming"
-            },
-            {
-                id: 106,
-                name: "Career Counseling",
-                type: "Career Counseling",
-                duration: "60 mins",
-                students: [
-                    { name: "Robert Brown", major: "Cybersecurity", year: "Junior", avatar: "R" }
-                ],
-                date: "2023-10-30",
-                time: "13:45",
-                notes: "Discuss career options in cybersecurity industry. Review internship opportunities.",
-                location: "Career Center",
-                status: "completed"
-            },
-            {
-                id: 107,
-                name: "Tutoring Support Planning",
-                type: "Academic Advising",
-                duration: "30 mins",
-                students: [
-                    { name: "Jennifer Lee", major: "Data Science", year: "Sophomore", avatar: "J" }
-                ],
-                date: "2023-10-31",
-                time: "10:30",
-                notes: "Set up tutoring support for statistics courses. Coordinate with tutoring center.",
-                location: "Learning Center",
-                status: "cancelled"
-            },
-            {
-                id: 108,
-                name: "Time Management Workshop",
-                type: "Personal Development",
-                duration: "90 mins",
-                students: [
-                    { name: "Sophia Rodriguez", major: "Information Systems", year: "Junior", avatar: "S" },
-                    { name: "James Martinez", major: "Computer Science", year: "Freshman", avatar: "J" }
-                ],
-                date: "2023-11-01",
-                time: "16:00",
-                notes: "Group session on effective time management strategies. Discuss study techniques.",
-                location: "Conference Room B",
-                status: "upcoming"
-            }
-        ];
+        // Data
+        let mySessions = [];
+        let sessionRequests = [];
 
-        // Database for "Session Requests"
-        const sessionRequests = [
-            {
-                id: 1,
-                name: "Course Selection Advising",
-                type: "Academic",
-                duration: "45 mins",
-                student: "Sarah Johnson",
-                studentId: "S10023",
-                date: "Oct 15, 2023",
-                notes: "Student needs guidance on selecting courses for Spring 2024 semester. Interested in Data Science track.",
-                status: "pending"
-            },
-            {
-                id: 2,
-                name: "Graduate School Planning",
-                type: "Academic",
-                duration: "60 mins",
-                student: "Michael Chen",
-                studentId: "S10045",
-                date: "Oct 16, 2023",
-                notes: "Discuss graduate school options and application timeline.",
-                status: "approved"
-            },
-            {
-                id: 3,
-                name: "Internship Guidance",
-                type: "Career",
-                duration: "60 mins",
-                student: "David Wilson",
-                studentId: "S10067",
-                date: "Oct 20, 2023",
-                notes: "Student needs resources for summer internship applications. Resume review requested.",
-                status: "pending"
-            },
-            {
-                id: 4,
-                name: "Personal Development",
-                type: "Personal",
-                duration: "45 mins",
-                student: "Emily Davis",
-                studentId: "S10089",
-                date: "Oct 22, 2023",
-                notes: "Student wants to improve public speaking skills and leadership abilities.",
-                status: "approved"
-            },
-            {
-                id: 5,
-                name: "Academic Probation",
-                type: "Academic",
-                duration: "60 mins",
-                student: "Robert Brown",
-                studentId: "S10012",
-                date: "Oct 24, 2023",
-                notes: "Student on academic probation needs improvement plan.",
-                status: "rejected"
+        // Context path helper
+        const ctx = (function(){ const p = window.location.pathname.split('/').filter(Boolean); return p.length ? '/' + p[0] : ''; })();
+
+        // Network helpers
+        async function apiGet(path) {
+            const res = await fetch(ctx + path, { cache: 'no-store' });
+            if (!res.ok) throw new Error('GET ' + path + ' returned ' + res.status);
+            return res.json();
+        }
+
+        // Load sessions from API
+        async function loadSessions() {
+            try {
+                const data = await apiGet('/api/advisor/sessions');
+                const sessions = data.sessions || [];
+                mySessions = sessions.filter(s => s.status !== 'pending');
+                sessionRequests = sessions.filter(s => s.status === 'pending');
+                filteredMySessions = [...mySessions];
+                filteredRequests = [...sessionRequests];
+                renderMySessions();
+                renderMySessionsPagination();
+                renderRequests();
+                renderRequestsPagination();
+                updateStats();
+            } catch (e) {
+                console.error('Failed to load sessions:', e);
+                // Fallback to empty arrays
+                mySessions = [];
+                sessionRequests = [];
+                filteredMySessions = [];
+                filteredRequests = [];
             }
-        ];
+        }
 
         // Pagination variables for My Sessions
         let currentPageMySessions = 1;
@@ -1643,19 +1504,8 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize filtered sessions
-            filteredMySessions = [...mySessions];
-            filteredRequests = [...sessionRequests];
-            
-            // Load My Sessions
-            renderMySessions();
-            renderMySessionsPagination();
-            
-            // Load Session Requests
-            renderRequests();
-            renderRequestsPagination();
-            
-            updateStats();
+            // Load sessions from API
+            loadSessions();
             
             // Add event listeners
             document.getElementById('createSessionBtn').addEventListener('click', function(e) {
@@ -1721,10 +1571,10 @@
                         }
                         
                         // Then apply search filter
-                        return session.name.toLowerCase().includes(searchTerm) ||
-                               session.type.toLowerCase().includes(searchTerm) ||
-                               session.notes.toLowerCase().includes(searchTerm) ||
-                               session.status.toLowerCase().includes(searchTerm);
+                        return (session.title || '').toLowerCase().includes(searchTerm) ||
+                               (session.sessionType || '').toLowerCase().includes(searchTerm) ||
+                               (session.notes || '').toLowerCase().includes(searchTerm) ||
+                               (session.status || '').toLowerCase().includes(searchTerm);
                     });
                     
                     currentPageMySessions = 1;
@@ -1747,10 +1597,10 @@
                         }
                         
                         // Then apply search filter
-                        return request.name.toLowerCase().includes(searchTerm) ||
-                               request.student.toLowerCase().includes(searchTerm) ||
-                               request.notes.toLowerCase().includes(searchTerm) ||
-                               request.status.toLowerCase().includes(searchTerm);
+                        return (request.title || '').toLowerCase().includes(searchTerm) ||
+                               (request.studentName || '').toLowerCase().includes(searchTerm) ||
+                               (request.notes || '').toLowerCase().includes(searchTerm) ||
+                               (request.status || '').toLowerCase().includes(searchTerm);
                     });
                     
                     currentPageRequests = 1;
@@ -1855,27 +1705,17 @@
             
             pageSessions.forEach((session, index) => {
                 const row = document.createElement('tr');
-                row.setAttribute('data-id', session.id);
+                row.setAttribute('data-id', session.sessionID);
                 
-                // Format date for display
-                const dateObj = new Date(session.date);
-                const formattedDate = dateObj.toLocaleDateString('en-US', { 
-                    year: 'numeric', 
-                    month: 'short', 
-                    day: 'numeric' 
-                });
-                
-                // Format time for display
-                const timeObj = new Date(`1970-01-01T${session.time}`);
-                const formattedTime = timeObj.toLocaleTimeString('en-US', { 
-                    hour: 'numeric', 
-                    minute: '2-digit',
-                    hour12: true 
-                });
+                // Parse sessionDateTime
+                const ts = session.sessionDateTime ? new Date(String(session.sessionDateTime).replace(' ', 'T')) : null;
+                const formattedDate = ts ? ts.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
+                const formattedTime = ts ? ts.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) : '';
                 
                 // Get status badge class and text
                 let statusClass, statusText;
-                switch(session.status) {
+                const status = (session.status || '').toLowerCase();
+                switch(status) {
                     case 'completed':
                         statusClass = 'status-completed';
                         statusText = 'Completed';
@@ -1884,22 +1724,29 @@
                         statusClass = 'status-cancelled';
                         statusText = 'Cancelled';
                         break;
-                    case 'upcoming':
+                    case 'confirmed':
+                    case 'scheduled':
+                        statusClass = 'status-upcoming';
+                        statusText = 'Confirmed';
+                        break;
+                    case 'denied':
+                        statusClass = 'status-cancelled';
+                        statusText = 'Denied';
+                        break;
                     default:
                         statusClass = 'status-upcoming';
                         statusText = 'Upcoming';
                 }
                 
                 // Truncate notes for display
-                const truncatedNotes = session.notes.length > 80 
-                    ? session.notes.substring(0, 80) + '...' 
-                    : session.notes;
+                const notes = session.notes || '';
+                const truncatedNotes = notes.length > 80 ? notes.substring(0, 80) + '...' : notes;
                 
                 row.innerHTML = `
                     <td class="number-cell">${startIndex + index + 1}</td>
                     <td>
-                        <div class="session-name-cell">${session.name}</div>
-                        <div class="session-type-cell">${session.type} • ${session.duration}</div>
+                        <div class="session-name-cell">${session.title || ''}</div>
+                        <div class="session-type-cell">${session.sessionType || 'General'} • 60 mins</div>
                     </td>
                     <td class="date-cell">
                         <div>${formattedDate}</div>
@@ -1908,16 +1755,16 @@
                     <td class="status-cell">
                         <span class="status-badge ${statusClass}">${statusText}</span>
                     </td>
-                    <td class="notes-cell" title="${session.notes}">${truncatedNotes}</td>
+                    <td class="notes-cell" title="${notes}">${truncatedNotes}</td>
                     <td class="actions-cell">
                         <div class="action-buttons">
-                            <button class="btn btn-secondary btn-small view-session-btn" onclick="viewSession(${session.id})" title="View Details">
+                            <button class="btn btn-secondary btn-small view-session-btn" onclick="viewSession(${session.sessionID})" title="View Details">
                                 <i class="fas fa-eye"></i> View
                             </button>
-                            <button class="btn btn-success btn-small edit-session-btn" onclick="editSession(${session.id})" title="Edit Session">
+                            <button class="btn btn-success btn-small edit-session-btn" onclick="editSession(${session.sessionID})" title="Edit Session">
                                 <i class="fas fa-edit"></i> Edit
                             </button>
-                            <button class="btn btn-danger btn-small delete-session-btn" onclick="deleteSession(${session.id})" title="Delete Session">
+                            <button class="btn btn-danger btn-small delete-session-btn" onclick="deleteSession(${session.sessionID})" title="Delete Session">
                                 <i class="fas fa-trash"></i> Delete
                             </button>
                         </div>
@@ -2050,12 +1897,17 @@
             
             pageRequests.forEach((request, index) => {
                 const row = document.createElement('tr');
-                row.setAttribute('data-id', request.id);
+                row.setAttribute('data-id', request.sessionID);
                 row.setAttribute('data-status', request.status);
+                
+                // Parse sessionDateTime
+                const ts = request.sessionDateTime ? new Date(String(request.sessionDateTime).replace(' ', 'T')) : null;
+                const formattedDate = ts ? ts.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
                 
                 // Get status badge class and text
                 let statusClass, statusText;
-                switch(request.status) {
+                const status = (request.status || '').toLowerCase();
+                switch(status) {
                     case 'pending':
                         statusClass = 'status-pending';
                         statusText = 'Pending';
@@ -2064,7 +1916,8 @@
                         statusClass = 'status-approved';
                         statusText = 'Approved';
                         break;
-                    case 'rejected':
+                    case 'denied':
+                    case 'cancelled':
                         statusClass = 'status-rejected';
                         statusText = 'Rejected';
                         break;
@@ -2074,35 +1927,34 @@
                 }
                 
                 // Determine button states based on status
-                const isApproved = request.status === "approved";
-                const isRejected = request.status === "rejected";
+                const isApproved = status === "approved";
+                const isRejected = status === "denied" || status === "cancelled";
                 
                 // Truncate notes for display
-                const truncatedNotes = request.notes.length > 80 
-                    ? request.notes.substring(0, 80) + '...' 
-                    : request.notes;
+                const notes = request.notes || '';
+                const truncatedNotes = notes.length > 80 ? notes.substring(0, 80) + '...' : notes;
                 
                 row.innerHTML = `
                     <td class="number-cell">${startIndex + index + 1}</td>
                     <td>
-                        <div class="session-name-cell">${request.name}</div>
-                        <div class="session-type-cell">${request.type} • ${request.duration}</div>
+                        <div class="session-name-cell">${request.title || ''}</div>
+                        <div class="session-type-cell">${request.sessionType || 'General'} • 60 mins</div>
                     </td>
                     <td>
-                        <div class="student-name-cell">${request.student}</div>
-                        <div class="student-id-cell">ID: ${request.studentId}</div>
+                        <div class="student-name-cell">${request.studentName || 'Unknown Student'}</div>
+                        <div class="student-id-cell">ID: ${request.studentID || 'N/A'}</div>
                     </td>
-                    <td class="date-cell">${request.date}</td>
+                    <td class="date-cell">${formattedDate}</td>
                     <td class="status-cell">
                         <span class="status-badge ${statusClass}">${statusText}</span>
                     </td>
-                    <td class="notes-cell" title="${request.notes}">${truncatedNotes}</td>
+                    <td class="notes-cell" title="${notes}">${truncatedNotes}</td>
                     <td class="actions-cell">
                         <div class="action-buttons">
-                            <button class="btn btn-success" onclick="approveRequest(${request.id})" ${isApproved ? 'disabled' : ''}>
+                            <button class="btn btn-success" onclick="approveRequest(${request.sessionID})" ${isApproved ? 'disabled' : ''}>
                                 <i class="fas fa-check"></i> Approve
                             </button>
-                            <button class="btn btn-danger" onclick="rejectRequest(${request.id})" ${isRejected ? 'disabled' : ''}>
+                            <button class="btn btn-danger" onclick="rejectRequest(${request.sessionID})" ${isRejected ? 'disabled' : ''}>
                                 <i class="fas fa-times"></i> Reject
                             </button>
                         </div>

@@ -55,17 +55,19 @@ public class AdvisorStdSearchServlet extends HttpServlet {
         String where = "";
         if (q != null && q.trim().length() > 0) {
             // Use case-insensitive search; use CONCAT for full-name match
-            where = " WHERE (" +
+                where = " WHERE (" +
                     "LOWER(studentID) LIKE ? OR " +
                     "LOWER(firstName) LIKE ? OR " +
                     "LOWER(lastName) LIKE ? OR " +
-                    "LOWER(CONCAT(COALESCE(firstName,''),' ',COALESCE(lastName,''))) LIKE ? OR " +
+                    // Use SQL string concatenation (||) which is Derby-compatible
+                    "LOWER(COALESCE(firstName,'') || ' ' || COALESCE(lastName,'')) LIKE ? OR " +
                     "LOWER(email) LIKE ? OR " +
                     "LOWER(program) LIKE ?" +
                     ")";
         }
 
-        String orderLimit = " ORDER BY lastName, firstName LIMIT ?";
+        // Derby does not support LIMIT; use FETCH FIRST ... ROWS ONLY
+        String orderLimit = " ORDER BY lastName, firstName FETCH FIRST ? ROWS ONLY";
 
         String sql = baseSql + where + orderLimit;
 
@@ -118,7 +120,11 @@ public class AdvisorStdSearchServlet extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("{\"error\":\"Database error\"}");
+            // Include message to aid debugging in development
+            JSONObject err = new JSONObject();
+            err.put("error", "Database error");
+            err.put("message", e.getMessage());
+            response.getWriter().write(err.toString());
         }
     }
 }

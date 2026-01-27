@@ -625,6 +625,69 @@
         </div>
     </div>
 
+    <!-- Create Session Modal -->
+    <div class="modal" id="createSessionModal" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="modal-content" role="document">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border);">
+                <h3 style="margin:0;color:var(--blue-primary)">Create Advising Session</h3>
+                <button id="closeCreateModal" class="close-modal" aria-label="Close" style="background:none;border:0;font-size:22px;cursor:pointer">&times;</button>
+            </div>
+
+            <div style="padding:18px;">
+                <form id="createSessionForm">
+                    <div style="margin-bottom:12px">
+                        <label for="sessionStudent" style="display:block;margin-bottom:4px;font-weight:600">Select Student</label>
+                        <select id="sessionStudent" name="sessionStudent" required style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px">
+                            <option value="">-- Choose a student --</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom:12px">
+                        <label for="sessionTitle" style="display:block;margin-bottom:4px;font-weight:600">Session Title</label>
+                        <input type="text" id="sessionTitle" name="sessionTitle" required placeholder="e.g., Academic Planning" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px">
+                    </div>
+
+                    <div style="margin-bottom:12px;display:flex;gap:12px">
+                        <div style="flex:1">
+                            <label for="sessionDate" style="display:block;margin-bottom:4px;font-weight:600">Date</label>
+                            <input type="date" id="sessionDate" name="sessionDate" required style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px">
+                        </div>
+                        <div style="flex:1">
+                            <label for="sessionTime" style="display:block;margin-bottom:4px;font-weight:600">Time</label>
+                            <input type="time" id="sessionTime" name="sessionTime" required style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px">
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom:12px">
+                        <label for="sessionNotes" style="display:block;margin-bottom:4px;font-weight:600">Notes (Optional)</label>
+                        <textarea id="sessionNotes" name="sessionNotes" rows="3" placeholder="Additional details..." style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px"></textarea>
+                    </div>
+
+                    <div style="margin-bottom:12px">
+                        <label for="sessionMeetLink" style="display:block;margin-bottom:4px;font-weight:600">Google Meet Link (Optional)</label>
+                        <input type="url" id="sessionMeetLink" name="sessionMeetLink" placeholder="https://meet.google.com/..." style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px">
+                    </div>
+
+                    <div style="margin-bottom:12px">
+                        <label for="sessionType" style="display:block;margin-bottom:4px;font-weight:600">Session Type</label>
+                        <select id="sessionType" name="sessionType" required style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px">
+                            <option value="">-- Select type --</option>
+                            <option value="academic">Academic Advising</option>
+                            <option value="career">Career Counseling</option>
+                            <option value="personal">Personal Support</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div style="display:flex;gap:8px">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-calendar-plus"></i> Create Session</button>
+                        <button type="button" id="cancelCreateBtn" class="btn btn-secondary">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast -->
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
@@ -648,6 +711,14 @@
         const selectedPreview = qs('selectedPreview');
         const confirmAddBtn = qs('confirmAddBtn');
         const cancelAddBtn = qs('cancelAddBtn');
+
+        // Create session modal elements
+        const createSessionBtn = qs('createSessionBtn');
+        const createSessionModal = qs('createSessionModal');
+        const closeCreateModal = qs('closeCreateModal');
+        const cancelCreateBtn = qs('cancelCreateBtn');
+        const createSessionForm = qs('createSessionForm');
+        const sessionStudent = qs('sessionStudent');
         const toast = qs('toast');
 
         function showToast(msg, type='success', timeout=3000){
@@ -883,10 +954,12 @@
                 const item = document.createElement('div');
                 item.className = 'candidate-item';
                 const name = s.name || ((s.firstName||'') + ' ' + (s.lastName||'')).trim() || s.studentID;
+                const isAssigned = s.advisorID != null && s.advisorID !== '';
                 item.innerHTML = `<div style="width:40px;height:40px;border-radius:8px;background:var(--blue-light);display:flex;align-items:center;justify-content:center;color:var(--blue-dark);font-weight:700">${escapeHtml((s.firstName||'').charAt(0) || (s.name||'').charAt(0) || 'S')}</div>
                                   <div style="flex:1">
                                     <div style="font-weight:700">${escapeHtml(name)}</div>
                                     <div style="font-size:13px;color:var(--text-light)">${escapeHtml(s.studentID || '')} • ${escapeHtml(s.program || s.major || '')}</div>
+                                    ${isAssigned ? '<div style="font-size:12px;color:#f00">Already assigned to advisor</div>' : ''}
                                   </div>`;
                 item.addEventListener('click', () => {
                     selectCandidate(s);
@@ -897,6 +970,7 @@
 
         function selectCandidate(s){
             selectedCandidate = s;
+            const isAssigned = s.advisorID != null && s.advisorID !== '';
             // populate preview
             const name = s.name || ((s.firstName||'') + ' ' + (s.lastName||'')).trim() || s.studentID;
             selectedPreview.innerHTML = `
@@ -906,6 +980,7 @@
                         <div style="font-weight:700">${escapeHtml(name)}</div>
                         <div style="font-size:13px;color:var(--text-light)">${escapeHtml(s.studentID || '')}</div>
                         <div style="margin-top:8px;font-size:13px">Email: <strong>${escapeHtml(s.email || '-')}</strong></div>
+                        ${isAssigned ? '<div style="margin-top:8px;font-size:13px;color:#f00">Currently assigned to advisor ID: ' + escapeHtml(s.advisorID) + '</div>' : ''}
                     </div>
                 </div>
                 <div style="margin-top:12px">
@@ -918,6 +993,7 @@
                 </div>
             `;
             confirmAddBtn.disabled = false;
+            confirmAddBtn.innerHTML = `<i class="fas fa-user-plus"></i> ${isAssigned ? 'Reassign Advisee' : 'Add Advisee'}`;
         }
 
         // Add advisee action: POST to /api/advisor/students/add (best-effort). If 404, show helpful message.
@@ -944,6 +1020,10 @@
                     }
                     closeAddAdviseeModal();
                     await loadAdvisees();
+                    return;
+                } else if (res.status === 409) {
+                    // Conflict: already assigned to another advisor
+                    showToast('Student already assigned to another advisor. Reassignment not allowed.', 'error', 6000);
                     return;
                 } else if (res.status === 404) {
                     // endpoint not implemented on server
@@ -981,6 +1061,29 @@
             selectedCandidate = null;
         }
 
+        // Create session modal functions
+        function openCreateSessionModal(){
+            createSessionModal.classList.add('show');
+            createSessionModal.setAttribute('aria-hidden','false');
+            populateStudentDropdown();
+            createSessionForm.reset();
+        }
+
+        function closeCreateSessionModal(){
+            createSessionModal.classList.remove('show');
+            createSessionModal.setAttribute('aria-hidden','true');
+        }
+
+        function populateStudentDropdown(){
+            sessionStudent.innerHTML = '<option value="">-- Choose a student --</option>';
+            advisees.forEach(s => {
+                const option = document.createElement('option');
+                option.value = s.studentID;
+                option.textContent = `${s.name || s.firstName + ' ' + s.lastName} (${s.studentID})`;
+                sessionStudent.appendChild(option);
+            });
+        }
+
         // debounce helper
         function debounce(fn, wait=300){
             let t;
@@ -1001,6 +1104,11 @@
             closeAddModal.addEventListener('click', closeAddAdviseeModal);
             cancelAddBtn.addEventListener('click', closeAddAdviseeModal);
 
+            // Create Session modal triggers
+            createSessionBtn.addEventListener('click', openCreateSessionModal);
+            closeCreateModal.addEventListener('click', closeCreateSessionModal);
+            cancelCreateBtn.addEventListener('click', closeCreateSessionModal);
+
             // candidate search (live)
             candidateSearch.addEventListener('input', debounce(async function(e){
                 const q = e.target.value.trim();
@@ -1016,8 +1124,44 @@
             // confirm add button
             confirmAddBtn.addEventListener('click', async function(){
                 if (!selectedCandidate || !selectedCandidate.studentID) return;
-                if (!confirm('Assign ' + (selectedCandidate.name || selectedCandidate.studentID) + ' as your advisee?')) return;
+                const isAssigned = selectedCandidate.advisorID != null && selectedCandidate.advisorID !== '';
+                const action = isAssigned ? 'Reassign' : 'Assign';
+                if (!confirm(action + ' ' + (selectedCandidate.name || selectedCandidate.studentID) + ' as your advisee?')) return;
                 await addAdvisee(selectedCandidate.studentID);
+            });
+
+            // create session form submit
+            createSessionForm.addEventListener('submit', async function(e){
+                e.preventDefault();
+                const formData = new FormData(this);
+                const data = {
+                    studentID: formData.get('sessionStudent'),
+                    title: formData.get('sessionTitle'),
+                    sessionDate: formData.get('sessionDate'),
+                    sessionTime: formData.get('sessionTime'),
+                    notes: formData.get('sessionNotes') || '',
+                    meetLink: formData.get('sessionMeetLink') || '',
+                    sessionType: formData.get('sessionType') || ''
+                };
+
+                try {
+                    const res = await fetch(ctx + '/api/sessions/create', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (res.ok) {
+                        showToast('Session created successfully');
+                        closeCreateSessionModal();
+                        // Optionally reload sessions or advisees
+                    } else {
+                        const txt = await res.text();
+                        showToast('Failed to create session: ' + txt, 'error');
+                    }
+                } catch (err) {
+                    showToast('Network error while creating session', 'error');
+                }
             });
 
             // logout button
