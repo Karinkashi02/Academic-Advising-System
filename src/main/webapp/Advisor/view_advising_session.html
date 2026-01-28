@@ -454,18 +454,18 @@
         #mySessionsTable th:nth-child(1) { width: 50px; } /* No. */
         #mySessionsTable th:nth-child(2) { width: 22%; } /* Session Name & Type - REDUCED */
         #mySessionsTable th:nth-child(3) { width: 120px; } /* Date & Time */
-        #mySessionsTable th:nth-child(4) { width: 90px; } /* Status */
-        #mySessionsTable th:nth-child(5) { width: 200px; } /* Notes */
-        #mySessionsTable th:nth-child(6) { width: 140px; } /* Actions */
+        #mySessionsTable th:nth-child(4) { width: 90px; text-align: center; } /* Status */
+        #mySessionsTable th:nth-child(5) { width: 100px; } /* Cancel Reason */
+        #mySessionsTable th:nth-child(6) { width: 200px; } /* Notes */
+        #mySessionsTable th:nth-child(7) { width: 140px; text-align: center; } /* Actions */
 
         /* Set column widths for the second table */
         #requestsTable th:nth-child(1) { width: 50px; } /* No. */
-        #requestsTable th:nth-child(2) { width: 20%; } /* Session Name */
-        #requestsTable th:nth-child(3) { width: 18%; } /* Student Name */
-        #requestsTable th:nth-child(4) { width: 100px; } /* Date */
-        #requestsTable th:nth-child(5) { width: 90px; } /* Status */
-        #requestsTable th:nth-child(6) { width: 180px; } /* Notes */
-        #requestsTable th:nth-child(7) { width: 140px; } /* Actions */
+        #requestsTable th:nth-child(2) { width: 25%; } /* Session Name */
+        #requestsTable th:nth-child(3) { width: 100px; } /* Date */
+        #requestsTable th:nth-child(4) { width: 90px; text-align: center; } /* Status */
+        #requestsTable th:nth-child(5) { width: 180px; } /* Notes */
+        #requestsTable th:nth-child(6) { width: 140px;justify-self: center; } /* Actions */
 
         /* Status Styles */
         .status-badge {
@@ -579,7 +579,7 @@
         .btn-small {
             padding: 6px 10px;
             font-size: 12px;
-            min-width: 60px;
+            min-width: 20px;
         }
 
         .btn-icon {
@@ -1166,7 +1166,7 @@
                         </div>
                         <div class="stat-info">
                             <h3 id="rejected-count">2</h3>
-                            <p>Rejected</p>
+                            <p>Cancelled</p>
                         </div>
                     </div>
                 </div>
@@ -1194,6 +1194,7 @@
                         <div class="filter-options">
                             <button class="filter-btn active" data-status="all">All Sessions</button>
                             <button class="filter-btn" data-status="upcoming">Upcoming</button>
+                            <button class="filter-btn" data-status="confirmed">Confirmed</button>
                             <button class="filter-btn" data-status="completed">Completed</button>
                             <button class="filter-btn" data-status="cancelled">Cancelled</button>
                         </div>
@@ -1207,6 +1208,7 @@
                                     <th>Session Name & Type</th>
                                     <th class="date-cell">Date & Time</th>
                                     <th class="status-cell">Status</th>
+                                    <th class="notes-cell">Cancel Reason</th>
                                     <th class="notes-cell">Notes</th>
                                     <th class="actions-cell">Actions</th>
                                 </tr>
@@ -1219,6 +1221,37 @@
                     
                     <!-- Pagination for My Sessions -->
                     <div class="pagination" id="mySessionsPagination">
+                        <!-- Pagination will be loaded by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Session Requests Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Student Session Requests</h2>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table id="requestsTable">
+                            <thead>
+                                <tr>
+                                    <th class="number-cell">No.</th>
+                                    <th>Session Name</th>
+                                    <th>Student Name</th>
+                                    <th class="date-cell">Date & Time</th>
+                                    <th class="status-cell">Status</th>
+                                    <th class="notes-cell">Reason</th>
+                                    <th class="actions-cell">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="requestsTableBody">
+                                <!-- Session Requests will be loaded by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination for Session Requests -->
+                    <div class="pagination" id="requestsPagination">
                         <!-- Pagination will be loaded by JavaScript -->
                     </div>
                 </div>
@@ -1486,7 +1519,7 @@
                 // cancel_requested, pending sessions go to sessionRequests
                 mySessions = sessions.filter(s => {
                     const status = (s.status || '').toLowerCase();
-                    return status === 'confirmed' || status === 'completed' || status === 'scheduled' || status === 'denied' || status === 'cancelled';
+                    return status === 'confirmed' || status === 'completed' || status === 'scheduled' || status === 'cancelled';
                 });
                 sessionRequests = sessions.filter(s => {
                     const status = (s.status || '').toLowerCase();
@@ -1496,6 +1529,8 @@
                 filteredRequests = [...sessionRequests];
                 renderMySessions();
                 renderMySessionsPagination();
+                renderRequests();
+                renderRequestsPagination();
                 updateStats();
             } catch (e) {
                 console.error('Failed to load sessions:', e);
@@ -1572,6 +1607,7 @@
                     renderMySessionsPagination();
                 }
             });
+
             
             // Modal close buttons
             document.getElementById('closeViewSessionModal').addEventListener('click', closeViewSessionModal);
@@ -1627,16 +1663,32 @@
             if (status === 'all') {
                 filteredMySessions = [...mySessions];
             } else if (status === 'upcoming') {
-                // Map "upcoming" to confirmed or scheduled statuses
+                // Map "upcoming" to confirmed or scheduled statuses that are in the future
+                const now = new Date();
+                filteredMySessions = mySessions.filter(session => {
+                    const sessionStatus = (session.status || '').toLowerCase();
+                    const ts = session.sessionDateTime ? new Date(String(session.sessionDateTime).replace(' ', 'T')) : null;
+                    return (sessionStatus === 'confirmed' || sessionStatus === 'scheduled') && ts && ts > now;
+                });
+            } else if (status === 'confirmed') {
+                // For confirmed filter, show all confirmed and scheduled sessions regardless of date
                 filteredMySessions = mySessions.filter(session => {
                     const sessionStatus = (session.status || '').toLowerCase();
                     return sessionStatus === 'confirmed' || sessionStatus === 'scheduled';
                 });
-            } else {
-                // For completed and cancelled, use exact match
+            } else if (status === 'completed') {
+                // For completed filter, include confirmed sessions that are in the past
+                const now = new Date();
                 filteredMySessions = mySessions.filter(session => {
                     const sessionStatus = (session.status || '').toLowerCase();
-                    return sessionStatus === status;
+                    const ts = session.sessionDateTime ? new Date(String(session.sessionDateTime).replace(' ', 'T')) : null;
+                    return (sessionStatus === 'completed' || (sessionStatus === 'confirmed' && ts && ts < now));
+                });
+            } else {
+                // For cancelled (includes both 'cancelled' and 'denied'), use exact match
+                filteredMySessions = mySessions.filter(session => {
+                    const sessionStatus = (session.status || '').toLowerCase();
+                    return sessionStatus === 'cancelled' || sessionStatus === 'denied';
                 });
             }
             
@@ -1703,6 +1755,7 @@
                         statusText = 'Completed';
                         break;
                     case 'cancelled':
+                    case 'denied':
                         statusClass = 'status-cancelled';
                         statusText = 'Cancelled';
                         break;
@@ -1710,10 +1763,6 @@
                     case 'scheduled':
                         statusClass = 'status-upcoming';
                         statusText = 'Confirmed';
-                        break;
-                    case 'denied':
-                        statusClass = 'status-cancelled';
-                        statusText = 'Denied';
                         break;
                     default:
                         statusClass = 'status-upcoming';
@@ -1723,6 +1772,8 @@
                 // Truncate notes for display
                 const notes = session.notes || '';
                 const truncatedNotes = notes.length > 80 ? notes.substring(0, 80) + '...' : notes;
+                const cancelReason = session.cancelReason || '';
+                const truncatedReason = cancelReason.length > 80 ? cancelReason.substring(0, 80) + '...' : cancelReason;
                 
                 row.innerHTML = `
                     <td class="number-cell">${startIndex + index + 1}</td>
@@ -1734,23 +1785,24 @@
                         <div>${formattedDate}</div>
                         <div style="font-size: 12px; color: var(--text-light);">${formattedTime}</div>
                     </td>
-                    <td class="status-cell">
+                    <td class="status-cell" style="text-align: center;">
                         <span class="status-badge ${statusClass}">${statusText}</span>
                     </td>
+                    <td class="notes-cell" title="${cancelReason}">${truncatedReason || '-'}</td>
                     <td class="notes-cell" title="${notes}">${truncatedNotes}</td>
-                    <td class="actions-cell">
+                    <td class="actions-cell" style="text-align: center;">
                         <div class="action-buttons">
                             ${(() => {
                                 const statusLower = (session.status || '').toLowerCase();
                                 const isConfirmed = statusLower === 'confirmed' || statusLower === 'scheduled';
                                 const hasLink = session.meetlink && session.meetlink.trim();
-                                return isConfirmed && hasLink ? `<button class="btn btn-success btn-small" onclick="window.open('${session.meetlink}', '_blank')" title="Join Meeting"><i class="fas fa-video"></i> Join</button>` : '';
+                                return isConfirmed && hasLink ? `<button class="btn btn-success btn-small" onclick="window.open('${session.meetlink}', '_blank')" title="Join Meeting"><i class="fas fa-video"></i></button>` : '';
                             })()}
                             <button class="btn btn-secondary btn-small view-session-btn" onclick="viewSession(${session.sessionID})" title="View Details">
-                                <i class="fas fa-eye"></i> View
+                                <i class="fas fa-eye"></i>
                             </button>
                             <button class="btn btn-success btn-small edit-session-btn" onclick="editSession(${session.sessionID})" title="Edit Session">
-                                <i class="fas fa-edit"></i> Edit
+                                <i class="fas fa-edit"></i>
                             </button>
                         </div>
                     </td>
@@ -1934,6 +1986,103 @@
             renderMySessionsPagination();
         }
 
+        // Render Session Requests pagination
+        function renderRequestsPagination() {
+            const totalPages = Math.ceil(filteredRequests.length / requestsPerPage);
+            const paginationContainer = document.getElementById('requestsPagination');
+            
+            if (totalPages <= 1) {
+                paginationContainer.style.display = 'none';
+                return;
+            }
+            
+            paginationContainer.style.display = 'flex';
+            
+            let paginationHTML = `
+                <button class="pagination-btn" id="firstPageRequests" ${currentPageRequests === 1 ? 'disabled' : ''}>
+                    <i class="fas fa-angle-double-left"></i> First
+                </button>
+                <button class="pagination-btn" id="prevPageRequests" ${currentPageRequests === 1 ? 'disabled' : ''}>
+                    <i class="fas fa-angle-left"></i> Previous
+                </button>
+                <div class="pagination-info">
+                    Page ${currentPageRequests} of ${totalPages}
+                </div>
+            `;
+            
+            // Show page numbers
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPageRequests - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+            
+            // Adjust start page if we're near the end
+            if (endPage - startPage + 1 < maxVisiblePages) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                if (i === currentPageRequests) {
+                    paginationHTML += `<button class="pagination-btn active">${i}</button>`;
+                } else {
+                    paginationHTML += `<button class="pagination-btn page-number-requests" data-page="${i}">${i}</button>`;
+                }
+            }
+            
+            paginationHTML += `
+                <button class="pagination-btn" id="nextPageRequests" ${currentPageRequests === totalPages ? 'disabled' : ''}>
+                    Next <i class="fas fa-angle-right"></i>
+                </button>
+                <button class="pagination-btn" id="lastPageRequests" ${currentPageRequests === totalPages ? 'disabled' : ''}>
+                    Last <i class="fas fa-angle-double-right"></i>
+                </button>
+            `;
+            
+            paginationContainer.innerHTML = paginationHTML;
+            
+            // Add event listeners to pagination buttons
+            document.getElementById('firstPageRequests').addEventListener('click', function(e) {
+                e.preventDefault();
+                goToPageRequests(1);
+            });
+            
+            document.getElementById('prevPageRequests').addEventListener('click', function(e) {
+                e.preventDefault();
+                goToPageRequests(currentPageRequests - 1);
+            });
+            
+            document.getElementById('nextPageRequests').addEventListener('click', function(e) {
+                e.preventDefault();
+                goToPageRequests(currentPageRequests + 1);
+            });
+            
+            document.getElementById('lastPageRequests').addEventListener('click', function(e) {
+                e.preventDefault();
+                goToPageRequests(totalPages);
+            });
+            
+            // Add event listeners to page number buttons
+            document.querySelectorAll('.page-number-requests').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = parseInt(this.getAttribute('data-page'));
+                    goToPageRequests(page);
+                });
+            });
+        }
+
+        // Go to specific page for Session Requests
+        function goToPageRequests(page) {
+            const totalPages = Math.ceil(filteredRequests.length / requestsPerPage);
+            
+            if (page < 1 || page > totalPages || page === currentPageRequests) {
+                return;
+            }
+            
+            currentPageRequests = page;
+            renderRequests();
+            renderRequestsPagination();
+        }
+
         // Render Session Requests for current page
 
         // View Session Details
@@ -1973,11 +2122,8 @@
                     statusClass = 'status-upcoming';
                     break;
                 case 'cancelled':
-                    statusText = 'Cancelled';
-                    statusClass = 'status-cancelled';
-                    break;
                 case 'denied':
-                    statusText = 'Denied';
+                    statusText = 'Cancelled';
                     statusClass = 'status-cancelled';
                     break;
                 default:
@@ -2310,13 +2456,13 @@
         function updateStats() {
             let pendingCount = 0;
             let confirmedCount = 0;
-            let completedCount = 0;
+            let cancelledCount = 0;
             
             // Count statuses for My Sessions
             mySessions.forEach(session => {
                 const status = (session.status || '').toLowerCase();
                 if (status === "confirmed" || status === "scheduled") confirmedCount++;
-                if (status === "completed") completedCount++;
+                if (status === "completed" || status === "denied" || status === "cancelled") cancelledCount++;
             });
             
             // Count pending requests
@@ -2328,7 +2474,7 @@
             // Update stat cards
             document.getElementById('pending-count').textContent = pendingCount;
             document.getElementById('approved-count').textContent = confirmedCount;
-            document.getElementById('rejected-count').textContent = completedCount;
+            document.getElementById('rejected-count').textContent = cancelledCount;
             
             // Update total sessions (My Sessions + Requests)
             const totalSessions = mySessions.length + sessionRequests.length;

@@ -1300,6 +1300,218 @@
                 margin-top: 15px;
             }
         }
+
+        /* Print Media Query for PDF/Print Output */
+        @media print {
+            * {
+                background: transparent !important;
+                color: #000 !important;
+                box-shadow: none !important;
+                text-shadow: none !important;
+            }
+
+            html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 20px;
+                font-size: 11pt;
+                line-height: 1.4;
+            }
+
+            .dashboard-container {
+                display: block;
+                flex-direction: initial;
+            }
+
+            .sidebar {
+                display: none !important;
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+
+            .header {
+                display: none !important;
+            }
+
+            .dashboard-header {
+                page-break-after: always;
+                margin-bottom: 20px;
+                padding: 20px 0;
+                border-bottom: 2px solid #000;
+            }
+
+            .dashboard-header h1 {
+                font-size: 18pt;
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+
+            .dashboard-header p {
+                font-size: 10pt;
+                color: #666;
+                margin: 5px 0;
+            }
+
+            .report-section {
+                page-break-inside: avoid;
+                margin-bottom: 30px;
+                border: 1px solid #999;
+                padding: 15px;
+            }
+
+            .report-section h2 {
+                font-size: 14pt;
+                font-weight: bold;
+                margin-bottom: 15px;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #000;
+                page-break-after: avoid;
+            }
+
+            .stats-container {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+                gap: 10px;
+                margin-bottom: 20px;
+                page-break-inside: avoid;
+            }
+
+            .stat-card {
+                border: 1px solid #999;
+                padding: 10px;
+                page-break-inside: avoid;
+            }
+
+            .stat-card h3 {
+                font-size: 10pt;
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+
+            .stat-card .number {
+                font-size: 14pt;
+                font-weight: bold;
+                color: #000;
+            }
+
+            .stat-card p {
+                font-size: 9pt;
+                color: #666;
+                margin: 5px 0 0 0;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 15px 0;
+                font-size: 10pt;
+            }
+
+            table thead {
+                background-color: #f0f0f0;
+                page-break-after: avoid;
+            }
+
+            table th {
+                border: 1px solid #999;
+                padding: 8px;
+                text-align: left;
+                font-weight: bold;
+                background-color: #ddd;
+            }
+
+            table td {
+                border: 1px solid #999;
+                padding: 6px;
+                word-break: break-word;
+            }
+
+            table tbody tr:nth-child(odd) {
+                background-color: #f9f9f9;
+            }
+
+            .pagination, .card-header .btn, .search-box, .filter-btn, .clear-filter-btn {
+                display: none !important;
+            }
+
+            .table-container {
+                overflow: visible !important;
+            }
+
+            .card {
+                border: 1px solid #999;
+                page-break-inside: avoid;
+                margin-bottom: 20px;
+            }
+
+            .card-header {
+                background-color: #f0f0f0;
+                border-bottom: 2px solid #000;
+                padding: 10px;
+                page-break-after: avoid;
+            }
+
+            .card-header h2 {
+                font-size: 14pt;
+                font-weight: bold;
+                margin: 0;
+            }
+
+            .card-body {
+                padding: 10px;
+            }
+
+            .modal, .btn, .search-btn, .profile-btn, .logout-btn {
+                display: none !important;
+            }
+
+            footer {
+                display: block;
+                text-align: center;
+                border-top: 1px solid #999;
+                padding-top: 15px;
+                margin-top: 30px;
+                font-size: 9pt;
+                color: #666;
+                page-break-before: avoid;
+            }
+
+            .page-break {
+                page-break-after: always;
+            }
+
+            /* Ensure all content is printed */
+            .hidden-print {
+                display: none !important;
+            }
+
+            /* Improve readability for printed text */
+            h1, h2, h3, h4, h5, h6 {
+                page-break-after: avoid;
+                page-break-inside: avoid;
+                color: #000;
+            }
+
+            p {
+                orphans: 3;
+                widows: 3;
+            }
+
+            /* Print header with date and advisor info */
+            body::before {
+                content: "Academic Advising System - Report\AGenerated on " attr(data-date);
+                display: block;
+                white-space: pre-wrap;
+                font-size: 10pt;
+                font-weight: bold;
+                margin-bottom: 20px;
+                page-break-after: avoid;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1746,6 +1958,8 @@
         let monthlySessionsData = [];
         let sessionTypeData = [];
         let pendingSessionsData = [];
+        let currentPendingPage = 0;
+        const pendingPerPage = 5;
         
         // Fallback sample data (used when APIs are not available)
         const SAMPLE_STUDENT_DATA = [
@@ -2164,26 +2378,52 @@
             const tableBody = document.querySelector('#sessionAnalytics table tbody');
             if (!tableBody) return;
 
+            // store sessions and reset page if needed
+            pendingSessionsData = Array.isArray(sessions) ? sessions : [];
+            if (currentPendingPage < 0) currentPendingPage = 0;
+            const total = pendingSessionsData.length;
+            if (currentPendingPage > Math.max(0, Math.ceil(total / pendingPerPage) - 1)) currentPendingPage = 0;
+
             tableBody.innerHTML = '';
 
-            if (sessions.length === 0) {
+            if (pendingSessionsData.length === 0) {
                 const row = document.createElement('tr');
                 row.innerHTML = '<td colspan="5" style="text-align: center;">No pending sessions</td>';
                 tableBody.appendChild(row);
-                return;
-            }
+            } else {
+                const start = currentPendingPage * pendingPerPage;
+                const page = pendingSessionsData.slice(start, start + pendingPerPage);
+                page.forEach(session => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${session.no}</td>
+                        <td><strong>${session.title}</strong></td>
+                        <td>${session.type}</td>
+                        <td>${session.scheduled}</td>
+                        <td><span class="status-badge status-badge-pending">Upcoming</span></td>
+                    `;
+                    tableBody.appendChild(row);
+                });
 
-            sessions.forEach(session => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${session.no}</td>
-                    <td><strong>${session.title}</strong></td>
-                    <td>${session.type}</td>
-                    <td>${session.scheduled}</td>
-                    <td><span class="status-badge status-badge-pending">Pending</span></td>
-                `;
-                tableBody.appendChild(row);
-            });
+                // render pagination controls for pending sessions
+                const existing = document.getElementById('pendingSessionsPagination');
+                if (existing) existing.remove();
+                const totalPages = Math.ceil(total / pendingPerPage);
+                if (totalPages > 1) {
+                    const paginator = document.createElement('div');
+                    paginator.id = 'pendingSessionsPagination';
+                    paginator.style = 'display:flex;justify-content:center;gap:10px;margin-top:12px;';
+                    paginator.innerHTML = `<button id="pendingPrev" class="btn-outline" ${currentPendingPage === 0 ? 'disabled' : ''}>Prev</button> <span>Page ${currentPendingPage+1} of ${totalPages}</span> <button id="pendingNext" class="btn-outline" ${currentPendingPage >= totalPages-1 ? 'disabled' : ''}>Next</button>`;
+                    tableBody.parentElement.insertAdjacentElement('afterend', paginator);
+
+                    document.getElementById('pendingPrev').addEventListener('click', function() {
+                        if (currentPendingPage > 0) { currentPendingPage--; updatePendingSessionsTable(pendingSessionsData); }
+                    });
+                    document.getElementById('pendingNext').addEventListener('click', function() {
+                        if (currentPendingPage < totalPages - 1) { currentPendingPage++; updatePendingSessionsTable(pendingSessionsData); }
+                    });
+                }
+            }
         }
 
         // Initialize pagination

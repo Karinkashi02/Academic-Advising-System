@@ -724,16 +724,13 @@
                 const program = s.program || s.major || '';
                 const year = s.yearOfStudy || s.year || '';
 
-                // view link uses requested format: /Advisor/view_student_detail.html?student_id=
-                const viewUrl = '/Advisor/view_student_detail.html?student_id=' + encodeURIComponent(s.studentID || '');
-
                 card.innerHTML = `
                     <div class="student-header">
                         <div style="display:flex;align-items:center;gap:12px">
                             <div class="student-avatar" aria-hidden="true">${(s.firstName||'').charAt(0) || (s.name||'').charAt(0) || 'S'}</div>
                             <div class="student-info">
                                 <div class="student-name">${escapeHtml(name)}</div>
-                                <div class="student-major-year">${escapeHtml(program)} • Year ${escapeHtml(String(year||''))}</div>
+                                <div class="student-major-year">${escapeHtml(program)}<br><span style="font-size:12px;color:#999">Year ${escapeHtml(String(year||''))}</span></div>
                             </div>
                         </div>
                         <div style="display:flex;gap:8px;flex-direction:column;align-items:flex-end">
@@ -751,8 +748,8 @@
                             <div class="detail-value">${escapeHtml(s.phoneNum || '')}</div>
                         </div>
                         <div class="detail-remark" style="display:flex;gap:8px;justify-content:flex-start">
-                            <a class="btn btn-secondary" href="${viewUrl}">View Profile</a>
-                            <button class="btn btn-primary btn-email" data-id="${escapeHtml(s.studentID||'')}">Email</button>
+                            <a class="btn btn-secondary" href="view_student_detail.html?student_id=${encodeURIComponent(s.studentID||'')}">View Profile</a>
+                            <button class="btn btn-primary btn-email" data-id="${escapeHtml(s.studentID||'')}" data-email="${escapeHtml(s.email||'')}">Email</button>
                         </div>
                     </div>
                 `;
@@ -761,9 +758,15 @@
                 // email button behaviour
                 const emailBtn = card.querySelector('.btn-email');
                 if (emailBtn) {
-                    emailBtn.addEventListener('click', () => {
-                        const sid = emailBtn.getAttribute('data-id');
-                        window.location.href = 'mailto:' + (s.email || '');
+                    emailBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const email = emailBtn.getAttribute('data-email');
+                        if (email) {
+                            const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`;
+                            window.open(gmailUrl, '_blank');
+                        } else {
+                            alert('Email address not available for this student.');
+                        }
                     });
                 }
             });
@@ -809,14 +812,13 @@
                 const program = s.program || s.major || '';
                 const year = s.yearOfStudy || s.year || '';
 
-                const viewUrl = '/Advisor/view_student_detail.html?student_id=' + encodeURIComponent(s.studentID || '');
                 card.innerHTML = `
                     <div class="student-header">
                         <div style="display:flex;align-items:center;gap:12px">
                             <div class="student-avatar" aria-hidden="true">${(s.firstName||'').charAt(0) || (s.name||'').charAt(0) || 'S'}</div>
                             <div class="student-info">
                                 <div class="student-name">${escapeHtml(name)}</div>
-                                <div class="student-major-year">${escapeHtml(program)} • Year ${escapeHtml(String(year||''))}</div>
+                                <div class="student-major-year">${escapeHtml(program)}<br><span style="font-size:12px;color:#999">Year ${escapeHtml(String(year||''))}</span></div>
                             </div>
                         </div>
                         <div style="display:flex;gap:8px;flex-direction:column;align-items:flex-end">
@@ -834,12 +836,27 @@
                             <div class="detail-value">${escapeHtml(s.phoneNum || '')}</div>
                         </div>
                         <div class="detail-remark" style="display:flex;gap:8px;justify-content:flex-start">
-                            <a class="btn btn-secondary" href="${viewUrl}">View Profile</a>
-                            <button class="btn btn-primary btn-email" data-id="${escapeHtml(s.studentID||'')}">Email</button>
+                            <a class="btn btn-secondary" href="view_student_detail.html?student_id=${encodeURIComponent(s.studentID||'')}">View Profile</a>
+                            <button class="btn btn-primary btn-email" data-id="${escapeHtml(s.studentID||'')}" data-email="${escapeHtml(s.email||"")}">Email</button>
                         </div>
                     </div>
                 `;
                 studentsGrid.appendChild(card);
+                
+                // email button behaviour for filtered results
+                const emailBtn = card.querySelector('.btn-email');
+                if (emailBtn) {
+                    emailBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const email = emailBtn.getAttribute('data-email');
+                        if (email) {
+                            const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`;
+                            window.open(gmailUrl, '_blank');
+                        } else {
+                            alert('Email address not available for this student.');
+                        }
+                    });
+                }
             });
         }
 
