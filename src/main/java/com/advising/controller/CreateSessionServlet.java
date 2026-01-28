@@ -89,7 +89,7 @@ public class CreateSessionServlet extends HttpServlet {
 
             // Insert session
             String sessionDateTime = sessionDate + " " + sessionTime + ":00"; // Assume HH:MM format, add seconds
-            String insertSql = "INSERT INTO advising_session (title, sessionDateTime, notes, meetLink, location, sessionType, status, advisorID, studentID) VALUES (?, ?, ?, ?, ?, ?, 'scheduled', ?, ?)";
+            String insertSql = "INSERT INTO advising_session (title, sessionDateTime, notes, meetLink, location, sessionType, status, advisorID, studentID) VALUES (?, ?, ?, ?, ?, ?, 'confirmed', ?, ?)";
             int generatedSessionID;
             try (PreparedStatement insertPs = conn.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
                 insertPs.setString(1, title);

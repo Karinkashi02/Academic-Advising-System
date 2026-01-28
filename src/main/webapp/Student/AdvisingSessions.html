@@ -1506,7 +1506,7 @@
           const timeStr = ts ? ts.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' }) : '';
 
           // use single-quoted inner HTML for conditional parts
-          const statusDisplay = s.status === 'scheduled' ? 'confirmed' : s.status;
+          const statusDisplay = s.status;
           const statusLower = (s.status || '').toLowerCase();
           const isConfirmedLike = statusLower === 'confirmed' || statusLower === 'scheduled';
           const joinBtn = isConfirmedLike && s.meetLink ? '<button class="btn btn-sm btn-success join-session" data-meetlink="'+escapeHtml(s.meetLink)+'"><i class="fas fa-video"></i> Join Session</button>' : '';
@@ -1634,7 +1634,7 @@
         const ts = s.sessionDateTime ? new Date(String(s.sessionDateTime).replace(' ', 'T')) : null;
         const dateStr = ts ? ts.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric', weekday:'long' }) : '';
         const timeStr = ts ? ts.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' }) : '';
-        const statusDisplay = s.status === 'scheduled' ? 'confirmed' : s.status;
+        const statusDisplay = s.status;
         document.getElementById('notesModalBody').innerHTML = `
           <div style="margin-bottom:25px;">
             <h4 style="color:#1e3a8a;margin-bottom:10px;">${escapeHtml(s.title)}</h4>
@@ -1891,7 +1891,7 @@
         if (st === 'pending') return 'linear-gradient(135deg, #f59e0b, #d97706)';
         if (st === 'cancelled') return 'linear-gradient(135deg, #ef4444, #dc2626)';
         if (st === 'completed') return 'linear-gradient(135deg, #10b981, #059669)';
-        if (st === 'scheduled') return 'linear-gradient(135deg, #3b82f6, #1e3a8a)';
+        if (st === 'confirmed') return 'linear-gradient(135deg, #3b82f6, #1e3a8a)';
         if (st === 'denied') return 'linear-gradient(135deg, #ef4444, #dc2626)';
         return '#6b7280';
       }
