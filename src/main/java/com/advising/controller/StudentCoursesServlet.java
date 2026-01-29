@@ -25,13 +25,31 @@ public class StudentCoursesServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("role") == null || !"student".equals(session.getAttribute("role"))) {
+        if (session == null || session.getAttribute("role") == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("{\"error\":\"Not authenticated\"}");
             return;
         }
 
-        String studentID = String.valueOf(session.getAttribute("userID"));
+        String role = (String) session.getAttribute("role");
+        String studentID = null;
+        
+        // If advisor, get studentID from request parameter; if student, get from session
+        if ("advisor".equals(role)) {
+            studentID = request.getParameter("studentID");
+            if (studentID == null || studentID.trim().isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"error\":\"studentID parameter required for advisors\"}");
+                return;
+            }
+        } else if ("student".equals(role)) {
+            studentID = String.valueOf(session.getAttribute("userID"));
+        } else {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.getWriter().write("{\"error\":\"Invalid role\"}");
+            return;
+        }
+
         if (studentID == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("{\"error\":\"No user in session\"}");

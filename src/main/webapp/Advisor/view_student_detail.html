@@ -769,10 +769,10 @@
                         <!-- Personal Information Square -->
                         <div class="profile-square">
                             <div class="profile-square-header">
-                                <div class="square-avatar">SJ</div>
+                                <div class="square-avatar">--</div>
                                 <div>
-                                    <div class="square-name">Sarah Johnson</div>
-                                    <div class="square-major">Computer Science • Senior</div>
+                                    <div class="square-name">Loading...</div>
+                                    <div class="square-major">Loading...</div>
                                 </div>
                             </div>
                             
@@ -781,7 +781,7 @@
                                     <div class="detail-label">Student ID</div>
                                     <div class="detail-value">
                                         <i class="fas fa-id-card"></i>
-                                        S10023
+                                        <span>--</span>
                                     </div>
                                 </div>
                                 
@@ -789,7 +789,7 @@
                                     <div class="detail-label">Email Address</div>
                                     <div class="detail-value">
                                         <i class="fas fa-envelope"></i>
-                                        sarah.johnson@university.edu
+                                        <span>--</span>
                                     </div>
                                 </div>
                                 
@@ -797,7 +797,7 @@
                                     <div class="detail-label">Phone Number</div>
                                     <div class="detail-value">
                                         <i class="fas fa-phone"></i>
-                                        (555) 123-4567
+                                        <span>--</span>
                                     </div>
                                 </div>
                                 
@@ -805,7 +805,14 @@
                                     <div class="detail-label">Advisor Name</div>
                                     <div class="detail-value">
                                         <i class="fas fa-chalkboard-teacher"></i>
-                                        Dr. Michael Chen
+                                        <span>--</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="detail-square">
+                                    <div class="detail-label">Student Remark</div>
+                                    <div class="detail-value">
+                                        <span id="studentRemark" style="font-size: 14px; color: var(--text-light);">--</span>
                                     </div>
                                 </div>
                             </div>
@@ -814,23 +821,23 @@
                         <!-- CGPA Square -->
                         <div class="profile-square cgpa-square">
                             <div class="cgpa-label">Cumulative GPA</div>
-                            <div class="cgpa-value">3.72</div>
-                            <div class="cgpa-rating">Excellent</div>
+                            <div class="cgpa-value">0.00</div>
+                            <div class="cgpa-rating">--</div>
                             
                             <div style="margin-top: 20px; text-align: left; width: 100%;">
                                 <div class="detail-label" style="margin-bottom: 10px;">Academic Details</div>
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                                     <div>
                                         <div class="detail-label">Current Semester</div>
-                                        <div class="detail-value" style="font-size: 14px;">Semester 7</div>
+                                        <div class="detail-value" style="font-size: 14px;">--</div>
                                     </div>
                                     <div>
                                         <div class="detail-label">Credits Earned</div>
-                                        <div class="detail-value" style="font-size: 14px;">105/120</div>
+                                        <div class="detail-value" style="font-size: 14px;">--</div>
                                     </div>
                                     <div>
-                                        <div class="detail-label">Enrollment Year</div>
-                                        <div class="detail-value" style="font-size: 14px;">2020</div>
+                                        <div class="detail-label">Year of Study</div>
+                                        <div class="detail-value" style="font-size: 14px;">--</div>
                                     </div>
                                     <div>
                                         <div class="detail-label">Status</div>
@@ -853,14 +860,7 @@
                         <div class="semester-selector">
                             <label for="semesterSelect">Select Semester:</label>
                             <select class="semester-dropdown" id="semesterSelect">
-                                <option value="semester1">Semester 1 (Fall 2020)</option>
-                                <option value="semester2">Semester 2 (Spring 2021)</option>
-                                <option value="semester3">Semester 3 (Fall 2021)</option>
-                                <option value="semester4">Semester 4 (Spring 2022)</option>
-                                <option value="semester5">Semester 5 (Fall 2022)</option>
-                                <option value="semester6">Semester 6 (Spring 2023)</option>
-                                <option value="semester7" selected>Semester 7 (Fall 2023) - Current</option>
-                                <option value="semester8">Semester 8 (Spring 2024) - Upcoming</option>
+                                <!-- Options populated by JavaScript -->
                             </select>
                         </div>
                         
@@ -904,12 +904,50 @@
                         <button class="btn btn-primary" id="printTranscriptBtn">
                             <i class="fas fa-print"></i> Print Transcript
                         </button>
-                        <button class="btn btn-secondary" id="viewFullTranscriptBtn">
-                            <i class="fas fa-file-alt"></i> View Full Transcript
-                        </button>
                         <button class="btn btn-secondary" id="createSessionBtn">
                             <i class="fas fa-calendar-plus"></i> Schedule Session
                         </button>
+                    </div>
+                </div>
+
+                <!-- Advisor Remarks Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Advisor Remarks</h2>
+                    </div>
+                    
+                    <div style="display: grid; gap: 20px;">
+                        <div>
+                            <label for="remarkSelect" style="font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 10px;">
+                                Student Status
+                            </label>
+                            <select id="remarkSelect" class="semester-dropdown" style="width: 100%; max-width: 400px;">
+                                <option value="">-- Select Status --</option>
+                                <option value="On Track">✓ On Track</option>
+                                <option value="Needs Attention">⚠ Needs Attention</option>
+                                <option value="At Risk">✗ At Risk</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label for="remarkNotes" style="font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 10px;">
+                                Notes (Optional)
+                            </label>
+                            <textarea id="remarkNotes" placeholder="Add additional notes about this student..." style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 14px; min-height: 100px; resize: vertical;"></textarea>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-primary" id="saveRemarkBtn">
+                                <i class="fas fa-save"></i> Save Remark
+                            </button>
+                            <button class="btn btn-secondary" id="cancelRemarkBtn">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                        </div>
+                        
+                        <div id="remarkStatus" style="display: none; padding: 12px; border-radius: 6px; border-left: 4px solid var(--blue-primary); background-color: var(--blue-light);">
+                            <span id="remarkStatusText"></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -921,216 +959,446 @@
     </div>
 
     <script>
-        // Academic data for each semester
-        const semesterData = {
-            semester1: {
-                name: "Semester 1 (Fall 2020)",
-                gpa: 3.45,
-                totalCredits: 15,
-                completedCredits: 15,
-                courses: [
-                    { code: "CS101", name: "Introduction to Computer Science", credits: 3, grade: "B+" },
-                    { code: "MATH101", name: "Calculus I", credits: 4, grade: "A-" },
-                    { code: "ENG101", name: "English Composition", credits: 3, grade: "B" },
-                    { code: "PHYS101", name: "Physics I", credits: 4, grade: "B+" },
-                    { code: "HIST101", name: "World History", credits: 3, grade: "A" }
-                ]
-            },
-            semester2: {
-                name: "Semester 2 (Spring 2021)",
-                gpa: 3.60,
-                totalCredits: 16,
-                completedCredits: 16,
-                courses: [
-                    { code: "CS102", name: "Data Structures", credits: 4, grade: "A-" },
-                    { code: "MATH102", name: "Calculus II", credits: 4, grade: "B+" },
-                    { code: "ENG102", name: "Literature & Composition", credits: 3, grade: "A" },
-                    { code: "PHYS102", name: "Physics II", credits: 4, grade: "B" },
-                    { code: "PSY101", name: "Introduction to Psychology", credits: 3, grade: "A-" }
-                ]
-            },
-            semester3: {
-                name: "Semester 3 (Fall 2021)",
-                gpa: 3.75,
-                totalCredits: 15,
-                completedCredits: 15,
-                courses: [
-                    { code: "CS201", name: "Algorithms & Analysis", credits: 4, grade: "A" },
-                    { code: "MATH201", name: "Discrete Mathematics", credits: 3, grade: "A-" },
-                    { code: "STAT201", name: "Probability & Statistics", credits: 3, grade: "B+" },
-                    { code: "CS202", name: "Computer Organization", credits: 3, grade: "A" },
-                    { code: "PHIL101", name: "Introduction to Philosophy", credits: 3, grade: "A-" }
-                ]
-            },
-            semester4: {
-                name: "Semester 4 (Spring 2022)",
-                gpa: 3.80,
-                totalCredits: 16,
-                completedCredits: 16,
-                courses: [
-                    { code: "CS301", name: "Database Systems", credits: 4, grade: "A" },
-                    { code: "CS302", name: "Operating Systems", credits: 4, grade: "A-" },
-                    { code: "MATH202", name: "Linear Algebra", credits: 3, grade: "B+" },
-                    { code: "CS303", name: "Software Engineering", credits: 3, grade: "A" },
-                    { code: "ECON101", name: "Principles of Economics", credits: 3, grade: "A-" }
-                ]
-            },
-            semester5: {
-                name: "Semester 5 (Fall 2022)",
-                gpa: 3.85,
-                totalCredits: 15,
-                completedCredits: 15,
-                courses: [
-                    { code: "CS401", name: "Artificial Intelligence", credits: 4, grade: "A" },
-                    { code: "CS402", name: "Computer Networks", credits: 4, grade: "A-" },
-                    { code: "CS403", name: "Web Development", credits: 3, grade: "A" },
-                    { code: "MATH301", name: "Numerical Methods", credits: 3, grade: "B+" },
-                    { code: "BUS101", name: "Business Fundamentals", credits: 3, grade: "A" }
-                ]
-            },
-            semester6: {
-                name: "Semester 6 (Spring 2023)",
-                gpa: 3.90,
-                totalCredits: 16,
-                completedCredits: 16,
-                courses: [
-                    { code: "CS501", name: "Machine Learning", credits: 4, grade: "A" },
-                    { code: "CS502", name: "Cybersecurity", credits: 4, grade: "A-" },
-                    { code: "CS503", name: "Mobile App Development", credits: 3, grade: "A" },
-                    { code: "CS504", name: "Cloud Computing", credits: 3, grade: "A" },
-                    { code: "ELECTIVE1", name: "Technical Elective", credits: 3, grade: "A-" }
-                ]
-            },
-            semester7: {
-                name: "Semester 7 (Fall 2023) - Current",
-                gpa: 3.85,
-                totalCredits: 15,
-                completedCredits: 12,
-                courses: [
-                    { code: "CS601", name: "Advanced Algorithms", credits: 4, grade: "A" },
-                    { code: "CS602", name: "Data Science", credits: 4, grade: "A-" },
-                    { code: "CS603", name: "Capstone Project I", credits: 3, grade: "In Progress" },
-                    { code: "ELECTIVE2", name: "Technical Elective", credits: 3, grade: "A" },
-                    { code: "CS604", name: "Ethics in Computing", credits: 3, grade: "Not Yet Taken" }
-                ]
-            },
-            semester8: {
-                name: "Semester 8 (Spring 2024) - Upcoming",
-                gpa: 0.00,
-                totalCredits: 15,
-                completedCredits: 0,
-                courses: [
-                    { code: "CS701", name: "Advanced Topics in AI", credits: 4, grade: "Not Yet Taken" },
-                    { code: "CS702", name: "Capstone Project II", credits: 4, grade: "Not Yet Taken" },
-                    { code: "CS703", name: "Professional Practice", credits: 3, grade: "Not Yet Taken" },
-                    { code: "ELECTIVE3", name: "Technical Elective", credits: 3, grade: "Not Yet Taken" },
-                    { code: "ELECTIVE4", name: "Free Elective", credits: 3, grade: "Not Yet Taken" }
-                ]
-            }
-        };
+        // DEBUG: Log immediately on page load
+        console.log('=== VIEW_STUDENT_DETAIL.HTML LOADED ===');
+        console.log('User Agent:', navigator.userAgent);
+        console.log('Current URL:', window.location.href);
+        console.log('Pathname:', window.location.pathname);
+        console.log('Hostname:', window.location.hostname);
+        console.log('Port:', window.location.port);
+        
+        // Global state
+        let studentData = null;
+        let allCourses = [];
+        let semesterCourses = {};
+        
+        // Get the application context path intelligently
+        // If accessing at /Advisor/view_student_detail.html, context is the part before /Advisor
+        const pathParts = window.location.pathname.split('/').filter(p => p);
+        console.log('Path parts:', pathParts);
+        
+        let contextPath = '';
+        
+        // Find where "Advisor" directory is and get everything before it as context
+        const advisorIndex = pathParts.indexOf('Advisor');
+        console.log('Advisor index in path:', advisorIndex);
+        
+        if (advisorIndex > 0) {
+            contextPath = '/' + pathParts.slice(0, advisorIndex).join('/');
+        }
+        
+        const apiBase = contextPath;
+        
+        console.log('=== CONTEXT DETECTION ===');
+        console.log('Current path:', window.location.pathname);
+        console.log('Context path detected:', contextPath || '(root deployment)');
+        console.log('API base URL:', apiBase || '(using root)');
+        console.log('Full API URLs will be:');
+        console.log('  - Students search:', `${apiBase}/api/students/search`);
+        console.log('  - Courses:', `${apiBase}/api/student/courses`);
+        console.log('=====================================');
 
         // Initialize the page
-        document.addEventListener('DOMContentLoaded', function() {
-            // Load current semester data (Semester 7)
-            loadSemesterData('semester7');
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('DOMContentLoaded event fired');
             
-            // Add event listener to semester dropdown
+            // Get student ID from URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            let studentID = urlParams.get('studentID') || urlParams.get('student_id');
+            
+            console.log('Query params:', {
+                studentID: urlParams.get('studentID'),
+                student_id: urlParams.get('student_id'),
+                resolved_studentID: studentID
+            });
+            
+            if (!studentID) {
+                console.error('ERROR: No student ID provided in URL');
+                alert("No student ID provided. Please provide ?student_id=XXX or ?studentID=XXX");
+                window.location.href = 'manage_student.html';
+                return;
+            }
+            
+            console.log(`Loading data for student: ${studentID}`);
+            
+            // Load student data and courses
+            console.log('Starting parallel data load...');
+            await Promise.all([
+                loadStudentData(studentID),
+                loadStudentCourses(studentID)
+            ]);
+            
+            console.log('Data load complete. StudentData:', studentData);
+            
+            // Check if data was loaded
+            if (!studentData) {
+                console.error('ERROR: Could not load student data');
+                alert('Could not load student data. Please check the student ID and try again.');
+                window.location.href = 'manage_student.html';
+                return;
+            }
+            
+            console.log('Populating UI with student data...');
+            
+            // Populate UI
+            populateStudentProfile();
+            populateSemesterDropdown();
+            
+            // Load initial semester data
+            const currentSemester = studentData.semester || 1;
+            console.log('Loading initial semester:', currentSemester);
+            loadSemesterData(currentSemester);
+            
+            console.log('Page initialization complete');
+            
+            // Add event listeners
             document.getElementById('semesterSelect').addEventListener('change', function() {
-                const selectedSemester = this.value;
+                const selectedSemester = parseInt(this.value);
+                console.log('Semester changed to:', selectedSemester);
                 loadSemesterData(selectedSemester);
             });
             
-            // Add event listeners to buttons
             document.getElementById('backBtn').addEventListener('click', function() {
-                // Go back to My Students page
                 window.location.href = 'manage_student.html';
             });
             
             document.getElementById('printTranscriptBtn').addEventListener('click', function() {
-                alert("Printing transcript...");
-                // In a real application, this would open a print dialog
+                window.print();
             });
             
-            document.getElementById('viewFullTranscriptBtn').addEventListener('click', function() {
-                alert("Opening full transcript...");
-                // In a real application, this would open a full transcript view
-            });
             
             document.getElementById('createSessionBtn').addEventListener('click', function() {
-                alert("Opening session scheduling form...");
-                // In a real application, this would open a scheduling form
+                // Redirect to create session page with student ID
+                window.location.href = `view_advising_session.html?studentID=${studentID}`;
             });
             
             document.querySelector('.logout-btn').addEventListener('click', function() {
                 if (confirm("Are you sure you want to logout?")) {
-                    alert("You have been logged out.");
-                    // In real application, redirect to logout page
+                    // Perform a full-page navigation to the logout endpoint so the
+                    // servlet can invalidate the session and redirect the browser.
+                    window.location.href = `${apiBase}/logout`;
                 }
+            });
+            
+            // Remark section event listeners
+            document.getElementById('saveRemarkBtn').addEventListener('click', function() {
+                saveRemark(studentID);
+            });
+            
+            document.getElementById('cancelRemarkBtn').addEventListener('click', function() {
+                document.getElementById('remarkSelect').value = '';
+                document.getElementById('remarkNotes').value = '';
+                document.getElementById('remarkStatus').style.display = 'none';
             });
         });
 
-        // Function to load semester data
-        function loadSemesterData(semesterKey) {
-            const semester = semesterData[semesterKey];
-            const tableBody = document.getElementById('coursesTableBody');
-            
-            // Clear existing rows
-            tableBody.innerHTML = '';
-            
-            // Add course rows
-            semester.courses.forEach(course => {
-                const row = document.createElement('tr');
+        // Fetch student data from backend
+        async function loadStudentData(studentID) {
+            try {
+                const url = `${apiBase}/api/students/search?q=${encodeURIComponent(studentID)}&limit=1`;
+                console.log('🔄 Fetching student data from:', url);
+                const response = await fetch(url);
                 
-                // Determine grade badge class
-                let gradeClass = '';
-                let gradeText = course.grade;
+                console.log('Response status:', response.status, response.statusText);
                 
-                if (course.grade === 'Not Yet Taken' || course.grade === 'In Progress') {
-                    gradeClass = 'not-taken';
-                } else if (course.grade.startsWith('A')) {
-                    gradeClass = 'grade-a';
-                } else if (course.grade.startsWith('B')) {
-                    gradeClass = 'grade-b';
-                } else if (course.grade.startsWith('C')) {
-                    gradeClass = 'grade-c';
-                } else if (course.grade.startsWith('D')) {
-                    gradeClass = 'grade-d';
-                } else if (course.grade.startsWith('F')) {
-                    gradeClass = 'grade-f';
+                if (!response.ok) {
+                    console.error(`❌ API Error: ${response.status} ${response.statusText}`);
+                    const errorText = await response.text();
+                    console.error('Response body:', errorText);
+                    throw new Error(`HTTP ${response.status}: Failed to load student`);
                 }
                 
+                const data = await response.json();
+                console.log('✅ API Response:', data);
+                
+                if (data.students && data.students.length > 0) {
+                    studentData = data.students[0];
+                    console.log('✅ Student data loaded:', studentData);
+                } else {
+                    throw new Error('Student not found in response');
+                }
+            } catch (error) {
+                console.error('❌ Error loading student:', error);
+                alert(`Failed to load student data:\n${error.message}\n\nCheck browser console for details.`);
+            }
+        }
+
+        // Fetch student courses from backend
+        async function loadStudentCourses(studentID) {
+            try {
+                // First, fetch all courses for this student with their progress
+                const url = `${apiBase}/api/student/courses?studentID=${encodeURIComponent(studentID)}`;
+                console.log('🔄 Fetching courses from:', url);
+                const response = await fetch(url);
+                
+                console.log('Response status:', response.status, response.statusText);
+                
+                if (!response.ok) {
+                    console.error(`❌ API Error: ${response.status} ${response.statusText}`);
+                    const errorText = await response.text();
+                    console.error('Response body:', errorText);
+                    throw new Error(`HTTP ${response.status}: Failed to load courses`);
+                }
+                
+                const data = await response.json();
+                console.log('✅ API Response:', data);
+                
+                allCourses = data.courses || [];
+                console.log(`✅ Loaded ${allCourses.length} courses`);
+                
+                // Group courses by semester
+                semesterCourses = {};
+                allCourses.forEach(course => {
+                    const sem = course.semester;
+                    if (!semesterCourses[sem]) {
+                        semesterCourses[sem] = [];
+                    }
+                    semesterCourses[sem].push(course);
+                });
+                console.log('📊 Semesters available:', Object.keys(semesterCourses));
+            } catch (error) {
+                console.error('❌ Error loading courses:', error);
+                alert(`Failed to load courses:\n${error.message}\n\nCheck browser console for details.`);
+                allCourses = [];
+            }
+        }
+
+        // Populate student profile section
+        function populateStudentProfile() {
+            if (!studentData) return;
+            
+            // Get initials for avatar
+            const initials = ((studentData.firstName || 'S')[0] + (studentData.lastName || 'J')[0]).toUpperCase();
+            document.querySelector('.square-avatar').textContent = initials;
+            
+            // Update student name
+            const fullName = `${studentData.firstName || ''} ${studentData.lastName || ''}`.trim();
+            document.querySelector('.square-name').textContent = fullName;
+            document.querySelector('.square-major').textContent = `${studentData.program || 'Unknown'} • Year ${studentData.yearOfStudy || 1}`;
+            
+            // Update detail squares
+            const detailSquares = document.querySelectorAll('.profile-details-grid .detail-square');
+            detailSquares.forEach(square => {
+                const label = square.querySelector('.detail-label').textContent;
+                const valueSpan = square.querySelector('.detail-value span');
+                
+                switch(label) {
+                    case 'Student ID':
+                        valueSpan.textContent = studentData.studentID || 'N/A';
+                        break;
+                    case 'Email Address':
+                        valueSpan.textContent = studentData.email || 'N/A';
+                        break;
+                    case 'Phone Number':
+                        valueSpan.textContent = studentData.phoneNum || 'N/A';
+                        break;
+                    case 'Advisor Name':
+                        valueSpan.textContent = studentData.advisorName || 'Not Assigned';
+                        break;
+                    case 'Student Remark':
+                        valueSpan.textContent = studentData.remark || 'No remark set';
+                        // Also populate the select if remark exists
+                        if (studentData.remark) {
+                            document.getElementById('remarkSelect').value = studentData.remark;
+                        }
+                        break;
+                }
+            });
+            
+            // Update CGPA section
+            document.querySelector('.cgpa-value').textContent = (studentData.cgpa || 0).toFixed(2);
+            document.querySelector('.cgpa-rating').textContent = getRatingText(studentData.cgpa || 0);
+            
+            // Update academic details in CGPA square
+            const academicDetailsDiv = document.querySelectorAll('.cgpa-square [style*="display: grid"] > div');
+            if (academicDetailsDiv.length >= 4) {
+                academicDetailsDiv[0].querySelector('.detail-value').textContent = `Semester ${studentData.semester || 1}`;
+                academicDetailsDiv[1].querySelector('.detail-value').textContent = `${studentData.creditsCompleted || 0}`;
+                academicDetailsDiv[2].querySelector('.detail-value').textContent = `Year ${studentData.yearOfStudy || 1}`;
+                academicDetailsDiv[3].querySelector('.detail-value').textContent = 'Active';
+            }
+        }
+
+        // Get rating text based on CGPA
+        function getRatingText(cgpa) {
+            if (cgpa >= 3.75) return 'Excellent';
+            if (cgpa >= 3.5) return 'Very Good';
+            if (cgpa >= 3.0) return 'Good';
+            if (cgpa >= 2.5) return 'Satisfactory';
+            return 'Needs Improvement';
+        }
+
+        // Populate semester dropdown
+        function populateSemesterDropdown() {
+            const semesterSelect = document.getElementById('semesterSelect');
+            semesterSelect.innerHTML = '';
+            
+            const semesters = Object.keys(semesterCourses).map(Number).sort((a, b) => a - b);
+            if (semesters.length === 0) {
+                semesterSelect.innerHTML = '<option>No semesters available</option>';
+                return;
+            }
+            
+            const currentSemester = studentData.semester || semesters[semesters.length - 1];
+            
+            semesters.forEach(sem => {
+                const option = document.createElement('option');
+                option.value = sem;
+                option.textContent = `Semester ${sem}`;
+                if (sem === currentSemester) {
+                    option.textContent += ' (Current)';
+                    option.selected = true;
+                }
+                semesterSelect.appendChild(option);
+            });
+        }
+
+        // Calculate semester GPA
+        function calculateSemesterGPA(courses) {
+            let totalPoints = 0;
+            let totalCredits = 0;
+            
+            courses.forEach(course => {
+                if (course.grade && !['NT', null, 'In Progress', 'Not Yet Taken'].includes(course.grade)) {
+                    const points = letterGradeToPoint(course.grade);
+                    if (points !== null) {
+                        totalPoints += points * course.creditHour;
+                        totalCredits += course.creditHour;
+                    }
+                }
+            });
+            
+            return totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : 0;
+        }
+
+        // Convert letter grade to points
+        function letterGradeToPoint(grade) {
+            if (!grade) return null;
+            const g = grade.trim().toUpperCase();
+            const gradeMap = {
+                'A+': 4.0, 'A': 4.0, 'A-': 3.7,
+                'B+': 3.3, 'B': 3.0, 'B-': 2.7,
+                'C+': 2.3, 'C': 2.0, 'C-': 1.7,
+                'D+': 1.3, 'D': 1.0, 'D-': 0.7,
+                'F': 0.0
+            };
+            return gradeMap[g] !== undefined ? gradeMap[g] : null;
+        }
+
+        // Load semester data
+        function loadSemesterData(semester) {
+            const courses = semesterCourses[semester] || [];
+            const tableBody = document.getElementById('coursesTableBody');
+            
+            tableBody.innerHTML = '';
+            
+            courses.forEach(course => {
+                const row = document.createElement('tr');
+                const gradeClass = getGradeClass(course.grade);
+                const gradeDisplay = course.grade || 'Not Yet Taken';
+                
                 row.innerHTML = `
-                    <td>
-                        <div class="course-code">${course.code}</div>
-                    </td>
-                    <td>
-                        <div class="course-name">${course.name}</div>
-                    </td>
-                    <td class="credit-hours">${course.credits}</td>
+                    <td><div class="course-code">${course.courseID}</div></td>
+                    <td><div class="course-name">${course.courseName}</div></td>
+                    <td class="credit-hours">${course.creditHour}</td>
                     <td>
                         ${gradeClass ? 
-                          `<span class="grade-badge ${gradeClass}">${gradeText}</span>` : 
-                          `<span class="${gradeClass}">${gradeText}</span>`}
+                          `<span class="grade-badge ${gradeClass}">${gradeDisplay}</span>` : 
+                          `<span class="not-taken">${gradeDisplay}</span>`}
                     </td>
                 `;
                 
                 tableBody.appendChild(row);
             });
             
-            // Update semester summary
-            document.getElementById('semesterGPA').textContent = semester.gpa.toFixed(2);
-            document.getElementById('semesterCredits').textContent = semester.totalCredits;
-            document.getElementById('completedCredits').textContent = semester.completedCredits;
+            // Calculate and update semester summary
+            const semesterGPA = calculateSemesterGPA(courses);
+            const totalCredits = courses.reduce((sum, c) => sum + c.creditHour, 0);
+            const completedCredits = courses.filter(c => c.grade && !['NT', null, 'In Progress', 'Not Yet Taken'].includes(c.grade))
+                                           .reduce((sum, c) => sum + c.creditHour, 0);
+            
+            document.getElementById('semesterGPA').textContent = semesterGPA;
+            document.getElementById('semesterCredits').textContent = totalCredits;
+            document.getElementById('completedCredits').textContent = completedCredits;
         }
 
-        // Function to get grade color class
+        // Get grade class based on letter grade
         function getGradeClass(grade) {
-            if (grade.startsWith('A')) return 'grade-a';
-            if (grade.startsWith('B')) return 'grade-b';
-            if (grade.startsWith('C')) return 'grade-c';
-            if (grade.startsWith('D')) return 'grade-d';
-            if (grade.startsWith('F')) return 'grade-f';
+            if (!grade) return '';
+            const g = grade.trim().toUpperCase();
+            
+            if (g === 'NOT YET TAKEN' || g === 'NT' || g === 'IN PROGRESS') return '';
+            if (g.startsWith('A')) return 'grade-a';
+            if (g.startsWith('B')) return 'grade-b';
+            if (g.startsWith('C')) return 'grade-c';
+            if (g.startsWith('D')) return 'grade-d';
+            if (g.startsWith('F')) return 'grade-f';
             return '';
+        }
+
+        // Save remark for student
+        async function saveRemark(studentID) {
+            try {
+                const remark = document.getElementById('remarkSelect').value;
+                const notes = document.getElementById('remarkNotes').value;
+                
+                if (!remark) {
+                    alert('Please select a status');
+                    return;
+                }
+                
+                console.log('💾 Saving remark for student:', studentID, 'Remark:', remark);
+                
+                const url = `${apiBase}/api/advisor/student/update?studentID=${encodeURIComponent(studentID)}`;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `remark=${encodeURIComponent(remark)}&notes=${encodeURIComponent(notes)}`
+                });
+                
+                if (!response.ok) {
+                    console.error(`❌ API Error: ${response.status} ${response.statusText}`);
+                    const errorText = await response.text();
+                    console.error('Response body:', errorText);
+                    
+                    // Try alternative endpoint
+                    console.log('⚠️ Trying alternative endpoint...');
+                    const altUrl = `${apiBase}/api/student/update`;
+                    const altResponse = await fetch(altUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: `remark=${encodeURIComponent(remark)}`
+                    });
+                    
+                    if (!altResponse.ok) {
+                        throw new Error(`HTTP ${response.status}: Failed to save remark`);
+                    }
+                }
+                
+                const data = await response.json();
+                console.log('✅ Remark saved:', data);
+                
+                // Update display
+                document.querySelector('.profile-details-grid .detail-square:nth-child(4) .detail-value span').textContent = remark;
+                
+                // Show success message
+                const statusDiv = document.getElementById('remarkStatus');
+                const statusText = document.getElementById('remarkStatusText');
+                statusText.textContent = `✓ Remark updated successfully: "${remark}"`;
+                statusDiv.style.display = 'block';
+                
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 3000);
+                
+            } catch (error) {
+                console.error('❌ Error saving remark:', error);
+                alert(`Failed to save remark:\n${error.message}`);
+            }
         }
     </script>
 </body>

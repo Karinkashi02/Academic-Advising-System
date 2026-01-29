@@ -39,7 +39,7 @@ public class AdvisorStudentsServlet extends HttpServlet {
         }
 
         try (Connection conn = DBConnection.getConnection()) {
-            String sql = "SELECT studentID, firstName, lastName, email, program, yearOfStudy, semester, phoneNum, cgpa, creditscompleted, co_curricular_points " +
+            String sql = "SELECT studentID, firstName, lastName, email, program, yearOfStudy, semester, phoneNum, cgpa, creditscompleted, co_curricular_points, remark " +
                          "FROM student WHERE advisorID = ? ORDER BY lastName, firstName";
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, advisorID);
@@ -59,6 +59,7 @@ public class AdvisorStudentsServlet extends HttpServlet {
                         s.put("cgpa", rs.getObject("cgpa") == null ? JSONObject.NULL : rs.getDouble("cgpa"));
                         s.put("creditsCompleted", rs.getObject("creditscompleted") == null ? JSONObject.NULL : rs.getInt("creditscompleted"));
                         s.put("co_curricular_points", rs.getObject("co_curricular_points") == null ? JSONObject.NULL : rs.getInt("co_curricular_points"));
+                        s.put("remark", rs.getString("remark") != null ? rs.getString("remark") : "");
                         arr.put(s);
                     }
                     JSONObject out = new JSONObject();

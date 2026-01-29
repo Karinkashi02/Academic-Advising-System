@@ -444,20 +444,6 @@
             white-space: nowrap;
         }
 
-        .notes-cell:hover {
-            overflow: visible;
-            white-space: normal;
-            position: relative;
-            z-index: 10;
-            background: var(--bg-card);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 10px;
-            border-radius: 4px;
-            max-height: 200px;
-            overflow-y: auto;
-            min-width: 300px;
-        }
-
         .actions-cell {
             width: 140px;
             min-width: 140px;
@@ -468,18 +454,18 @@
         #mySessionsTable th:nth-child(1) { width: 50px; } /* No. */
         #mySessionsTable th:nth-child(2) { width: 22%; } /* Session Name & Type - REDUCED */
         #mySessionsTable th:nth-child(3) { width: 120px; } /* Date & Time */
-        #mySessionsTable th:nth-child(4) { width: 90px; } /* Status */
-        #mySessionsTable th:nth-child(5) { width: 200px; } /* Notes */
-        #mySessionsTable th:nth-child(6) { width: 140px; } /* Actions */
+        #mySessionsTable th:nth-child(4) { width: 90px; text-align: center; } /* Status */
+        #mySessionsTable th:nth-child(5) { width: 100px; } /* Cancel Reason */
+        #mySessionsTable th:nth-child(6) { width: 200px; } /* Notes */
+        #mySessionsTable th:nth-child(7) { width: 140px; text-align: center; } /* Actions */
 
         /* Set column widths for the second table */
         #requestsTable th:nth-child(1) { width: 50px; } /* No. */
-        #requestsTable th:nth-child(2) { width: 20%; } /* Session Name */
-        #requestsTable th:nth-child(3) { width: 18%; } /* Student Name */
-        #requestsTable th:nth-child(4) { width: 100px; } /* Date */
-        #requestsTable th:nth-child(5) { width: 90px; } /* Status */
-        #requestsTable th:nth-child(6) { width: 180px; } /* Notes */
-        #requestsTable th:nth-child(7) { width: 140px; } /* Actions */
+        #requestsTable th:nth-child(2) { width: 25%; } /* Session Name */
+        #requestsTable th:nth-child(3) { width: 100px; } /* Date */
+        #requestsTable th:nth-child(4) { width: 90px; text-align: center; } /* Status */
+        #requestsTable th:nth-child(5) { width: 180px; } /* Notes */
+        #requestsTable th:nth-child(6) { width: 140px;justify-self: center; } /* Actions */
 
         /* Status Styles */
         .status-badge {
@@ -593,7 +579,7 @@
         .btn-small {
             padding: 6px 10px;
             font-size: 12px;
-            min-width: 60px;
+            min-width: 20px;
         }
 
         .btn-icon {
@@ -1052,14 +1038,6 @@
             .form-row {
                 grid-template-columns: 1fr;
             }
-            
-            /* On mobile, show full notes on hover */
-            .notes-cell:hover {
-                position: static;
-                box-shadow: none;
-                max-height: none;
-                overflow-y: visible;
-            }
         }
 
         @media (max-width: 480px) {
@@ -1188,7 +1166,7 @@
                         </div>
                         <div class="stat-info">
                             <h3 id="rejected-count">2</h3>
-                            <p>Rejected</p>
+                            <p>Cancelled</p>
                         </div>
                     </div>
                 </div>
@@ -1198,8 +1176,8 @@
                     <div class="card-header">
                         <h2>My Advising Sessions</h2>
                         <div style="display: flex; gap: 15px; align-items: center;">
-                            <button class="btn btn-primary" id="createSessionBtn">
-                                <i class="fas fa-calendar-plus"></i> Create New Session
+                            <button class="btn btn-primary" id="createSessionBtnTop" title="Create new session">
+                                <i class="fas fa-plus"></i> Create Session
                             </button>
                             <input type="text" class="search-box" placeholder="Search my sessions..." id="searchMySessions">
                         </div>
@@ -1216,6 +1194,7 @@
                         <div class="filter-options">
                             <button class="filter-btn active" data-status="all">All Sessions</button>
                             <button class="filter-btn" data-status="upcoming">Upcoming</button>
+                            <button class="filter-btn" data-status="confirmed">Confirmed</button>
                             <button class="filter-btn" data-status="completed">Completed</button>
                             <button class="filter-btn" data-status="cancelled">Cancelled</button>
                         </div>
@@ -1229,6 +1208,7 @@
                                     <th>Session Name & Type</th>
                                     <th class="date-cell">Date & Time</th>
                                     <th class="status-cell">Status</th>
+                                    <th class="notes-cell">Cancel Reason</th>
                                     <th class="notes-cell">Notes</th>
                                     <th class="actions-cell">Actions</th>
                                 </tr>
@@ -1244,33 +1224,11 @@
                         <!-- Pagination will be loaded by JavaScript -->
                     </div>
                 </div>
-                
+
                 <!-- Session Requests Card -->
                 <div class="card">
                     <div class="card-header">
-                        <h2>Session Requests for Review</h2>
-                        <div style="display: flex; gap: 15px; align-items: center;">
-                            <input type="text" class="search-box" placeholder="Search requests..." id="searchRequests">
-                            <button class="btn btn-export" id="exportBtn">
-                                <i class="fas fa-download"></i> Export
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Filter Section for Session Requests -->
-                    <div class="filter-section">
-                        <div class="filter-header">
-                            <h3>Filter by Status</h3>
-                            <button class="clear-filter-btn" id="clearRequestFilter">
-                                <i class="fas fa-times"></i> Clear Filter
-                            </button>
-                        </div>
-                        <div class="filter-options">
-                            <button class="filter-btn active" data-status="all">All Requests</button>
-                            <button class="filter-btn" data-status="pending">Pending</button>
-                            <button class="filter-btn" data-status="approved">Approved</button>
-                            <button class="filter-btn" data-status="rejected">Rejected</button>
-                        </div>
+                        <h2>Student Session Requests</h2>
                     </div>
                     
                     <div class="table-container">
@@ -1280,14 +1238,14 @@
                                     <th class="number-cell">No.</th>
                                     <th>Session Name</th>
                                     <th>Student Name</th>
-                                    <th class="date-cell">Date</th>
+                                    <th class="date-cell">Date & Time</th>
                                     <th class="status-cell">Status</th>
-                                    <th class="notes-cell">Notes</th>
+                                    <th class="notes-cell">Reason</th>
                                     <th class="actions-cell">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="requestsTableBody">
-                                <!-- Requests will be loaded by JavaScript -->
+                                <!-- Session Requests will be loaded by JavaScript -->
                             </tbody>
                         </table>
                     </div>
@@ -1361,6 +1319,9 @@
                 </div>
             </div>
             <div class="modal-footer">
+                <button class="btn btn-success" id="joinSessionBtn" style="display: none;">
+                    <i class="fas fa-video"></i> Join Session
+                </button>
                 <button class="btn btn-secondary" id="closeViewBtn">
                     <i class="fas fa-times"></i> Close
                 </button>
@@ -1380,62 +1341,63 @@
                     <input type="hidden" id="editSessionId">
                     
                     <div class="form-group">
-                        <label for="editSessionType"><i class="fas fa-clipboard-list"></i> Session Type *</label>
-                        <select class="form-control" id="editSessionType" required>
-                            <option value="">Select session type</option>
-                            <option value="academic">Academic Advising</option>
-                            <option value="career">Career Counseling</option>
-                            <option value="personal">Personal Development</option>
-                            <option value="graduation">Graduation Planning</option>
-                            <option value="research">Research Guidance</option>
-                            <option value="group">Group Session</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="editSessionName"><i class="fas fa-calendar"></i> Session Name *</label>
-                        <input type="text" class="form-control" id="editSessionName" placeholder="Enter session name" required>
+                        <label class="form-label" for="editSessionName">
+                            <i class="fas fa-comment-alt"></i> Session Title *
+                        </label>
+                        <input type="text" class="form-control" id="editSessionName" placeholder="Enter session title" required>
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="editSessionDate"><i class="fas fa-calendar-alt"></i> Session Date *</label>
-                            <input type="date" class="form-control" id="editSessionDate" required>
+                            <label class="form-label" for="editSessionDateTime">
+                                <i class="fas fa-calendar"></i> Session Date & Time *
+                            </label>
+                            <input type="datetime-local" class="form-control" id="editSessionDateTime" required>
                         </div>
                         <div class="form-group">
-                            <label for="editSessionTime"><i class="fas fa-clock"></i> Session Time *</label>
-                            <input type="time" class="form-control" id="editSessionTime" required>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="editSessionDuration"><i class="fas fa-hourglass-half"></i> Duration *</label>
-                            <select class="form-control" id="editSessionDuration" required>
-                                <option value="30">30 minutes</option>
-                                <option value="45">45 minutes</option>
-                                <option value="60">60 minutes</option>
-                                <option value="90">90 minutes</option>
-                                <option value="120">120 minutes</option>
+                            <label class="form-label" for="editSessionType">
+                                <i class="fas fa-tag"></i> Session Type *
+                            </label>
+                            <select class="form-control" id="editSessionType" required>
+                                <option value="">Select session type</option>
+                                <option value="academic">Academic Planning</option>
+                                <option value="course">Course Selection</option>
+                                <option value="career">Career Guidance</option>
+                                <option value="personal">Personal Issues</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label for="editSessionLocation"><i class="fas fa-map-marker-alt"></i> Location</label>
-                            <input type="text" class="form-control" id="editSessionLocation" placeholder="E.g., Room 205, Building A">
-                        </div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="editSessionStatus"><i class="fas fa-flag"></i> Status</label>
-                        <select class="form-control" id="editSessionStatus">
-                            <option value="upcoming">Upcoming</option>
-                            <option value="completed">Completed</option>
-                            <option value="cancelled">Cancelled</option>
+                        <label class="form-label" for="editSessionStudents">
+                            <i class="fas fa-users"></i> Students *
+                        </label>
+                        <select class="form-control" id="editSessionStudents" multiple required style="min-height: 120px;">
+                            <option value="">-- Select students --</option>
                         </select>
+                        <small style="color: #666; margin-top: 5px; display: block;">Hold Ctrl (Cmd on Mac) to select multiple students</small>
                     </div>
                     
                     <div class="form-group">
-                        <label for="editSessionNotes"><i class="fas fa-sticky-note"></i> Session Notes</label>
+                        <label class="form-label" for="editSessionLocation">
+                            <i class="fas fa-video"></i> Meeting Link
+                        </label>
+                        <input type="url" class="form-control" id="editSessionLocation" placeholder="Enter Google Meet or Zoom link">
+                    </div>
+                    
+                    <h2>OR</h2><br><br>
+
+                    <div class="form-group">
+                        <label class="form-label" for="editSessionPhysicalLocation">
+                            <i class="fas fa-map-marker-alt"></i> Physical Location
+                        </label>
+                        <input type="text" class="form-control" id="editSessionPhysicalLocation" placeholder="Enter physical location (room, building)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editSessionNotes">
+                            <i class="fas fa-align-left"></i> Notes
+                        </label>
                         <textarea class="form-control" id="editSessionNotes" placeholder="Enter notes or agenda for this session..."></textarea>
                     </div>
                 </form>
@@ -1451,183 +1413,134 @@
         </div>
     </div>
 
-    <script>
-        // Database for "My Advising Sessions"
-        const mySessions = [
-            {
-                id: 101,
-                name: "Graduation Planning",
-                type: "Graduation Planning",
-                duration: "60 mins",
-                students: [
-                    { name: "Sarah Johnson", major: "Computer Science", year: "Senior", avatar: "S" },
-                    { name: "Emily Davis", major: "Information Systems", year: "Senior", avatar: "E" }
-                ],
-                date: "2023-10-25",
-                time: "10:00",
-                notes: "Review graduation requirements and plan final semester courses. Ensure all prerequisites are met.",
-                location: "Room 205, Building A",
-                status: "upcoming"
-            },
-            {
-                id: 102,
-                name: "Academic Progress Review",
-                type: "Academic Advising",
-                duration: "45 mins",
-                students: [
-                    { name: "Michael Chen", major: "Data Science", year: "Junior", avatar: "M" }
-                ],
-                date: "2023-10-26",
-                time: "14:00",
-                notes: "Mid-semester progress check and course adjustment discussion. Review current grades.",
-                location: "Virtual Meeting",
-                status: "upcoming"
-            },
-            {
-                id: 103,
-                name: "Research Guidance",
-                type: "Research Guidance",
-                duration: "90 mins",
-                students: [
-                    { name: "Olivia Taylor", major: "Artificial Intelligence", year: "Senior", avatar: "O" }
-                ],
-                date: "2023-10-27",
-                time: "11:30",
-                notes: "Discuss research opportunities in AI ethics and machine learning. Review project proposals.",
-                location: "Research Lab 3",
-                status: "upcoming"
-            },
-            {
-                id: 104,
-                name: "Study Abroad Planning",
-                type: "Academic Advising",
-                duration: "45 mins",
-                students: [
-                    { name: "Amanda Wilson", major: "Computer Science", year: "Junior", avatar: "A" }
-                ],
-                date: "2023-10-28",
-                time: "15:15",
-                notes: "Explore study abroad options for next academic year. Review partner universities.",
-                location: "Room 102",
-                status: "completed"
-            },
-            {
-                id: 105,
-                name: "Capstone Project Review",
-                type: "Research Guidance",
-                duration: "60 mins",
-                students: [
-                    { name: "Thomas Anderson", major: "Software Engineering", year: "Senior", avatar: "T" }
-                ],
-                date: "2023-10-29",
-                time: "09:00",
-                notes: "Review capstone project proposal and timeline. Discuss technical requirements.",
-                location: "Project Room 1",
-                status: "upcoming"
-            },
-            {
-                id: 106,
-                name: "Career Counseling",
-                type: "Career Counseling",
-                duration: "60 mins",
-                students: [
-                    { name: "Robert Brown", major: "Cybersecurity", year: "Junior", avatar: "R" }
-                ],
-                date: "2023-10-30",
-                time: "13:45",
-                notes: "Discuss career options in cybersecurity industry. Review internship opportunities.",
-                location: "Career Center",
-                status: "completed"
-            },
-            {
-                id: 107,
-                name: "Tutoring Support Planning",
-                type: "Academic Advising",
-                duration: "30 mins",
-                students: [
-                    { name: "Jennifer Lee", major: "Data Science", year: "Sophomore", avatar: "J" }
-                ],
-                date: "2023-10-31",
-                time: "10:30",
-                notes: "Set up tutoring support for statistics courses. Coordinate with tutoring center.",
-                location: "Learning Center",
-                status: "cancelled"
-            },
-            {
-                id: 108,
-                name: "Time Management Workshop",
-                type: "Personal Development",
-                duration: "90 mins",
-                students: [
-                    { name: "Sophia Rodriguez", major: "Information Systems", year: "Junior", avatar: "S" },
-                    { name: "James Martinez", major: "Computer Science", year: "Freshman", avatar: "J" }
-                ],
-                date: "2023-11-01",
-                time: "16:00",
-                notes: "Group session on effective time management strategies. Discuss study techniques.",
-                location: "Conference Room B",
-                status: "upcoming"
-            }
-        ];
+    <!-- Create Session Modal -->
+    <div class="modal" id="createSessionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-plus"></i> Create New Session</h3>
+                <button class="close-modal" id="closeCreateSessionModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="createSessionForm">
+                    <div class="form-group">
+                        <label class="form-label" for="createSessionName">
+                            <i class="fas fa-comment-alt"></i> Session Title *
+                        </label>
+                        <input type="text" class="form-control" id="createSessionName" placeholder="Enter session title" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="createSessionDateTime">
+                                <i class="fas fa-calendar"></i> Session Date & Time *
+                            </label>
+                            <input type="datetime-local" class="form-control" id="createSessionDateTime" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="createSessionType">
+                                <i class="fas fa-tag"></i> Session Type *
+                            </label>
+                            <select class="form-control" id="createSessionType" required>
+                                <option value="">Select session type</option>
+                                <option value="academic">Academic Planning</option>
+                                <option value="course">Course Selection</option>
+                                <option value="career">Career Guidance</option>
+                                <option value="personal">Personal Issues</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="createSessionStudents">
+                            <i class="fas fa-users"></i> Students *
+                        </label>
+                        <select class="form-control" id="createSessionStudents" multiple required style="min-height: 120px;">
+                            <option value="">-- Select students --</option>
+                        </select>
+                        <small style="color: #666; margin-top: 5px; display: block;">Hold Ctrl (Cmd on Mac) to select multiple students</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="createSessionLocation">
+                            <i class="fas fa-video"></i> Meeting Link
+                        </label>
+                        <input type="url" class="form-control" id="createSessionLocation" placeholder="Enter Google Meet or Zoom link">
+                    </div>
+                    
+                    <h2>OR</h2><br><br>
 
-        // Database for "Session Requests"
-        const sessionRequests = [
-            {
-                id: 1,
-                name: "Course Selection Advising",
-                type: "Academic",
-                duration: "45 mins",
-                student: "Sarah Johnson",
-                studentId: "S10023",
-                date: "Oct 15, 2023",
-                notes: "Student needs guidance on selecting courses for Spring 2024 semester. Interested in Data Science track.",
-                status: "pending"
-            },
-            {
-                id: 2,
-                name: "Graduate School Planning",
-                type: "Academic",
-                duration: "60 mins",
-                student: "Michael Chen",
-                studentId: "S10045",
-                date: "Oct 16, 2023",
-                notes: "Discuss graduate school options and application timeline.",
-                status: "approved"
-            },
-            {
-                id: 3,
-                name: "Internship Guidance",
-                type: "Career",
-                duration: "60 mins",
-                student: "David Wilson",
-                studentId: "S10067",
-                date: "Oct 20, 2023",
-                notes: "Student needs resources for summer internship applications. Resume review requested.",
-                status: "pending"
-            },
-            {
-                id: 4,
-                name: "Personal Development",
-                type: "Personal",
-                duration: "45 mins",
-                student: "Emily Davis",
-                studentId: "S10089",
-                date: "Oct 22, 2023",
-                notes: "Student wants to improve public speaking skills and leadership abilities.",
-                status: "approved"
-            },
-            {
-                id: 5,
-                name: "Academic Probation",
-                type: "Academic",
-                duration: "60 mins",
-                student: "Robert Brown",
-                studentId: "S10012",
-                date: "Oct 24, 2023",
-                notes: "Student on academic probation needs improvement plan.",
-                status: "rejected"
+                    <div class="form-group">
+                        <label class="form-label" for="createSessionPhysicalLocation">
+                            <i class="fas fa-map-marker-alt"></i> Physical Location
+                        </label>
+                        <input type="text" class="form-control" id="createSessionPhysicalLocation" placeholder="Enter physical location (room, building)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="createSessionNotes">
+                            <i class="fas fa-align-left"></i> Notes
+                        </label>
+                        <textarea class="form-control" id="createSessionNotes" placeholder="Enter notes or agenda for this session..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelCreateSessionBtn">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="btn btn-primary" id="submitCreateSessionBtn">
+                    <i class="fas fa-plus"></i> Create Session
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data
+        let mySessions = [];
+        let sessionRequests = [];
+
+        // Context path helper
+        const ctx = (function(){ const p = window.location.pathname.split('/').filter(Boolean); return p.length ? '/' + p[0] : ''; })();
+
+        // Network helpers
+        async function apiGet(path) {
+            const res = await fetch(ctx + path, { cache: 'no-store' });
+            if (!res.ok) throw new Error('GET ' + path + ' returned ' + res.status);
+            return res.json();
+        }
+
+        // Load sessions from API
+        async function loadSessions() {
+            try {
+                const data = await apiGet('/api/advisor/sessions');
+                const sessions = data.sessions || [];
+                // Filter: confirmed, completed sessions go to mySessions
+                // cancel_requested, pending sessions go to sessionRequests
+                mySessions = sessions.filter(s => {
+                    const status = (s.status || '').toLowerCase();
+                    return status === 'confirmed' || status === 'completed' || status === 'scheduled' || status === 'cancelled';
+                });
+                sessionRequests = sessions.filter(s => {
+                    const status = (s.status || '').toLowerCase();
+                    return status === 'pending' || status === 'cancel_requested';
+                });
+                filteredMySessions = [...mySessions];
+                filteredRequests = [...sessionRequests];
+                renderMySessions();
+                renderMySessionsPagination();
+                renderRequests();
+                renderRequestsPagination();
+                updateStats();
+            } catch (e) {
+                console.error('Failed to load sessions:', e);
+                // Fallback to empty arrays
+                mySessions = [];
+                sessionRequests = [];
+                filteredMySessions = [];
+                filteredRequests = [];
             }
-        ];
+        }
 
         // Pagination variables for My Sessions
         let currentPageMySessions = 1;
@@ -1643,31 +1556,14 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize filtered sessions
-            filteredMySessions = [...mySessions];
-            filteredRequests = [...sessionRequests];
-            
-            // Load My Sessions
-            renderMySessions();
-            renderMySessionsPagination();
-            
-            // Load Session Requests
-            renderRequests();
-            renderRequestsPagination();
-            
-            updateStats();
-            
-            // Add event listeners
-            document.getElementById('createSessionBtn').addEventListener('click', function(e) {
-                e.preventDefault();
-                openCreateSessionModal();
-            });
+            // Load sessions from API
+            loadSessions();
             
             // Filter functionality for My Sessions
-            document.querySelectorAll('#mySessionsCard .filter-btn').forEach(btn => {
+            document.querySelectorAll('.filter-section .filter-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     // Remove active class from all buttons
-                    document.querySelectorAll('#mySessionsCard .filter-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.filter-section .filter-btn').forEach(b => b.classList.remove('active'));
                     // Add active class to clicked button
                     this.classList.add('active');
                     
@@ -1679,32 +1575,11 @@
             // Clear filter for My Sessions
             document.getElementById('clearMySessionFilter').addEventListener('click', function() {
                 // Set active class to "All Sessions" button
-                document.querySelectorAll('#mySessionsCard .filter-btn').forEach(b => b.classList.remove('active'));
-                document.querySelector('#mySessionsCard .filter-btn[data-status="all"]').classList.add('active');
+                document.querySelectorAll('.filter-section .filter-btn').forEach(b => b.classList.remove('active'));
+                const allBtn = document.querySelector('.filter-section .filter-btn[data-status="all"]');
+                if (allBtn) allBtn.classList.add('active');
                 
                 applyMySessionFilter('all');
-            });
-            
-            // Filter functionality for Session Requests
-            document.querySelectorAll('#requestsCard .filter-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    // Remove active class from all buttons
-                    document.querySelectorAll('#requestsCard .filter-btn').forEach(b => b.classList.remove('active'));
-                    // Add active class to clicked button
-                    this.classList.add('active');
-                    
-                    const status = this.getAttribute('data-status');
-                    applyRequestFilter(status);
-                });
-            });
-            
-            // Clear filter for Session Requests
-            document.getElementById('clearRequestFilter').addEventListener('click', function() {
-                // Set active class to "All Requests" button
-                document.querySelectorAll('#requestsCard .filter-btn').forEach(b => b.classList.remove('active'));
-                document.querySelector('#requestsCard .filter-btn[data-status="all"]').classList.add('active');
-                
-                applyRequestFilter('all');
             });
             
             // Search functionality for My Sessions
@@ -1721,10 +1596,10 @@
                         }
                         
                         // Then apply search filter
-                        return session.name.toLowerCase().includes(searchTerm) ||
-                               session.type.toLowerCase().includes(searchTerm) ||
-                               session.notes.toLowerCase().includes(searchTerm) ||
-                               session.status.toLowerCase().includes(searchTerm);
+                        return (session.title || '').toLowerCase().includes(searchTerm) ||
+                               (session.sessionType || '').toLowerCase().includes(searchTerm) ||
+                               (session.notes || '').toLowerCase().includes(searchTerm) ||
+                               (session.status || '').toLowerCase().includes(searchTerm);
                     });
                     
                     currentPageMySessions = 1;
@@ -1733,37 +1608,6 @@
                 }
             });
 
-            // Search functionality for Requests
-            document.getElementById('searchRequests').addEventListener('keyup', function() {
-                const searchTerm = this.value.toLowerCase();
-                
-                if (searchTerm.trim() === '') {
-                    applyRequestFilter(currentRequestFilter);
-                } else {
-                    filteredRequests = sessionRequests.filter(request => {
-                        // First apply status filter
-                        if (currentRequestFilter !== 'all' && request.status !== currentRequestFilter) {
-                            return false;
-                        }
-                        
-                        // Then apply search filter
-                        return request.name.toLowerCase().includes(searchTerm) ||
-                               request.student.toLowerCase().includes(searchTerm) ||
-                               request.notes.toLowerCase().includes(searchTerm) ||
-                               request.status.toLowerCase().includes(searchTerm);
-                    });
-                    
-                    currentPageRequests = 1;
-                    renderRequests();
-                    renderRequestsPagination();
-                }
-            });
-            
-            // Export button
-            document.getElementById('exportBtn').addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('Export functionality would download session data as CSV file.');
-            });
             
             // Modal close buttons
             document.getElementById('closeViewSessionModal').addEventListener('click', closeViewSessionModal);
@@ -1772,10 +1616,25 @@
             document.getElementById('closeEditSessionModal').addEventListener('click', closeEditSessionModal);
             document.getElementById('cancelEditSessionBtn').addEventListener('click', closeEditSessionModal);
             
+            document.getElementById('closeCreateSessionModal').addEventListener('click', closeCreateSessionModal);
+            document.getElementById('cancelCreateSessionBtn').addEventListener('click', closeCreateSessionModal);
+            
             // Submit Edit Session form
             document.getElementById('submitEditSessionBtn').addEventListener('click', function(e) {
                 e.preventDefault();
                 saveEditedSession();
+            });
+            
+            // Submit Create Session form
+            document.getElementById('submitCreateSessionBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                saveNewSession();
+            });
+            
+            // Create Session button
+            document.getElementById('createSessionBtnTop').addEventListener('click', function(e) {
+                e.preventDefault();
+                openCreateSessionModal();
             });
             
             // Header action buttons
@@ -1792,8 +1651,7 @@
             document.querySelector('.logout-btn').addEventListener('click', function(e) {
                 e.preventDefault();
                 if (confirm("Are you sure you want to logout?")) {
-                    alert("You have been logged out. Redirecting to login page.");
-                    window.location.href = "login.html";
+                    window.location.href = ctx + "/logout";
                 }
             });
         });
@@ -1804,8 +1662,34 @@
             
             if (status === 'all') {
                 filteredMySessions = [...mySessions];
+            } else if (status === 'upcoming') {
+                // Map "upcoming" to confirmed or scheduled statuses that are in the future
+                const now = new Date();
+                filteredMySessions = mySessions.filter(session => {
+                    const sessionStatus = (session.status || '').toLowerCase();
+                    const ts = session.sessionDateTime ? new Date(String(session.sessionDateTime).replace(' ', 'T')) : null;
+                    return (sessionStatus === 'confirmed' || sessionStatus === 'scheduled') && ts && ts > now;
+                });
+            } else if (status === 'confirmed') {
+                // For confirmed filter, show all confirmed and scheduled sessions regardless of date
+                filteredMySessions = mySessions.filter(session => {
+                    const sessionStatus = (session.status || '').toLowerCase();
+                    return sessionStatus === 'confirmed' || sessionStatus === 'scheduled';
+                });
+            } else if (status === 'completed') {
+                // For completed filter, include confirmed sessions that are in the past
+                const now = new Date();
+                filteredMySessions = mySessions.filter(session => {
+                    const sessionStatus = (session.status || '').toLowerCase();
+                    const ts = session.sessionDateTime ? new Date(String(session.sessionDateTime).replace(' ', 'T')) : null;
+                    return (sessionStatus === 'completed' || (sessionStatus === 'confirmed' && ts && ts < now));
+                });
             } else {
-                filteredMySessions = mySessions.filter(session => session.status === status);
+                // For cancelled (includes both 'cancelled' and 'denied'), use exact match
+                filteredMySessions = mySessions.filter(session => {
+                    const sessionStatus = (session.status || '').toLowerCase();
+                    return sessionStatus === 'cancelled' || sessionStatus === 'denied';
+                });
             }
             
             currentPageMySessions = 1;
@@ -1855,70 +1739,147 @@
             
             pageSessions.forEach((session, index) => {
                 const row = document.createElement('tr');
-                row.setAttribute('data-id', session.id);
+                row.setAttribute('data-id', session.sessionID);
                 
-                // Format date for display
-                const dateObj = new Date(session.date);
-                const formattedDate = dateObj.toLocaleDateString('en-US', { 
-                    year: 'numeric', 
-                    month: 'short', 
-                    day: 'numeric' 
-                });
-                
-                // Format time for display
-                const timeObj = new Date(`1970-01-01T${session.time}`);
-                const formattedTime = timeObj.toLocaleTimeString('en-US', { 
-                    hour: 'numeric', 
-                    minute: '2-digit',
-                    hour12: true 
-                });
+                // Parse sessionDateTime
+                const ts = session.sessionDateTime ? new Date(String(session.sessionDateTime).replace(' ', 'T')) : null;
+                const formattedDate = ts ? ts.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
+                const formattedTime = ts ? ts.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) : '';
                 
                 // Get status badge class and text
                 let statusClass, statusText;
-                switch(session.status) {
+                const status = (session.status || '').toLowerCase();
+                switch(status) {
                     case 'completed':
                         statusClass = 'status-completed';
                         statusText = 'Completed';
                         break;
                     case 'cancelled':
+                    case 'denied':
                         statusClass = 'status-cancelled';
                         statusText = 'Cancelled';
                         break;
-                    case 'upcoming':
+                    case 'confirmed':
+                    case 'scheduled':
+                        statusClass = 'status-upcoming';
+                        statusText = 'Confirmed';
+                        break;
                     default:
                         statusClass = 'status-upcoming';
                         statusText = 'Upcoming';
                 }
                 
                 // Truncate notes for display
-                const truncatedNotes = session.notes.length > 80 
-                    ? session.notes.substring(0, 80) + '...' 
-                    : session.notes;
+                const notes = session.notes || '';
+                const truncatedNotes = notes.length > 80 ? notes.substring(0, 80) + '...' : notes;
+                const cancelReason = session.cancelReason || '';
+                const truncatedReason = cancelReason.length > 80 ? cancelReason.substring(0, 80) + '...' : cancelReason;
                 
                 row.innerHTML = `
                     <td class="number-cell">${startIndex + index + 1}</td>
                     <td>
-                        <div class="session-name-cell">${session.name}</div>
-                        <div class="session-type-cell">${session.type} • ${session.duration}</div>
+                        <div class="session-name-cell">${session.title || ''}</div>
+                        <div class="session-type-cell">${session.sessionType || 'General'} • 60 mins</div>
                     </td>
                     <td class="date-cell">
                         <div>${formattedDate}</div>
                         <div style="font-size: 12px; color: var(--text-light);">${formattedTime}</div>
                     </td>
+                    <td class="status-cell" style="text-align: center;">
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    </td>
+                    <td class="notes-cell" title="${cancelReason}">${truncatedReason || '-'}</td>
+                    <td class="notes-cell" title="${notes}">${truncatedNotes}</td>
+                    <td class="actions-cell" style="text-align: center;">
+                        <div class="action-buttons">
+                            ${(() => {
+                                const statusLower = (session.status || '').toLowerCase();
+                                const isConfirmed = statusLower === 'confirmed' || statusLower === 'scheduled';
+                                const hasLink = session.meetlink && session.meetlink.trim();
+                                return isConfirmed && hasLink ? `<button class="btn btn-success btn-small" onclick="window.open('${session.meetlink}', '_blank')" title="Join Meeting"><i class="fas fa-video"></i></button>` : '';
+                            })()}
+                            <button class="btn btn-secondary btn-small view-session-btn" onclick="viewSession(${session.sessionID})" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-success btn-small edit-session-btn" onclick="editSession(${session.sessionID})" title="Edit Session">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        // Render Session Requests for current page
+        function renderRequests() {
+            const tbody = document.getElementById('requestsTableBody');
+            tbody.innerHTML = '';
+            
+            // Calculate start and end index for current page
+            const startIndex = (currentPageRequests - 1) * requestsPerPage;
+            const endIndex = startIndex + requestsPerPage;
+            const pageRequests = filteredRequests.slice(startIndex, endIndex);
+            
+            if (pageRequests.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-light);">
+                            <i class="fas fa-inbox" style="font-size: 32px; margin-bottom: 15px; display: block;"></i>
+                            <h3 style="margin-bottom: 10px; color: var(--text-light);">No requests found</h3>
+                            <p>All session requests have been reviewed</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            pageRequests.forEach((request, index) => {
+                const row = document.createElement('tr');
+                row.setAttribute('data-id', request.sessionID);
+                
+                // Parse sessionDateTime
+                const ts = request.sessionDateTime ? new Date(String(request.sessionDateTime).replace(' ', 'T')) : null;
+                const formattedDate = ts ? ts.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
+                
+                // Get status badge class and text
+                let statusClass, statusText;
+                const status = (request.status || '').toLowerCase();
+                switch(status) {
+                    case 'pending':
+                        statusClass = 'status-pending';
+                        statusText = 'Pending';
+                        break;
+                    case 'cancel_requested':
+                        statusClass = 'status-pending';
+                        statusText = 'Cancel Request';
+                        break;
+                    default:
+                        statusClass = 'status-upcoming';
+                        statusText = 'Pending';
+                }
+                
+                // Truncate notes for display
+                const notes = request.notes || request.cancelReason || '';
+                const truncatedNotes = notes.length > 80 ? notes.substring(0, 80) + '...' : notes;
+                
+                row.innerHTML = `
+                    <td class="number-cell">${startIndex + index + 1}</td>
+                    <td>${request.title || ''}</td>
+                    <td>${request.studentName || 'Unknown'}</td>
+                    <td class="date-cell">${formattedDate}</td>
                     <td class="status-cell">
                         <span class="status-badge ${statusClass}">${statusText}</span>
                     </td>
-                    <td class="notes-cell" title="${session.notes}">${truncatedNotes}</td>
+                    <td class="notes-cell" title="${notes}">${truncatedNotes}</td>
                     <td class="actions-cell">
                         <div class="action-buttons">
-                            <button class="btn btn-secondary btn-small view-session-btn" onclick="viewSession(${session.id})" title="View Details">
-                                <i class="fas fa-eye"></i> View
+                            <button class="btn btn-success btn-small" onclick="approveRequest(${request.sessionID})" title="Approve Request">
+                                <i class="fas fa-check"></i> Approve
                             </button>
-                            <button class="btn btn-success btn-small edit-session-btn" onclick="editSession(${session.id})" title="Edit Session">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                            <button class="btn btn-danger btn-small delete-session-btn" onclick="deleteSession(${session.id})" title="Delete Session">
-                                <i class="fas fa-trash"></i> Delete
+                            <button class="btn btn-danger btn-small" onclick="rejectRequest(${request.sessionID})" title="Reject Request">
+                                <i class="fas fa-times"></i> Reject
                             </button>
                         </div>
                     </td>
@@ -2025,95 +1986,7 @@
             renderMySessionsPagination();
         }
 
-        // Render Session Requests for current page
-        function renderRequests() {
-            const tbody = document.getElementById('requestsTableBody');
-            tbody.innerHTML = '';
-            
-            // Calculate start and end index for current page
-            const startIndex = (currentPageRequests - 1) * requestsPerPage;
-            const endIndex = startIndex + requestsPerPage;
-            const pageRequests = filteredRequests.slice(startIndex, endIndex);
-            
-            if (pageRequests.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-light);">
-                            <i class="fas fa-calendar-times" style="font-size: 32px; margin-bottom: 15px; display: block;"></i>
-                            <h3 style="margin-bottom: 10px; color: var(--text-light);">No session requests found</h3>
-                            <p>Try adjusting your search or filter criteria</p>
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-            
-            pageRequests.forEach((request, index) => {
-                const row = document.createElement('tr');
-                row.setAttribute('data-id', request.id);
-                row.setAttribute('data-status', request.status);
-                
-                // Get status badge class and text
-                let statusClass, statusText;
-                switch(request.status) {
-                    case 'pending':
-                        statusClass = 'status-pending';
-                        statusText = 'Pending';
-                        break;
-                    case 'approved':
-                        statusClass = 'status-approved';
-                        statusText = 'Approved';
-                        break;
-                    case 'rejected':
-                        statusClass = 'status-rejected';
-                        statusText = 'Rejected';
-                        break;
-                    default:
-                        statusClass = 'status-pending';
-                        statusText = 'Pending';
-                }
-                
-                // Determine button states based on status
-                const isApproved = request.status === "approved";
-                const isRejected = request.status === "rejected";
-                
-                // Truncate notes for display
-                const truncatedNotes = request.notes.length > 80 
-                    ? request.notes.substring(0, 80) + '...' 
-                    : request.notes;
-                
-                row.innerHTML = `
-                    <td class="number-cell">${startIndex + index + 1}</td>
-                    <td>
-                        <div class="session-name-cell">${request.name}</div>
-                        <div class="session-type-cell">${request.type} • ${request.duration}</div>
-                    </td>
-                    <td>
-                        <div class="student-name-cell">${request.student}</div>
-                        <div class="student-id-cell">ID: ${request.studentId}</div>
-                    </td>
-                    <td class="date-cell">${request.date}</td>
-                    <td class="status-cell">
-                        <span class="status-badge ${statusClass}">${statusText}</span>
-                    </td>
-                    <td class="notes-cell" title="${request.notes}">${truncatedNotes}</td>
-                    <td class="actions-cell">
-                        <div class="action-buttons">
-                            <button class="btn btn-success" onclick="approveRequest(${request.id})" ${isApproved ? 'disabled' : ''}>
-                                <i class="fas fa-check"></i> Approve
-                            </button>
-                            <button class="btn btn-danger" onclick="rejectRequest(${request.id})" ${isRejected ? 'disabled' : ''}>
-                                <i class="fas fa-times"></i> Reject
-                            </button>
-                        </div>
-                    </td>
-                `;
-                
-                tbody.appendChild(row);
-            });
-        }
-
-        // Render pagination for Session Requests
+        // Render Session Requests pagination
         function renderRequestsPagination() {
             const totalPages = Math.ceil(filteredRequests.length / requestsPerPage);
             const paginationContainer = document.getElementById('requestsPagination');
@@ -2210,84 +2083,103 @@
             renderRequestsPagination();
         }
 
+        // Render Session Requests for current page
+
         // View Session Details
         function viewSession(sessionId) {
-            const session = mySessions.find(s => s.id === sessionId);
+            const session = mySessions.find(s => s.sessionID === sessionId);
             if (!session) return;
             
-            // Format date for display
-            const dateObj = new Date(session.date);
-            const formattedDate = dateObj.toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                weekday: 'long'
-            });
-            
-            // Format time for display
-            const timeObj = new Date(`1970-01-01T${session.time}`);
-            const formattedTime = timeObj.toLocaleTimeString('en-US', { 
-                hour: 'numeric', 
-                minute: '2-digit',
-                hour12: true 
-            });
+            // Format date for display from ISO datetime
+            let formattedDate = 'N/A';
+            let formattedTime = 'N/A';
+            if (session.sessionDateTime) {
+                const ts = new Date(String(session.sessionDateTime).replace(' ', 'T'));
+                formattedDate = ts.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric',
+                    weekday: 'long'
+                });
+                formattedTime = ts.toLocaleTimeString('en-US', { 
+                    hour: 'numeric', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+            }
             
             // Get status text
-            let statusText;
-            switch(session.status) {
+            let statusText, statusClass;
+            const status = (session.status || '').toLowerCase();
+            switch(status) {
                 case 'completed':
                     statusText = 'Completed';
+                    statusClass = 'status-completed';
+                    break;
+                case 'confirmed':
+                case 'scheduled':
+                    statusText = 'Confirmed';
+                    statusClass = 'status-upcoming';
                     break;
                 case 'cancelled':
+                case 'denied':
                     statusText = 'Cancelled';
+                    statusClass = 'status-cancelled';
                     break;
-                case 'upcoming':
                 default:
-                    statusText = 'Upcoming';
+                    statusText = 'Pending';
+                    statusClass = 'status-upcoming';
             }
             
             // Populate modal fields
-            document.getElementById('viewSessionName').textContent = session.name;
-            document.getElementById('viewSessionType').textContent = session.type;
+            document.getElementById('viewSessionName').textContent = session.title || 'N/A';
+            document.getElementById('viewSessionType').textContent = session.sessionType || 'General';
             document.getElementById('viewSessionDate').textContent = formattedDate;
             document.getElementById('viewSessionTime').textContent = formattedTime;
-            document.getElementById('viewSessionDuration').textContent = session.duration;
-            document.getElementById('viewSessionLocation').textContent = session.location || 'Not specified';
-            document.getElementById('viewSessionNotes').textContent = session.notes;
+            document.getElementById('viewSessionDuration').textContent = '60 mins'; // Default duration
+            document.getElementById('viewSessionLocation').textContent = session.meetlink || 'Not specified';
+            document.getElementById('viewSessionNotes').textContent = session.notes || 'No notes';
             
             // Update status badge
             const statusBadge = document.getElementById('viewSessionStatus');
             statusBadge.textContent = statusText;
-            statusBadge.className = 'status-badge';
+            statusBadge.className = 'status-badge ' + statusClass;
             
-            switch(session.status) {
-                case 'completed':
-                    statusBadge.classList.add('status-completed');
-                    break;
-                case 'cancelled':
-                    statusBadge.classList.add('status-cancelled');
-                    break;
-                case 'upcoming':
-                default:
-                    statusBadge.classList.add('status-upcoming');
+            // Show/hide Join Session button based on status and meetlink
+            const joinBtn = document.getElementById('joinSessionBtn');
+            const statusLower = (session.status || '').toLowerCase();
+            const isConfirmedLike = statusLower === 'confirmed' || statusLower === 'scheduled';
+            if (isConfirmedLike && session.meetlink) {
+                joinBtn.style.display = 'inline-block';
+                joinBtn.onclick = () => window.open(session.meetlink, '_blank');
+            } else {
+                joinBtn.style.display = 'none';
             }
             
-            // Populate students list
+            // Populate student list with all students
             const studentsContainer = document.getElementById('viewSessionStudents');
             studentsContainer.innerHTML = '';
             
-            session.students.forEach(student => {
+            // Support both single student (legacy) and multiple students (new)
+            const studentList = session.students && session.students.length > 0 ? session.students : 
+                                (session.studentName ? [{studentID: session.studentID, studentName: session.studentName}] : []);
+            
+            studentList.forEach(student => {
                 const studentItem = document.createElement('div');
                 studentItem.className = 'student-item';
+                const initials = (student.studentName || '').split(' ').map(n => n[0]).join('').toUpperCase();
                 studentItem.innerHTML = `
-                    <div class="student-avatar">${student.avatar}</div>
+                    <div class="student-avatar">${initials}</div>
                     <div class="student-info">
-                        <div class="student-name">${student.name}</div>
-                        <div class="student-major-year">${student.major} • ${student.year}</div>
+                        <div class="student-name">${student.studentName}</div>
+                        <div class="student-major-year">Student ID: ${student.studentID}</div>
                     </div>
                 `;
                 studentsContainer.appendChild(studentItem);
             });
+            
+            // Store sessionID for later use
+            document.getElementById('viewSessionModal').dataset.sessionId = sessionId;
             
             // Show the modal
             const modal = document.getElementById('viewSessionModal');
@@ -2295,20 +2187,56 @@
         }
 
         // Edit Session
-        function editSession(sessionId) {
-            const session = mySessions.find(s => s.id === sessionId);
+        async function editSession(sessionId) {
+            const session = mySessions.find(s => s.sessionID === sessionId);
             if (!session) return;
             
+            // Parse the sessionDateTime for datetime-local input
+            let dateTimeStr = '';
+            if (session.sessionDateTime) {
+                const ts = new Date(String(session.sessionDateTime).replace(' ', 'T'));
+                // Format as YYYY-MM-DDTHH:MM for datetime-local input
+                const year = ts.getFullYear();
+                const month = String(ts.getMonth() + 1).padStart(2, '0');
+                const day = String(ts.getDate()).padStart(2, '0');
+                const hours = String(ts.getHours()).padStart(2, '0');
+                const mins = String(ts.getMinutes()).padStart(2, '0');
+                dateTimeStr = `${year}-${month}-${day}T${hours}:${mins}`;
+            }
+            
+            // Load students for multi-select
+            try {
+                const studentData = await apiGet('/api/advisor/students');
+                const studentSelect = document.getElementById('editSessionStudents');
+                studentSelect.innerHTML = '<option value="">-- Select students --</option>';
+                
+                studentData.students.forEach(student => {
+                    const option = document.createElement('option');
+                    option.value = student.studentID;
+                    option.textContent = `${student.firstName} ${student.lastName} (${student.studentID})`;
+                    studentSelect.appendChild(option);
+                });
+                
+                // Select currently assigned students
+                if (session.students && session.students.length > 0) {
+                    const currentStudentIds = session.students.map(s => s.studentID);
+                    Array.from(studentSelect.options).forEach(option => {
+                        if (currentStudentIds.includes(option.value)) {
+                            option.selected = true;
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error('Error loading students:', e);
+            }
+            
             // Populate form with session data
-            document.getElementById('editSessionId').value = session.id;
-            document.getElementById('editSessionName').value = session.name;
-            document.getElementById('editSessionType').value = session.type;
-            document.getElementById('editSessionDate').value = session.date;
-            document.getElementById('editSessionTime').value = session.time;
-            document.getElementById('editSessionDuration').value = session.duration.replace(' mins', '');
-            document.getElementById('editSessionLocation').value = session.location || '';
-            document.getElementById('editSessionStatus').value = session.status;
-            document.getElementById('editSessionNotes').value = session.notes;
+            document.getElementById('editSessionId').value = session.sessionID;
+            document.getElementById('editSessionName').value = session.title || '';
+            document.getElementById('editSessionType').value = session.sessionType || '';
+            document.getElementById('editSessionDateTime').value = dateTimeStr;
+            document.getElementById('editSessionLocation').value = session.meetlink || '';
+            document.getElementById('editSessionNotes').value = session.notes || '';
             
             // Show the modal
             const modal = document.getElementById('editSessionModal');
@@ -2316,40 +2244,67 @@
         }
 
         // Save edited session
-        function saveEditedSession() {
+        async function saveEditedSession() {
             const sessionId = parseInt(document.getElementById('editSessionId').value);
-            const session = mySessions.find(s => s.id === sessionId);
-            if (!session) return;
+            const title = document.getElementById('editSessionName').value;
+            const sessionType = document.getElementById('editSessionType').value;
+            const dateTimeStr = document.getElementById('editSessionDateTime').value;
+            const meetLink = document.getElementById('editSessionLocation').value;
+            const notes = document.getElementById('editSessionNotes').value;
             
-            // Update session data
-            session.name = document.getElementById('editSessionName').value;
-            session.type = document.getElementById('editSessionType').value;
-            session.date = document.getElementById('editSessionDate').value;
-            session.time = document.getElementById('editSessionTime').value;
+            // Get selected students
+            const studentSelect = document.getElementById('editSessionStudents');
+            const selectedStudents = Array.from(studentSelect.selectedOptions).map(opt => opt.value);
             
-            const durationValue = document.getElementById('editSessionDuration').value;
-            session.duration = `${durationValue} mins`;
+            if (!title || !sessionType || !dateTimeStr || selectedStudents.length === 0) {
+                alert('Please fill in all required fields and select at least one student.');
+                return;
+            }
             
-            session.location = document.getElementById('editSessionLocation').value;
-            session.status = document.getElementById('editSessionStatus').value;
-            session.notes = document.getElementById('editSessionNotes').value;
+            // Convert datetime-local to ISO format (add :00 for seconds)
+            const sessionDateTime = dateTimeStr + ':00';
             
-            // Update UI
-            applyMySessionFilter(currentMySessionFilter);
-            closeEditSessionModal();
-            
-            alert('Session updated successfully!');
+            try {
+                const response = await fetch(ctx + '/api/advisor/session/update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `action=update&sessionID=${sessionId}&title=${encodeURIComponent(title)}&sessionType=${encodeURIComponent(sessionType)}&sessionDateTime=${encodeURIComponent(sessionDateTime)}&meetLink=${encodeURIComponent(meetLink)}&notes=${encodeURIComponent(notes)}&students=${encodeURIComponent(selectedStudents.join(','))}`
+                });
+                const data = await response.json();
+                if (!response.ok || data.error) {
+                    alert('Error updating session: ' + (data.error || 'Unknown error'));
+                    return;
+                }
+                
+                alert('Session updated successfully!');
+                closeEditSessionModal();
+                await loadSessions();
+            } catch (e) {
+                console.error('Error updating session:', e);
+                alert('Error updating session: ' + e.message);
+            }
         }
 
         // Delete Session
-        function deleteSession(sessionId) {
+        async function deleteSession(sessionId) {
             if (confirm('Are you sure you want to delete this session? This action cannot be undone.')) {
-                const sessionIndex = mySessions.findIndex(s => s.id === sessionId);
-                if (sessionIndex !== -1) {
-                    mySessions.splice(sessionIndex, 1);
-                    applyMySessionFilter(currentMySessionFilter);
-                    updateStats();
+                try {
+                    const response = await fetch(ctx + '/api/advisor/session/update', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `sessionID=${sessionId}&action=delete`
+                    });
+                    const data = await response.json();
+                    if (!response.ok || data.error) {
+                        alert('Error deleting session: ' + (data.error || 'Unknown error'));
+                        return;
+                    }
+                    
                     alert('Session deleted successfully!');
+                    await loadSessions();
+                } catch (e) {
+                    console.error('Error deleting session:', e);
+                    alert('Error deleting session: ' + e.message);
                 }
             }
         }
@@ -2366,52 +2321,160 @@
             modal.style.display = 'none';
         }
 
-        // Create Session Modal (simplified for this example)
-        function openCreateSessionModal() {
-            alert('Create Session modal would open here. This would be similar to the edit modal but for creating new sessions.');
-            // In a full implementation, this would show a modal similar to editSessionModal
-            // but for creating new sessions
+        // Open Create Session Modal
+        async function openCreateSessionModal() {
+            // Load students for multi-select
+            try {
+                const studentData = await apiGet('/api/advisor/students');
+                const studentSelect = document.getElementById('createSessionStudents');
+                studentSelect.innerHTML = '<option value="">-- Select students --</option>';
+                
+                studentData.students.forEach(student => {
+                    const option = document.createElement('option');
+                    option.value = student.studentID;
+                    option.textContent = `${student.firstName} ${student.lastName} (${student.studentID})`;
+                    studentSelect.appendChild(option);
+                });
+            } catch (e) {
+                console.error('Error loading students:', e);
+            }
+            
+            // Clear form
+            document.getElementById('createSessionForm').reset();
+            
+            // Show the modal
+            const modal = document.getElementById('createSessionModal');
+            modal.style.display = 'flex';
+        }
+
+        // Close Create Session Modal
+        function closeCreateSessionModal() {
+            const modal = document.getElementById('createSessionModal');
+            modal.style.display = 'none';
+        }
+
+        // Save new session
+        async function saveNewSession() {
+            const title = document.getElementById('createSessionName').value;
+            const sessionType = document.getElementById('createSessionType').value;
+            const dateTimeStr = document.getElementById('createSessionDateTime').value;
+            const meetLink = document.getElementById('createSessionLocation').value;
+            const location = document.getElementById('createSessionPhysicalLocation').value;
+            const notes = document.getElementById('createSessionNotes').value;
+            
+            // Get selected students
+            const studentSelect = document.getElementById('createSessionStudents');
+            const selectedStudents = Array.from(studentSelect.selectedOptions).map(opt => opt.value);
+            
+            if (!title || !sessionType || !dateTimeStr || selectedStudents.length === 0) {
+                alert('Please fill in all required fields and select at least one student.');
+                return;
+            }
+            
+            // Convert datetime-local to ISO format (add :00 for seconds)
+            const sessionDateTime = dateTimeStr + ':00';
+            
+            try {
+                // For creating a session, we'll insert directly via API
+                const response = await fetch(ctx + '/api/sessions/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title: title,
+                        sessionType: sessionType,
+                        sessionDate: sessionDateTime.substring(0, 10),
+                        sessionTime: sessionDateTime.substring(11, 16),
+                        meetLink: meetLink,
+                        location: location,
+                        notes: notes,
+                        studentID: selectedStudents[0], // Use first student for backward compatibility
+                        students: selectedStudents // Pass all students
+                    })
+                });
+                const data = await response.json();
+                if (!response.ok || data.error) {
+                    alert('Error creating session: ' + (data.error || 'Unknown error'));
+                    return;
+                }
+                
+                alert('Session created successfully!');
+                closeCreateSessionModal();
+                await loadSessions();
+            } catch (e) {
+                console.error('Error creating session:', e);
+                alert('Error creating session: ' + e.message);
+            }
         }
 
         // Function to approve a session request
-        function approveRequest(sessionId) {
-            const request = sessionRequests.find(r => r.id === sessionId);
-            if (request) {
-                request.status = "approved";
-                applyRequestFilter(currentRequestFilter);
-                updateStats();
+        async function approveRequest(sessionId) {
+            const meetLink = prompt('Enter meeting link (optional):', '');
+            try {
+                const response = await fetch(ctx + '/api/advisor/session/update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `sessionID=${sessionId}&action=accept&meetLink=${encodeURIComponent(meetLink || '')}`
+                });
+                const data = await response.json();
+                if (!response.ok || data.error) {
+                    alert('Error approving request: ' + (data.error || 'Unknown error'));
+                    return;
+                }
+                
                 alert(`Session request #${sessionId} has been approved.`);
+                await loadSessions();
+            } catch (e) {
+                console.error('Error approving request:', e);
+                alert('Error approving request: ' + e.message);
             }
         }
         
         // Function to reject a session request
-        function rejectRequest(sessionId) {
-            const request = sessionRequests.find(r => r.id === sessionId);
-            if (request) {
-                request.status = "rejected";
-                applyRequestFilter(currentRequestFilter);
-                updateStats();
+        async function rejectRequest(sessionId) {
+            const reason = prompt('Enter rejection reason (optional):', '');
+            try {
+                const response = await fetch(ctx + '/api/advisor/session/update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `sessionID=${sessionId}&action=deny&reason=${encodeURIComponent(reason || '')}`
+                });
+                const data = await response.json();
+                if (!response.ok || data.error) {
+                    alert('Error rejecting request: ' + (data.error || 'Unknown error'));
+                    return;
+                }
+                
                 alert(`Session request #${sessionId} has been rejected.`);
+                await loadSessions();
+            } catch (e) {
+                console.error('Error rejecting request:', e);
+                alert('Error rejecting request: ' + e.message);
             }
         }
         
         // Function to update stats
         function updateStats() {
             let pendingCount = 0;
-            let approvedCount = 0;
-            let rejectedCount = 0;
+            let confirmedCount = 0;
+            let cancelledCount = 0;
             
-            // Count statuses for requests
+            // Count statuses for My Sessions
+            mySessions.forEach(session => {
+                const status = (session.status || '').toLowerCase();
+                if (status === "confirmed" || status === "scheduled") confirmedCount++;
+                if (status === "completed" || status === "denied" || status === "cancelled") cancelledCount++;
+            });
+            
+            // Count pending requests
             sessionRequests.forEach(request => {
-                if (request.status === "pending") pendingCount++;
-                if (request.status === "approved") approvedCount++;
-                if (request.status === "rejected") rejectedCount++;
+                const status = (request.status || '').toLowerCase();
+                if (status === "pending" || status === "cancel_requested") pendingCount++;
             });
             
             // Update stat cards
             document.getElementById('pending-count').textContent = pendingCount;
-            document.getElementById('approved-count').textContent = approvedCount;
-            document.getElementById('rejected-count').textContent = rejectedCount;
+            document.getElementById('approved-count').textContent = confirmedCount;
+            document.getElementById('rejected-count').textContent = cancelledCount;
             
             // Update total sessions (My Sessions + Requests)
             const totalSessions = mySessions.length + sessionRequests.length;

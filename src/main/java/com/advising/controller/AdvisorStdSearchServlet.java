@@ -49,23 +49,28 @@ public class AdvisorStdSearchServlet extends HttpServlet {
 
         // Build SQL
         // Select advisorID too so client can see whether student is already assigned
-        String baseSql = "SELECT studentID, firstName, lastName, email, program, yearOfStudy, semester, phoneNum, cgpa, creditscompleted, co_curricular_points, advisorID " +
-                "FROM student";
+        // JOIN with advisor table to get advisor's name
+        String baseSql = "SELECT s.studentID, s.firstName, s.lastName, s.email, s.program, s.yearOfStudy, s.semester, s.phoneNum, s.cgpa, s.creditscompleted, s.co_curricular_points, s.advisorID, s.remark, " +
+                "COALESCE(a.firstName, '') as advisorFirstName, COALESCE(a.lastName, '') as advisorLastName " +
+                "FROM student s " +
+                "LEFT JOIN advisor a ON s.advisorID = a.advisorID";
 
         String where = "";
         if (q != null && q.trim().length() > 0) {
             // Use case-insensitive search; use CONCAT for full-name match
-            where = " WHERE (" +
-                    "LOWER(studentID) LIKE ? OR " +
-                    "LOWER(firstName) LIKE ? OR " +
-                    "LOWER(lastName) LIKE ? OR " +
-                    "LOWER(CONCAT(COALESCE(firstName,''),' ',COALESCE(lastName,''))) LIKE ? OR " +
-                    "LOWER(email) LIKE ? OR " +
-                    "LOWER(program) LIKE ?" +
+                where = " WHERE (" +
+                    "LOWER(s.studentID) LIKE ? OR " +
+                    "LOWER(s.firstName) LIKE ? OR " +
+                    "LOWER(s.lastName) LIKE ? OR " +
+                    // Use SQL string concatenation (||) which is Derby-compatible
+                    "LOWER(COALESCE(s.firstName,'') || ' ' || COALESCE(s.lastName,'')) LIKE ? OR " +
+                    "LOWER(s.email) LIKE ? OR " +
+                    "LOWER(s.program) LIKE ?" +
                     ")";
         }
 
-        String orderLimit = " ORDER BY lastName, firstName LIMIT ?";
+        // Derby does not support LIMIT; use FETCH FIRST ... ROWS ONLY
+        String orderLimit = " ORDER BY s.lastName, s.firstName FETCH FIRST ? ROWS ONLY";
 
         String sql = baseSql + where + orderLimit;
 
@@ -106,9 +111,15 @@ public class AdvisorStdSearchServlet extends HttpServlet {
                     st.put("cgpa", rs.getObject("cgpa") == null ? JSONObject.NULL : rs.getDouble("cgpa"));
                     st.put("creditsCompleted", rs.getObject("creditscompleted") == null ? JSONObject.NULL : rs.getInt("creditscompleted"));
                     st.put("co_curricular_points", rs.getObject("co_curricular_points") == null ? JSONObject.NULL : rs.getInt("co_curricular_points"));
+                    st.put("remark", rs.getString("remark") != null ? rs.getString("remark") : "");
                     // advisor assignment info
                     Object adv = rs.getObject("advisorID");
                     st.put("advisorID", adv == null ? JSONObject.NULL : String.valueOf(adv));
+                    // advisor name (from JOIN)
+                    String advisorFirstName = rs.getString("advisorFirstName");
+                    String advisorLastName = rs.getString("advisorLastName");
+                    String advisorName = ((advisorFirstName == null ? "" : advisorFirstName) + " " + (advisorLastName == null ? "" : advisorLastName)).trim();
+                    st.put("advisorName", advisorName.length() > 0 ? advisorName : "Not Assigned");
                     arr.put(st);
                 }
                 JSONObject out = new JSONObject();
@@ -118,7 +129,11 @@ public class AdvisorStdSearchServlet extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("{\"error\":\"Database error\"}");
+            // Include message to aid debugging in development
+            JSONObject err = new JSONObject();
+            err.put("error", "Database error");
+            err.put("message", e.getMessage());
+            response.getWriter().write(err.toString());
         }
     }
 }

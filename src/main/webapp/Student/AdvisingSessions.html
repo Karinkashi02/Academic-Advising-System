@@ -1185,10 +1185,10 @@
                 <thead>
                     <tr>
                         <th>Date</th>
-                        <th>Advisor</th>
                         <th>Title</th>
                         <th>Notes</th>
-                        <th>Actions</th>
+                        <th>Advisor</th>
+                        <th>Type</th>
                     </tr>
                 </thead>
                 <tbody id="pastSessionsTable">
@@ -1217,18 +1217,18 @@
                         <label class="form-label" for="sessionTitle">
                             <i class="fas fa-comment-alt"></i> Session Title
                         </label>
-                        <input type="text" class="form-control" id="sessionTitle" placeholder="Enter session title" required>
+                        <input type="text" class="form-control" id="sessionTitle" name="title" placeholder="Enter session title" required>
                     </div>
                     
                     <div class="form-row">
                       <div class="form-group">
                         <label class="form-label" for="sessionDateTime"><i class="fas fa-calendar"></i> Session Date & Time</label>
-                        <input type="datetime-local" class="form-control" id="sessionDateTime" required>
+                        <input type="datetime-local" class="form-control" id="sessionDateTime" name="sessionDateTime" required>
                       </div>
 
                       <div class="form-group">
                         <label class="form-label" for="sessionType"><i class="fas fa-tag"></i> Session Type</label>
-                        <select class="form-control" id="sessionType" required>
+                        <select class="form-control" id="sessionType" name="sessionType" required>
                           <option value="academic">Academic Planning</option>
                           <option value="course">Course Selection</option>
                           <option value="career">Career Guidance</option>
@@ -1240,7 +1240,7 @@
                     <div class="form-row" style="margin-top:12px;">
                       <div class="form-group" style="flex:1;">
                         <label class="form-label" for="advisorID"><i class="fas fa-user-tie"></i> Advisor (optional)</label>
-                        <select class="form-control" id="advisorID">
+                        <select class="form-control" id="advisorID" name="advisorID">
                           <option value="">Select advisor</option>
                           <!-- advisors populated by JS -->
                         </select>
@@ -1251,7 +1251,7 @@
                         <label class="form-label" for="sessionNotes">
                             <i class="fas fa-align-left"></i> Notes
                         </label>
-                        <textarea class="form-control" id="sessionNotes" placeholder="Enter notes for the session..."></textarea>
+                        <textarea class="form-control" id="sessionNotes" name="notes" placeholder="Enter notes for the session..."></textarea>
                     </div>
                     
                     <div style="display: flex; gap: 15px; margin-top: 30px;">
@@ -1297,7 +1297,12 @@
       // context path helper (keeps same behavior as other pages)
       const ctx = (function(){ const p = window.location.pathname.split('/').filter(Boolean); return p.length ? '/' + p[0] : ''; })();
 
-      // Elements
+      // state
+      let allSessions = [];
+      let currentPage = 0;
+      let currentFilteredSessions = [];
+      let currentCalendarMonth = (new Date()).getMonth();
+      let currentCalendarYear = (new Date()).getFullYear();
       const upcomingContainer = document.getElementById('upcomingSessions');
       const pastTableBody = document.getElementById('pastSessionsTable');
       const upcomingCountEl = document.getElementById('upcomingCount');
@@ -1335,11 +1340,6 @@
       const profileNameEl = document.getElementById('profileName');
       const profilePicEl = document.getElementById('profilePic');
       const profileRoleEl = document.getElementById('profileRole');
-
-      // state
-      let allSessions = [];
-      let currentCalendarMonth = (new Date()).getMonth();
-      let currentCalendarYear = (new Date()).getFullYear();
 
       // --- network helpers ---
       async function apiGet(path) {
@@ -1453,6 +1453,8 @@
 
       function applyFiltersAndRender() {
         const sessions = filterSessionsForDisplay(allSessions);
+        currentFilteredSessions = sessions;
+        currentPage = 0;
         renderSessions(sessions);
       }
 
@@ -1468,19 +1470,38 @@
           if (st === 'completed') completed++;
           else if (st === 'pending') pending++;
           else if (st === 'cancelled') cancelled++;
+          else if (st === 'denied') cancelled++;
           else if (st === 'cancel_requested') pending++;
           const tsAll = s.sessionDateTime ? new Date(String(s.sessionDateTime).replace(' ', 'T')) : null;
-          if (tsAll && tsAll > now && (st === 'confirmed' || st === 'pending' || st === 'cancel_requested')) {
+          if (tsAll && (tsAll > now - 30*60*1000) && (st === 'confirmed' || st === 'pending' || st === 'cancel_requested' || st === 'cancelled' || st === 'scheduled' || st === 'denied')) {
             upcoming++;
           }
         });
 
         // render upcoming list from filtered sessions
         upcomingContainer.innerHTML = '';
-        sessions.forEach(s => {
+                let upcomingSessions = sessions.filter(s => {
           const status = (s.status || '').toLowerCase();
           const ts = s.sessionDateTime ? new Date(String(s.sessionDateTime).replace(' ', 'T')) : null;
-          const isUpcoming = ts && ts > now && (status === 'confirmed' || status === 'pending' || status === 'cancel_requested');
+          const isUpcoming = ts && (ts > now - 30*60*1000) && (status === 'confirmed' || status === 'pending' || status === 'cancel_requested' || status === 'cancelled' || status === 'scheduled' || status === 'denied');
+          return isUpcoming;
+        });
+                // Sort upcoming sessions by future date descending (later dates first)
+                upcomingSessions.sort((a,b) => {
+                    const ta = a.sessionDateTime ? new Date(String(a.sessionDateTime).replace(' ', 'T')).getTime() : 0;
+                    const tb = b.sessionDateTime ? new Date(String(b.sessionDateTime).replace(' ', 'T')).getTime() : 0;
+                    return tb - ta;
+                });
+        const itemsPerPage = 3;
+        const totalPages = Math.ceil(upcomingSessions.length / itemsPerPage);
+        if (currentPage >= totalPages) currentPage = Math.max(0, totalPages - 1);
+        const start = currentPage * itemsPerPage;
+        const end = start + itemsPerPage;
+        const pageSessions = upcomingSessions.slice(start, end);
+        pageSessions.forEach(s => {
+          const status = (s.status || '').toLowerCase();
+          const ts = s.sessionDateTime ? new Date(String(s.sessionDateTime).replace(' ', 'T')) : null;
+          const isUpcoming = ts && (ts > now - 30*60*1000) && (status === 'confirmed' || status === 'pending' || status === 'cancel_requested' || status === 'cancelled' || status === 'scheduled' || status === 'denied');
 
           if (!isUpcoming) return;
 
@@ -1491,15 +1512,19 @@
           const timeStr = ts ? ts.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' }) : '';
 
           // use single-quoted inner HTML for conditional parts
-          const joinBtn = (s.status || '').toLowerCase() === 'confirmed' ? '<button class="btn btn-sm btn-success join-session" data-session="'+s.sessionID+'"><i class="fas fa-video"></i> Join Session</button>' : '';
+          const statusDisplay = s.status;
+          const statusLower = (s.status || '').toLowerCase();
+          const isConfirmedLike = statusLower === 'confirmed' || statusLower === 'scheduled';
+          const joinBtn = isConfirmedLike && s.meetLink ? '<button class="btn btn-sm btn-success join-session" data-meetlink="'+escapeHtml(s.meetLink)+'"><i class="fas fa-video"></i> Join Session</button>' : '';
           const cancelBtn = (s.status || '').toLowerCase() === 'pending' ? '<button class="btn btn-sm btn-outline cancel-session" data-session="'+s.sessionID+'"><i class="fas fa-times"></i> Cancel Request</button>' : '';
-          const reqCancelBtn = (s.status || '').toLowerCase() === 'confirmed' ? '<button class="btn btn-sm btn-outline request-cancel" data-session="'+s.sessionID+'"><i class="fas fa-ban"></i> Request Cancel</button>' : '';
+          const reqCancelBtn = '';
 
           card.innerHTML = `
             <div class="session-header">
               <div>
                 <div class="session-title">${escapeHtml(s.title)}</div>
-                <span class="session-status">${capitalize(s.status)} ${s.sessionType? ' • '+escapeHtml(s.sessionType):''}</span>
+                <span class="session-status">${capitalize(statusDisplay)} ${s.sessionType? ' • '+escapeHtml(s.sessionType):''}</span>
+                ${s.status && (s.status.toLowerCase() === 'cancelled' || s.status.toLowerCase() === 'denied') && s.cancelReason ? '<div style="color:#ef4444;font-size:0.85rem;margin-top:5px;"><i class="fas fa-exclamation-triangle"></i> Reason: '+escapeHtml(s.cancelReason)+'</div>' : ''}
               </div>
               <div class="session-time">
                 <div style="font-weight:600;color:#1e3a8a">${dateStr}</div>
@@ -1515,6 +1540,10 @@
                 <div class="detail-icon"><i class="fas fa-sticky-note"></i></div>
                 <div class="detail-content"><h4>Notes Preview</h4><p class="notes-preview">${escapeHtml((s.notes||'').substring(0,40))}${(s.notes||'').length>40?'...':''}</p></div>
               </div>
+                            <div class="detail-item">
+                                <div class="detail-icon"><i class="fas fa-map-marker-alt"></i></div>
+                                <div class="detail-content"><h4>Location</h4><p>${escapeHtml(s.location || s.meetLink || 'Not specified')}</p></div>
+                            </div>
             </div>
             <div class="session-actions">
               ${joinBtn}
@@ -1526,15 +1555,33 @@
           upcomingContainer.appendChild(card);
         });
 
-        // past completed sessions
-        pastTableBody.innerHTML = '';
-        const pastSessions = sessions.filter(s => (s.status||'').toLowerCase() === 'completed')
+        // pagination
+        document.querySelector('.pagination')?.remove();
+        if (totalPages > 1) {
+          upcomingContainer.insertAdjacentHTML('afterend', `<div class="pagination" style="display:flex;justify-content:center;gap:10px;margin-top:20px;"> <button id="prevPage" class="btn btn-outline" ${currentPage === 0 ? 'disabled' : ''}>Prev</button> <span>Page ${currentPage+1} of ${totalPages}</span> <button id="nextPage" class="btn btn-outline" ${currentPage >= totalPages - 1 ? 'disabled' : ''}>Next</button> </div>`);
+        }
+
+        // past completed sessions with pagination (5 per page)
+        const pastSessionsAll = sessions.filter(s => {
+                    const st = (s.status||'').toLowerCase();
+                    const ts = s.sessionDateTime ? new Date(String(s.sessionDateTime).replace(' ', 'T')) : null;
+                    // include confirmed or completed sessions that are in the past
+                    return (st === 'completed' || st === 'confirmed') && ts && ts < now;
+                })
           .sort((a,b) => {
             const ta = a.sessionDateTime ? new Date(String(a.sessionDateTime).replace(' ', 'T')).getTime() : 0;
             const tb = b.sessionDateTime ? new Date(String(b.sessionDateTime).replace(' ', 'T')).getTime() : 0;
             return tb - ta;
           });
 
+        // initialize past pagination variables
+        let currentPastPage = currentPastPage !== undefined ? currentPastPage : 0;
+        const pastPageSize = 5;
+        const totalPastPages = Math.ceil(pastSessionsAll.length / pastPageSize);
+        const pastStart = currentPastPage * pastPageSize;
+        const pastSessions = pastSessionsAll.slice(pastStart, pastStart + pastPageSize);
+
+        pastTableBody.innerHTML = '';
         pastSessions.forEach(s => {
           const ts = s.sessionDateTime ? new Date(String(s.sessionDateTime).replace(' ', 'T')) : null;
           const formattedDate = ts ? ts.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : '';
@@ -1542,13 +1589,37 @@
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td><strong>${formattedDate}</strong><br>${formattedTime}</td>
-            <td>${escapeHtml(s.advisorName||'')}</td>
             <td>${escapeHtml(s.title)}</td>
             <td class="notes-preview">${escapeHtml((s.notes||'').substring(0,50))}${(s.notes||'').length>50?'...':''}</td>
-            <td><button class="btn btn-sm btn-outline view-notes" data-session="${s.sessionID}"><i class="fas fa-eye"></i> View Notes</button></td>
+            <td>${escapeHtml(s.advisorName||'')}</td>
+            <td>${escapeHtml(s.sessionType||'')}</td>
           `;
           pastTableBody.appendChild(tr);
         });
+
+        // render pagination for past sessions
+        const existingPastPagination = document.querySelector('.past-sessions-pagination');
+        if (existingPastPagination) existingPastPagination.remove();
+        if (totalPastPages > 1) {
+          const pastPaginationDiv = document.createElement('div');
+          pastPaginationDiv.className = 'past-sessions-pagination';
+          pastPaginationDiv.style = 'display:flex;justify-content:center;gap:10px;margin-top:15px;';
+          pastPaginationDiv.innerHTML = `<button id="pastPrevBtn" class="btn btn-outline" ${currentPastPage === 0 ? 'disabled' : ''}>Prev</button> <span>Page ${currentPastPage+1} of ${totalPastPages}</span> <button id="pastNextBtn" class="btn btn-outline" ${currentPastPage >= totalPastPages-1 ? 'disabled' : ''}>Next</button>`;
+          document.querySelector('.past-sessions-container') ? document.querySelector('.past-sessions-container').insertAdjacentElement('afterend', pastPaginationDiv) : pastTableBody.parentElement.insertAdjacentElement('afterend', pastPaginationDiv);
+          
+          document.getElementById('pastPrevBtn')?.addEventListener('click', function() {
+            if (currentPastPage > 0) {
+              currentPastPage--;
+              renderSessions(currentFilteredSessions);
+            }
+          });
+          document.getElementById('pastNextBtn')?.addEventListener('click', function() {
+            if (currentPastPage < totalPastPages - 1) {
+              currentPastPage++;
+              renderSessions(currentFilteredSessions);
+            }
+          });
+        }
 
         // update counts
         upcomingCountEl.textContent = upcoming;
@@ -1568,7 +1639,34 @@
           if (reason === null) return;
           await cancelSession(this.dataset.session, reason);
         }));
-        document.querySelectorAll('.join-session').forEach(btn => btn.addEventListener('click', function(){ alert('Join placeholder'); }));
+        document.querySelectorAll('.join-session').forEach(btn => btn.addEventListener('click', function(){
+            const link = this.getAttribute('data-meetlink');
+            if (link) {
+                window.open(link, '_blank');
+            } else {
+                alert('No meeting link available');
+            }
+        }));
+
+        // pagination
+        document.getElementById('prevPage')?.addEventListener('click', function() {
+          if (currentPage > 0) {
+            currentPage--;
+            renderSessions(currentFilteredSessions);
+          }
+        });
+        document.getElementById('nextPage')?.addEventListener('click', function() {
+          const upcomingSessions = currentFilteredSessions.filter(s => {
+            const status = (s.status || '').toLowerCase();
+            const ts = s.sessionDateTime ? new Date(String(s.sessionDateTime).replace(' ', 'T')) : null;
+            return ts && (ts > new Date() - 30*60*1000) && (status === 'confirmed' || status === 'pending' || status === 'cancel_requested' || status === 'cancelled' || status === 'scheduled' || status === 'denied');
+          });
+          const totalPages = Math.ceil(upcomingSessions.length / 3);
+          if (currentPage < totalPages - 1) {
+            currentPage++;
+            renderSessions(currentFilteredSessions);
+          }
+        });
       }
 
       // show details modal
@@ -1578,13 +1676,14 @@
         const ts = s.sessionDateTime ? new Date(String(s.sessionDateTime).replace(' ', 'T')) : null;
         const dateStr = ts ? ts.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric', weekday:'long' }) : '';
         const timeStr = ts ? ts.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' }) : '';
+        const statusDisplay = s.status;
         document.getElementById('notesModalBody').innerHTML = `
           <div style="margin-bottom:25px;">
             <h4 style="color:#1e3a8a;margin-bottom:10px;">${escapeHtml(s.title)}</h4>
             <div style="display:flex;gap:15px;color:#475569;opacity:0.9">
               <div><i class="fas fa-calendar"></i> ${dateStr}</div>
               <div><i class="fas fa-clock"></i> ${timeStr}</div>
-              <div><i class="fas fa-info-circle"></i> ${escapeHtml(s.status || '')}</div>
+              <div><i class="fas fa-info-circle"></i> ${escapeHtml(statusDisplay || '')}</div>
               <div>${s.sessionType? ' • ' + escapeHtml(s.sessionType) : ''}</div>
             </div>
           </div>
@@ -1592,7 +1691,8 @@
             <div class="form-group"><label class="form-label"><i class="fas fa-user-tie"></i> Advisor</label><div style="padding:10px 0;font-weight:500;">${escapeHtml(s.advisorName||'')}</div></div>
             <div class="form-group"><label class="form-label"><i class="fas fa-user-graduate"></i> Student</label><div style="padding:10px 0;font-weight:500;">You</div></div>
           </div>
-          <div class="form-group"><label class="form-label"><i class="fas fa-sticky-note"></i> Session Notes</label><div style="background:#f8fafc;padding:15px;border-radius:8px;margin-top:5px;">${escapeHtml(s.notes||'')}</div></div>
+                    <div class="form-group"><label class="form-label"><i class="fas fa-map-marker-alt"></i> Location</label><div style="padding:10px 0;font-weight:500;">${escapeHtml(s.location || s.meetLink || 'Not specified')}</div></div>
+          <div class="form-group"><label class="form-label"><i class="fas fa-sticky-note"></i> Session Notes</label><div style="background:#f8fafc;padding:15px;border-radius:8px;margin-top:5px;">${escapeHtml(s.notes||'')}${(s.status && (s.status.toLowerCase() === 'cancelled' || s.status.toLowerCase() === 'denied') && s.cancelReason) ? '<br><br><strong style="color:#ef4444;">Cancellation Reason:</strong> '+escapeHtml(s.cancelReason) : ''}</div></div>
           <div style="margin-top:25px;"><button class="btn btn-primary" onclick="window.print()" style="width:100%"><i class="fas fa-print"></i> Print Session Details</button></div>
         `;
         document.getElementById('notesModal').classList.add('show');
@@ -1712,10 +1812,12 @@
               </div>
               <div style="display:flex;justify-content:space-between;gap:10px;margin-top:6px;align-items:center;">
                 <div style="color:#64748b">${escapeHtml(s.advisorName||'')} ${s.sessionType? ' • '+escapeHtml(s.sessionType):''}</div>
-                <div style="display:flex;gap:8px;">
-                  <button class="btn btn-sm btn-outline view-day-session" data-session="${s.sessionID}"><i class="fas fa-eye"></i> Details</button>
-                  ${ (s.status||'').toLowerCase() === 'pending' ? '<button class="btn btn-sm btn-outline cancel-day-session" data-session="'+s.sessionID+'"><i class="fas fa-times"></i> Cancel</button>' : '' }
-                </div>
+                <span class="session-status" style="font-size:0.8rem;padding:4px 8px;border-radius:12px;background:${statusColor(s.status)};color:white;">${capitalize(s.status)}</span>
+              </div>
+              ${(s.status && (s.status.toLowerCase() === 'cancelled' || s.status.toLowerCase() === 'denied') && s.cancelReason) ? '<div style="color:#ef4444;font-size:0.8rem;margin-top:4px;"><i class="fas fa-exclamation-triangle"></i> '+escapeHtml(s.cancelReason)+'</div>' : ''}
+              <div style="display:flex;gap:8px;margin-top:8px;">
+                <button class="btn btn-sm btn-outline view-day-session" data-session="${s.sessionID}"><i class="fas fa-eye"></i> Details</button>
+                ${ (s.status||'').toLowerCase() === 'pending' ? '<button class="btn btn-sm btn-outline cancel-day-session" data-session="'+s.sessionID+'"><i class="fas fa-times"></i> Cancel</button>' : '' }
               </div>
             `;
             list.appendChild(item);
@@ -1809,7 +1911,15 @@
       }
 
       // new session button
-      if (newSessionBtn) newSessionBtn.addEventListener('click', function(){ newSessionModal.classList.add('show'); dropdownBackdrop.classList.add('active'); loadAdvisors(); });
+      if (newSessionBtn) newSessionBtn.addEventListener('click', function(){ 
+        // set min date to now
+        const now = new Date();
+        const minDateTime = now.toISOString().slice(0,16);
+        sessionDateTimeEl.min = minDateTime;
+        newSessionModal.classList.add('show'); 
+        dropdownBackdrop.classList.add('active'); 
+        loadAdvisors(); 
+      });
 
       // initial load
       loadProfile();
@@ -1818,6 +1928,16 @@
       // utilities
       function capitalize(s) { if (!s) return ''; s = String(s); return s.charAt(0).toUpperCase() + s.slice(1); }
       function escapeHtml(t) { if (!t) return ''; return String(t).replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]); }); }
+      function statusColor(status) {
+        const st = (status || '').toLowerCase();
+        if (st === 'confirmed') return 'linear-gradient(135deg, #10b981, #059669)';
+        if (st === 'pending') return 'linear-gradient(135deg, #f59e0b, #d97706)';
+        if (st === 'cancelled') return 'linear-gradient(135deg, #ef4444, #dc2626)';
+        if (st === 'completed') return 'linear-gradient(135deg, #10b981, #059669)';
+        if (st === 'confirmed') return 'linear-gradient(135deg, #3b82f6, #1e3a8a)';
+        if (st === 'denied') return 'linear-gradient(135deg, #ef4444, #dc2626)';
+        return '#6b7280';
+      }
 
     });
     </script>

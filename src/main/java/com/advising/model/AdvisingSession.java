@@ -14,8 +14,11 @@ public class AdvisingSession {
     private String title;
     private String sessionDate; // String or java.sql.Date
     private String sessionTime;
-    private String notes;
     private String status;
+    private String notes;
+    private String meetLink;
+    private String sessionType;
+    private String location;
     private String advisorID;
     private String studentID;
 
@@ -34,6 +37,12 @@ public class AdvisingSession {
     public void setNotes(String notes) { this.notes = notes; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    public String getMeetLink() { return meetLink; }
+    public void setMeetLink(String meetLink) { this.meetLink = meetLink; }
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
+    public String getSessionType() { return sessionType; }
+    public void setSessionType(String sessionType) { this.sessionType = sessionType; }
     public String getAdvisorID() { return advisorID; }
     public void setAdvisorID(String advisorID) { this.advisorID = advisorID; }
     public String getStudentID() { return studentID; }

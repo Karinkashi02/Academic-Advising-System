@@ -1300,6 +1300,218 @@
                 margin-top: 15px;
             }
         }
+
+        /* Print Media Query for PDF/Print Output */
+        @media print {
+            * {
+                background: transparent !important;
+                color: #000 !important;
+                box-shadow: none !important;
+                text-shadow: none !important;
+            }
+
+            html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 20px;
+                font-size: 11pt;
+                line-height: 1.4;
+            }
+
+            .dashboard-container {
+                display: block;
+                flex-direction: initial;
+            }
+
+            .sidebar {
+                display: none !important;
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+
+            .header {
+                display: none !important;
+            }
+
+            .dashboard-header {
+                page-break-after: always;
+                margin-bottom: 20px;
+                padding: 20px 0;
+                border-bottom: 2px solid #000;
+            }
+
+            .dashboard-header h1 {
+                font-size: 18pt;
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+
+            .dashboard-header p {
+                font-size: 10pt;
+                color: #666;
+                margin: 5px 0;
+            }
+
+            .report-section {
+                page-break-inside: avoid;
+                margin-bottom: 30px;
+                border: 1px solid #999;
+                padding: 15px;
+            }
+
+            .report-section h2 {
+                font-size: 14pt;
+                font-weight: bold;
+                margin-bottom: 15px;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #000;
+                page-break-after: avoid;
+            }
+
+            .stats-container {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+                gap: 10px;
+                margin-bottom: 20px;
+                page-break-inside: avoid;
+            }
+
+            .stat-card {
+                border: 1px solid #999;
+                padding: 10px;
+                page-break-inside: avoid;
+            }
+
+            .stat-card h3 {
+                font-size: 10pt;
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+
+            .stat-card .number {
+                font-size: 14pt;
+                font-weight: bold;
+                color: #000;
+            }
+
+            .stat-card p {
+                font-size: 9pt;
+                color: #666;
+                margin: 5px 0 0 0;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 15px 0;
+                font-size: 10pt;
+            }
+
+            table thead {
+                background-color: #f0f0f0;
+                page-break-after: avoid;
+            }
+
+            table th {
+                border: 1px solid #999;
+                padding: 8px;
+                text-align: left;
+                font-weight: bold;
+                background-color: #ddd;
+            }
+
+            table td {
+                border: 1px solid #999;
+                padding: 6px;
+                word-break: break-word;
+            }
+
+            table tbody tr:nth-child(odd) {
+                background-color: #f9f9f9;
+            }
+
+            .pagination, .card-header .btn, .search-box, .filter-btn, .clear-filter-btn {
+                display: none !important;
+            }
+
+            .table-container {
+                overflow: visible !important;
+            }
+
+            .card {
+                border: 1px solid #999;
+                page-break-inside: avoid;
+                margin-bottom: 20px;
+            }
+
+            .card-header {
+                background-color: #f0f0f0;
+                border-bottom: 2px solid #000;
+                padding: 10px;
+                page-break-after: avoid;
+            }
+
+            .card-header h2 {
+                font-size: 14pt;
+                font-weight: bold;
+                margin: 0;
+            }
+
+            .card-body {
+                padding: 10px;
+            }
+
+            .modal, .btn, .search-btn, .profile-btn, .logout-btn {
+                display: none !important;
+            }
+
+            footer {
+                display: block;
+                text-align: center;
+                border-top: 1px solid #999;
+                padding-top: 15px;
+                margin-top: 30px;
+                font-size: 9pt;
+                color: #666;
+                page-break-before: avoid;
+            }
+
+            .page-break {
+                page-break-after: always;
+            }
+
+            /* Ensure all content is printed */
+            .hidden-print {
+                display: none !important;
+            }
+
+            /* Improve readability for printed text */
+            h1, h2, h3, h4, h5, h6 {
+                page-break-after: avoid;
+                page-break-inside: avoid;
+                color: #000;
+            }
+
+            p {
+                orphans: 3;
+                widows: 3;
+            }
+
+            /* Print header with date and advisor info */
+            body::before {
+                content: "Academic Advising System - Report\AGenerated on " attr(data-date);
+                display: block;
+                white-space: pre-wrap;
+                font-size: 10pt;
+                font-weight: bold;
+                margin-bottom: 20px;
+                page-break-after: avoid;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1344,7 +1556,7 @@
             <header class="header">
                 <h1>Reports & Analytics Dashboard</h1>
                 <div class="header-actions">
-                    <button class="btn btn-primary" id="exportReportBtn">
+                    <button class="btn btn-primary" id="exportReportBtn" style="display:none">
                         <i class="fas fa-download"></i> Export Report
                     </button>
                     <button class="btn btn-secondary" id="printReportBtn">
@@ -1528,7 +1740,7 @@
                                     
                                     <!-- Filter Controls -->
                                     <div class="filter-controls">
-                                        <div class="filter-checkbox" id="allStudentsFilter">
+                                        <div class="filter-checkbox" id="allStudentsFilter" style="display:none">
                                             <input type="checkbox" id="allStudentsCheckbox">
                                             <label for="allStudentsCheckbox">All Students</label>
                                         </div>
@@ -1626,7 +1838,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>No.</th>
-                                                    <th>Student</th>
+                                                    <th>Title</th>
                                                     <th>Type</th>
                                                     <th>Scheduled</th>
                                                     <th>Status</th>
@@ -1635,7 +1847,7 @@
                                             <tbody>
                                                 <tr>
                                                     <td>1</td>
-                                                    <td><strong>James Martinez</strong></td>
+                                                    <td><strong>Math Advising Session</strong></td>
                                                     <td>Academic Advising</td>
                                                     <td>Tomorrow, 10:00 AM</td>
                                                     <td><span class="status-badge status-badge-pending">Pending</span></td>
@@ -1740,8 +1952,17 @@
     </div>
 
     <script>
-        // Sample student data for reports
-        const studentData = [
+        // Data variables that will be populated from API
+        let studentData = [];
+        let academicStatusData = [];
+        let monthlySessionsData = [];
+        let sessionTypeData = [];
+        let pendingSessionsData = [];
+        let currentPendingPage = 0;
+        const pendingPerPage = 5;
+        
+        // Fallback sample data (used when APIs are not available)
+        const SAMPLE_STUDENT_DATA = [
             { id: "S10023", name: "Sarah Johnson", major: "Computer Science", year: "Senior", cgpa: "3.72", status: "Dean's List", lastSession: "Oct 10, 2023", nextDue: "Nov 15, 2023" },
             { id: "S10024", name: "Michael Chen", major: "Data Science", year: "Junior", cgpa: "3.48", status: "Pass", lastSession: "Sep 28, 2023", nextDue: "Nov 5, 2023" },
             { id: "S10025", name: "David Wilson", major: "Software Engineering", year: "Sophomore", cgpa: "3.95", status: "Dean's List", lastSession: "Oct 5, 2023", nextDue: "Nov 12, 2023" },
@@ -1767,17 +1988,15 @@
             { id: "S10045", name: "Ethan Wright", major: "Cybersecurity", year: "Senior", cgpa: "3.76", status: "Dean's List", lastSession: "Oct 25, 2023", nextDue: "Dec 1, 2023" },
             { id: "S10046", name: "Mia Davis", major: "Artificial Intelligence", year: "Sophomore", cgpa: "3.61", status: "Pass", lastSession: "Oct 26, 2023", nextDue: "Dec 2, 2023" }
         ];
-
-        // Academic status data for donut chart
-        const academicStatusData = [
+        
+        const SAMPLE_ACADEMIC_STATUS_DATA = [
             { name: "Dean's List", value: 8, color: "#27ae60" },
             { name: "Pass", value: 14, color: "#3498db" },
             { name: "Probation", value: 1, color: "#f39c12" },
             { name: "At Risk", value: 1, color: "#e74c3c" }
         ];
-
-        // Monthly sessions data
-        const monthlySessionsData = [
+        
+        const SAMPLE_MONTHLY_SESSIONS_DATA = [
             { month: 'May', value: 5, color: '#3498db' },
             { month: 'Jun', value: 6, color: '#2ecc71' },
             { month: 'Jul', value: 4, color: '#e67e22' },
@@ -1785,14 +2004,25 @@
             { month: 'Sep', value: 10, color: '#1abc9c' },
             { month: 'Oct', value: 14, color: '#e74c3c' }
         ];
-
-        // Session type data
-        const sessionTypeData = [
+        
+        const SAMPLE_SESSION_TYPE_DATA = [
             { name: "Academic Advising", value: 24, color: "#3498db" },
             { name: "Career Counseling", value: 12, color: "#2ecc71" },
             { name: "Graduation Planning", value: 8, color: "#e67e22" },
             { name: "Personal Development", value: 3, color: "#9b59b6" }
         ];
+        
+        // Determine webapp context path ('' if deployed at root)
+        function getContextPath() {
+            const p = window.location.pathname;
+            const parts = p.split('/').filter(Boolean);
+            if (parts.length === 0) return '';
+            const first = parts[0];
+            if (first.indexOf('.') !== -1) return '';
+            return '/' + first;
+        }
+
+        const ctx = getContextPath();
 
         // Pagination variables
         let currentPage = 1;
@@ -1812,8 +2042,8 @@
             });
             document.getElementById('reportDate').textContent = formattedDate;
             
-            // Initialize charts and tables
-            initializeCharts();
+            // Load all report data from APIs
+            loadReportData();
             
             // Initialize pagination
             initializePagination();
@@ -1837,6 +2067,7 @@
                 document.getElementById('studentReportBtn').classList.remove('active');
                 document.getElementById('studentAnalytics').style.display = 'none';
                 document.getElementById('sessionAnalytics').style.display = 'block';
+                loadPendingSessions();
             });
             
             // Major select functionality
@@ -1872,7 +2103,7 @@
             // Logout button
             document.querySelector('.logout-btn').addEventListener('click', function() {
                 if (confirm("Are you sure you want to logout?")) {
-                    alert("You have been logged out.");
+                    window.location.href = '/logout';
                 }
             });
             
@@ -1895,14 +2126,304 @@
             document.getElementById('nextPageBtn').addEventListener('click', goToNextPage);
         });
 
-        // Initialize all charts
-        function initializeCharts() {
-            createDonutChart('academicDonutChart', academicStatusData);
-            createMonthlyBarChart('monthlySessionsChart', monthlySessionsData);
-            createAcademicLegend('academicLegend', academicStatusData);
-            createDonutChart('sessionDonutChart', sessionTypeData);
-            createSessionLegend('sessionLegend', sessionTypeData);
+        // Load all report data from APIs
+        function loadReportData() {
+            loadSummaryStats();
+            loadAcademicStatusData();
+            loadMonthlySessionsData();
+            loadSessionTypesData();
+            loadStudentPerformanceData();
+        }
+
+        // Load summary statistics
+        function loadSummaryStats() {
+            fetch(ctx + '/api/advisor/report?type=summary')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.warn('API Error:', data.error, '- Using sample data');
+                        useSampleSummaryStats();
+                        return;
+                    }
+                    document.getElementById('totalStudents').textContent = data.totalStudents || 0;
+                    document.getElementById('graduationRate').textContent = data.graduationRate || '0%';
+                    document.getElementById('sessionsCompleted').textContent = data.sessionsCompleted || 0;
+                    document.getElementById('avgCGPA').textContent = (data.avgCGPA || 0).toFixed(2);
+                })
+                .catch(error => {
+                    console.warn('API unavailable:', error.message, '- Using sample data');
+                    useSampleSummaryStats();
+                });
+        }
+        
+        function useSampleSummaryStats() {
+            document.getElementById('totalStudents').textContent = '24';
+            document.getElementById('graduationRate').textContent = '92.3%';
+            document.getElementById('sessionsCompleted').textContent = '47';
+            document.getElementById('avgCGPA').textContent = '3.52';
+        }
+
+        // Load academic status distribution
+        function loadAcademicStatusData() {
+            fetch(ctx + '/api/advisor/report?type=academic-status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.warn('API Error:', data.error, '- Using sample data');
+                        useSampleAcademicStatus();
+                        return;
+                    }
+                    academicStatusData = data.data || [];
+                    createDonutChart('academicDonutChart', academicStatusData);
+                    createAcademicLegend('academicLegend', academicStatusData);
+                    updateStatusDetails(academicStatusData);
+                })
+                .catch(error => {
+                    console.warn('API unavailable:', error.message, '- Using sample data');
+                    useSampleAcademicStatus();
+                });
+        }
+        
+        function useSampleAcademicStatus() {
+            const sampleData = [
+                { name: "Dean's List", value: 8, color: "#27ae60" },
+                { name: "Pass", value: 14, color: "#3498db" },
+                { name: "Probation", value: 1, color: "#f39c12" },
+                { name: "At Risk", value: 1, color: "#e74c3c" }
+            ];
+            academicStatusData = sampleData;
+            createDonutChart('academicDonutChart', sampleData);
+            createAcademicLegend('academicLegend', sampleData);
+            updateStatusDetails(sampleData);
+        }
+
+        // Load monthly sessions data
+        function loadMonthlySessionsData() {
+            fetch(ctx + '/api/advisor/report?type=monthly-sessions')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.warn('API Error:', data.error, '- Using sample data');
+                        useSampleMonthlySessions();
+                        return;
+                    }
+                    monthlySessionsData = data.data || [];
+                    createMonthlyBarChart('monthlySessionsChart', monthlySessionsData);
+                    updateMonthlyStats();
+                })
+                .catch(error => {
+                    console.warn('API unavailable:', error.message, '- Using sample data');
+                    useSampleMonthlySessions();
+                });
+        }
+        
+        function useSampleMonthlySessions() {
+            const sampleData = [
+                { month: 'May', value: 5, color: '#3498db' },
+                { month: 'Jun', value: 6, color: '#2ecc71' },
+                { month: 'Jul', value: 4, color: '#e67e22' },
+                { month: 'Aug', value: 8, color: '#9b59b6' },
+                { month: 'Sep', value: 10, color: '#1abc9c' },
+                { month: 'Oct', value: 14, color: '#e74c3c' }
+            ];
+            monthlySessionsData = sampleData;
+            createMonthlyBarChart('monthlySessionsChart', sampleData);
             updateMonthlyStats();
+        }
+
+        // Load session types distribution
+        function loadSessionTypesData() {
+            fetch(ctx + '/api/advisor/report?type=session-types')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.warn('API Error:', data.error, '- Using sample data');
+                        useSampleSessionTypes();
+                        return;
+                    }
+                    sessionTypeData = data.data || [];
+                    createDonutChart('sessionDonutChart', sessionTypeData);
+                    createSessionLegend('sessionLegend', sessionTypeData);
+                })
+                .catch(error => {
+                    console.warn('API unavailable:', error.message, '- Using sample data');
+                    useSampleSessionTypes();
+                });
+        }
+        
+        function useSampleSessionTypes() {
+            const sampleData = [
+                { name: "Academic Advising", value: 24, color: "#3498db" },
+                { name: "Career Counseling", value: 12, color: "#2ecc71" },
+                { name: "Graduation Planning", value: 8, color: "#e67e22" },
+                { name: "Personal Development", value: 3, color: "#9b59b6" }
+            ];
+            sessionTypeData = sampleData;
+            createDonutChart('sessionDonutChart', sampleData);
+            createSessionLegend('sessionLegend', sampleData);
+        }
+
+        // Load student performance data
+        function loadStudentPerformanceData() {
+            fetch(ctx + '/api/advisor/performance')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.warn('API Error:', data.error, '- Using sample data');
+                        useSampleStudentData();
+                        return;
+                    }
+                    studentData = data.students || [];
+                    filteredStudentData = [...studentData];
+                    currentPage = 1;
+                    renderPerformanceTablePage();
+                    updatePagination();
+                })
+                .catch(error => {
+                    console.warn('API unavailable:', error.message, '- Using sample data');
+                    useSampleStudentData();
+                });
+        }
+        
+        function useSampleStudentData() {
+            const sampleData = [
+                { id: "S10023", name: "Sarah Johnson", major: "Computer Science", year: "Senior", cgpa: "3.72", status: "Dean's List", lastSession: "Oct 10, 2023", nextDue: "Nov 15, 2023" },
+                { id: "S10024", name: "Michael Chen", major: "Data Science", year: "Junior", cgpa: "3.48", status: "Pass", lastSession: "Sep 28, 2023", nextDue: "Nov 5, 2023" },
+                { id: "S10025", name: "David Wilson", major: "Software Engineering", year: "Sophomore", cgpa: "3.95", status: "Dean's List", lastSession: "Oct 5, 2023", nextDue: "Nov 12, 2023" },
+                { id: "S10026", name: "Emily Davis", major: "Information Systems", year: "Senior", cgpa: "3.88", status: "Dean's List", lastSession: "Oct 12, 2023", nextDue: "Nov 20, 2023" },
+                { id: "S10027", name: "Robert Brown", major: "Cybersecurity", year: "Junior", cgpa: "2.85", status: "Probation", lastSession: "Sep 15, 2023", nextDue: "Oct 30, 2023" },
+                { id: "S10028", name: "Olivia Taylor", major: "Artificial Intelligence", year: "Senior", cgpa: "3.91", status: "Dean's List", lastSession: "Oct 18, 2023", nextDue: "Nov 25, 2023" },
+                { id: "S10029", name: "James Martinez", major: "Computer Science", year: "Freshman", cgpa: "2.45", status: "At Risk", lastSession: "Oct 3, 2023", nextDue: "Oct 31, 2023" },
+                { id: "S10030", name: "Jennifer Lee", major: "Data Science", year: "Sophomore", cgpa: "3.65", status: "Pass", lastSession: "Oct 8, 2023", nextDue: "Nov 10, 2023" },
+                { id: "S10031", name: "Thomas Anderson", major: "Software Engineering", year: "Junior", cgpa: "3.22", status: "Pass", lastSession: "Sep 20, 2023", nextDue: "Oct 28, 2023" },
+                { id: "S10032", name: "Lisa Wang", major: "Computer Science", year: "Senior", cgpa: "3.78", status: "Dean's List", lastSession: "Oct 22, 2023", nextDue: "Nov 28, 2023" },
+                { id: "S10033", name: "Brian Wilson", major: "Data Science", year: "Sophomore", cgpa: "3.15", status: "Pass", lastSession: "Sep 25, 2023", nextDue: "Nov 3, 2023" },
+                { id: "S10034", name: "Karen Smith", major: "Information Systems", year: "Junior", cgpa: "3.42", status: "Pass", lastSession: "Oct 14, 2023", nextDue: "Nov 18, 2023" },
+                { id: "S10035", name: "Alex Johnson", major: "Computer Science", year: "Junior", cgpa: "3.55", status: "Pass", lastSession: "Oct 16, 2023", nextDue: "Nov 22, 2023" },
+                { id: "S10036", name: "Maria Garcia", major: "Data Science", year: "Senior", cgpa: "3.88", status: "Dean's List", lastSession: "Oct 20, 2023", nextDue: "Nov 26, 2023" },
+                { id: "S10037", name: "Daniel Kim", major: "Software Engineering", year: "Sophomore", cgpa: "3.25", status: "Pass", lastSession: "Sep 30, 2023", nextDue: "Nov 5, 2023" },
+                { id: "S10038", name: "Sophia Patel", major: "Information Systems", year: "Junior", cgpa: "3.67", status: "Pass", lastSession: "Oct 17, 2023", nextDue: "Nov 23, 2023" },
+                { id: "S10039", name: "Kevin Wilson", major: "Cybersecurity", year: "Senior", cgpa: "3.92", status: "Dean's List", lastSession: "Oct 19, 2023", nextDue: "Nov 25, 2023" },
+                { id: "S10040", name: "Emma Thompson", major: "Artificial Intelligence", year: "Junior", cgpa: "3.48", status: "Pass", lastSession: "Oct 21, 2023", nextDue: "Nov 27, 2023" },
+                { id: "S10041", name: "Ryan Lee", major: "Computer Science", year: "Sophomore", cgpa: "3.15", status: "Pass", lastSession: "Sep 28, 2023", nextDue: "Nov 3, 2023" },
+                { id: "S10042", name: "Chloe Martinez", major: "Data Science", year: "Senior", cgpa: "3.82", status: "Dean's List", lastSession: "Oct 23, 2023", nextDue: "Nov 29, 2023" },
+                { id: "S10043", name: "Jacob Brown", major: "Software Engineering", year: "Freshman", cgpa: "2.95", status: "Pass", lastSession: "Oct 5, 2023", nextDue: "Nov 10, 2023" },
+                { id: "S10044", name: "Isabella Clark", major: "Information Systems", year: "Junior", cgpa: "3.33", status: "Pass", lastSession: "Oct 24, 2023", nextDue: "Nov 30, 2023" },
+                { id: "S10045", name: "Ethan Wright", major: "Cybersecurity", year: "Senior", cgpa: "3.76", status: "Dean's List", lastSession: "Oct 25, 2023", nextDue: "Dec 1, 2023" },
+                { id: "S10046", name: "Mia Davis", major: "Artificial Intelligence", year: "Sophomore", cgpa: "3.61", status: "Pass", lastSession: "Oct 26, 2023", nextDue: "Dec 2, 2023" }
+            ];
+            studentData = sampleData;
+            filteredStudentData = [...sampleData];
+            currentPage = 1;
+            renderPerformanceTablePage();
+            updatePagination();
+        }
+
+        // Load pending sessions
+        function loadPendingSessions() {
+            fetch(ctx + '/api/advisor/sessions-report?type=pending')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.warn('API Error:', data.error, '- Using empty sessions');
+                        updatePendingSessionsTable([]);
+                        return;
+                    }
+                    updatePendingSessionsTable(data.sessions || []);
+                })
+                .catch(error => {
+                    console.warn('API unavailable:', error.message, '- Using empty sessions');
+                    updatePendingSessionsTable([]);
+                });
+        }
+
+        // Update status details based on API data
+        function updateStatusDetails(data) {
+            const statusContainer = document.getElementById('statusDetailsContainer');
+            statusContainer.innerHTML = '';
+
+            data.forEach((item, index) => {
+                const colorMap = {
+                    "Dean's List": "status-deans-list",
+                    "Pass": "status-pass",
+                    "Probation": "status-probation",
+                    "At Risk": "status-at-risk"
+                };
+
+                const statusItem = document.createElement('div');
+                statusItem.className = `status-item ${colorMap[item.name] || ''}`;
+                statusItem.setAttribute('data-status', item.name);
+
+                const total = data.reduce((sum, d) => sum + d.value, 0);
+                const percentage = Math.round((item.value / total) * 100);
+
+                statusItem.innerHTML = `
+                    <div class="status-checkbox"></div>
+                    <div class="status-info">
+                        <div class="status-name">${item.name}</div>
+                        <div class="status-count">${item.value} students</div>
+                    </div>
+                    <div class="status-percentage">${percentage}%</div>
+                `;
+
+                statusContainer.appendChild(statusItem);
+            });
+
+            // Reattach event listeners after updating
+            setupStatusDetailInteractivity();
+        }
+
+        // Update pending sessions table
+        function updatePendingSessionsTable(sessions) {
+            const tableBody = document.querySelector('#sessionAnalytics table tbody');
+            if (!tableBody) return;
+
+            // store sessions and reset page if needed
+            pendingSessionsData = Array.isArray(sessions) ? sessions : [];
+            if (currentPendingPage < 0) currentPendingPage = 0;
+            const total = pendingSessionsData.length;
+            if (currentPendingPage > Math.max(0, Math.ceil(total / pendingPerPage) - 1)) currentPendingPage = 0;
+
+            tableBody.innerHTML = '';
+
+            if (pendingSessionsData.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="5" style="text-align: center;">No pending sessions</td>';
+                tableBody.appendChild(row);
+            } else {
+                const start = currentPendingPage * pendingPerPage;
+                const page = pendingSessionsData.slice(start, start + pendingPerPage);
+                page.forEach(session => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${session.no}</td>
+                        <td><strong>${session.title}</strong></td>
+                        <td>${session.type}</td>
+                        <td>${session.scheduled}</td>
+                        <td><span class="status-badge status-badge-pending">Upcoming</span></td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+                // render pagination controls for pending sessions
+                const existing = document.getElementById('pendingSessionsPagination');
+                if (existing) existing.remove();
+                const totalPages = Math.ceil(total / pendingPerPage);
+                if (totalPages > 1) {
+                    const paginator = document.createElement('div');
+                    paginator.id = 'pendingSessionsPagination';
+                    paginator.style = 'display:flex;justify-content:center;gap:10px;margin-top:12px;';
+                    paginator.innerHTML = `<button id="pendingPrev" class="btn-outline" ${currentPendingPage === 0 ? 'disabled' : ''}>Prev</button> <span>Page ${currentPendingPage+1} of ${totalPages}</span> <button id="pendingNext" class="btn-outline" ${currentPendingPage >= totalPages-1 ? 'disabled' : ''}>Next</button>`;
+                    tableBody.parentElement.insertAdjacentElement('afterend', paginator);
+
+                    document.getElementById('pendingPrev').addEventListener('click', function() {
+                        if (currentPendingPage > 0) { currentPendingPage--; updatePendingSessionsTable(pendingSessionsData); }
+                    });
+                    document.getElementById('pendingNext').addEventListener('click', function() {
+                        if (currentPendingPage < totalPages - 1) { currentPendingPage++; updatePendingSessionsTable(pendingSessionsData); }
+                    });
+                }
+            }
         }
 
         // Initialize pagination
@@ -2425,9 +2946,7 @@
                 let statusClass = 'status-badge-pass';
                 if (student.status === "Dean's List") {
                     statusClass = 'status-badge-deans-list';
-                } else if (student.status === "At Risk") {
-                    statusClass = 'status-badge-fail';
-                } else if (student.status === "Probation") {
+                } else if (student.status === "At Risk" || student.status === "Probation") {
                     statusClass = 'status-badge-fail';
                 }
                 
@@ -2447,76 +2966,80 @@
 
         // Update major students table
         function updateMajorStudentsTable(major, statusFilter = null) {
-            // Get students in this major
-            let majorStudents = studentData
-                .filter(student => student.major === major);
-            
-            // Apply status filter if provided
+            let url = ctx + `/api/advisor/performance?major=${encodeURIComponent(major)}`;
             if (statusFilter) {
-                majorStudents = majorStudents.filter(student => student.status === statusFilter);
+                url += `&status=${encodeURIComponent(statusFilter)}`;
             }
-            
-            // Sort by CGPA (highest first)
-            majorStudents.sort((a, b) => parseFloat(b.cgpa) - parseFloat(a.cgpa));
-            
-            // Take top 5
-            const topStudents = majorStudents.slice(0, 5);
-            
-            // Update table
-            const tableBody = document.getElementById('majorStudentsTableBody');
-            tableBody.innerHTML = '';
-            
-            if (topStudents.length === 0) {
-                const row = document.createElement('tr');
-                const filterText = statusFilter ? ` with status "${statusFilter}"` : '';
-                row.innerHTML = `
-                    <td colspan="4" style="text-align: center; color: var(--text-light); padding: 30px;">
-                        No students found in ${major}${filterText}
-                    </td>
-                `;
-                tableBody.appendChild(row);
-            } else {
-                topStudents.forEach((student, index) => {
-                    const row = document.createElement('tr');
-                    
-                    // Determine status badge class
-                    let statusClass = 'status-badge-pass';
-                    if (student.status === "Dean's List") {
-                        statusClass = 'status-badge-deans-list';
-                    } else if (student.status === "At Risk") {
-                        statusClass = 'status-badge-fail';
-                    } else if (student.status === "Probation") {
-                        statusClass = 'status-badge-fail';
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error('Error:', data.error);
+                        return;
                     }
-                    
-                    row.innerHTML = `
-                        <td>
-                            <span class="rank-badge">${index + 1}</span>
-                        </td>
-                        <td style="font-weight: 600;">${student.name}</td>
-                        <td><strong>${student.cgpa}</strong></td>
-                        <td><span class="status-badge ${statusClass}">${student.status}</span></td>
-                    `;
-                    
-                    tableBody.appendChild(row);
-                });
-            }
-            
-            // Update stats
-            const totalMajorStudents = studentData.filter(s => s.major === major).length;
-            const majorCGPAValues = studentData
-                .filter(s => s.major === major)
-                .map(s => parseFloat(s.cgpa));
-            const avgMajorCGPA = majorCGPAValues.length > 0 
-                ? (majorCGPAValues.reduce((a, b) => a + b, 0) / majorCGPAValues.length).toFixed(2)
-                : "0.00";
-            const topMajorCGPA = majorCGPAValues.length > 0 
-                ? Math.max(...majorCGPAValues).toFixed(2)
-                : "0.00";
-            
-            document.getElementById('totalMajorStudents').textContent = totalMajorStudents;
-            document.getElementById('avgMajorCGPA').textContent = avgMajorCGPA;
-            document.getElementById('topMajorCGPA').textContent = topMajorCGPA;
+
+                    let majorStudents = data.students || [];
+
+                    // Sort by CGPA (highest first)
+                    majorStudents.sort((a, b) => parseFloat(b.cgpa) - parseFloat(a.cgpa));
+
+                    // Take top 5
+                    const topStudents = majorStudents.slice(0, 5);
+
+                    // Update table
+                    const tableBody = document.getElementById('majorStudentsTableBody');
+                    tableBody.innerHTML = '';
+
+                    if (topStudents.length === 0) {
+                        const row = document.createElement('tr');
+                        const filterText = statusFilter ? ` with status "${statusFilter}"` : '';
+                        row.innerHTML = `
+                            <td colspan="4" style="text-align: center; color: var(--text-light); padding: 30px;">
+                                No students found in ${major}${filterText}
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    } else {
+                        topStudents.forEach((student, index) => {
+                            const row = document.createElement('tr');
+
+                            // Determine status badge class
+                            let statusClass = 'status-badge-pass';
+                            if (student.status === "Dean's List") {
+                                statusClass = 'status-badge-deans-list';
+                            } else if (student.status === "At Risk" || student.status === "Probation") {
+                                statusClass = 'status-badge-fail';
+                            }
+
+                            row.innerHTML = `
+                                <td>
+                                    <span class="rank-badge">${index + 1}</span>
+                                </td>
+                                <td style="font-weight: 600;">${student.name}</td>
+                                <td><strong>${student.cgpa}</strong></td>
+                                <td><span class="status-badge ${statusClass}">${student.status}</span></td>
+                            `;
+
+                            tableBody.appendChild(row);
+                        });
+                    }
+
+                    // Update stats
+                    const totalMajorStudents = majorStudents.length;
+                    const majorCGPAValues = majorStudents.map(s => parseFloat(s.cgpa));
+                    const avgMajorCGPA = majorCGPAValues.length > 0
+                        ? (majorCGPAValues.reduce((a, b) => a + b, 0) / majorCGPAValues.length).toFixed(2)
+                        : "0.00";
+                    const topMajorCGPA = majorCGPAValues.length > 0
+                        ? Math.max(...majorCGPAValues).toFixed(2)
+                        : "0.00";
+
+                    document.getElementById('totalMajorStudents').textContent = totalMajorStudents;
+                    document.getElementById('avgMajorCGPA').textContent = avgMajorCGPA;
+                    document.getElementById('topMajorCGPA').textContent = topMajorCGPA;
+                })
+                .catch(error => console.error('Error updating major students table:', error));
         }
 
         // Filter students based on search input
@@ -2553,18 +3076,11 @@
             refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
             refreshBtn.disabled = true;
             
-            // Simulate API call delay
+            // Reload data from APIs
+            loadStudentPerformanceData();
+            
+            // Restore button
             setTimeout(() => {
-                // Reset filtered data to all students
-                filteredStudentData = [...studentData];
-                currentPage = 1;
-                document.getElementById('studentSearchInput').value = '';
-                
-                // Refresh the table with updated data
-                renderPerformanceTablePage();
-                updatePagination();
-                
-                // Restore button
                 refreshBtn.innerHTML = originalHTML;
                 refreshBtn.disabled = false;
                 

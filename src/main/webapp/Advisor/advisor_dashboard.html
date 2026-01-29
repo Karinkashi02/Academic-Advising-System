@@ -784,8 +784,8 @@
           return;
         }
 
-        // limit to 12
-        sessions.slice(0, 12).forEach(s => {
+        // limit to 5 recent sessions
+        sessions.slice(0, 5).forEach(s => {
           const card = document.createElement('div');
           card.className = 'activity-item';
 
@@ -834,9 +834,12 @@
             acceptBtn.textContent = 'Accept';
             acceptBtn.addEventListener('click', async (ev) => {
               ev.stopPropagation();
+              const meetLink = prompt('Enter Google Meet link for this session (optional):');
               if (!confirm('Accept this advising session?')) return;
               try {
-                const res = await apiPost('/api/advisor/session/update', new URLSearchParams({ sessionID: s.sessionID, action: 'accept' }));
+                const params = new URLSearchParams({ sessionID: s.sessionID, action: 'accept' });
+                if (meetLink && meetLink.trim()) params.append('meetLink', meetLink.trim());
+                const res = await apiPost('/api/advisor/session/update', params);
                 if (res && (res.success || res.ok)) {
                   alert('Session accepted.');
                   await loadOverview();
@@ -918,6 +921,7 @@
           const name = s.name || ((s.firstName||'')+' '+(s.lastName||'')).trim() || s.studentID;
           const cgpa = (s.cgpa === null || typeof s.cgpa === 'undefined') ? 'N/A' : Number(s.cgpa).toFixed(2);
           const credits = s.creditsCompleted === null || typeof s.creditsCompleted === 'undefined' ? 'N/A' : s.creditsCompleted;
+          const remark = s.remark || '';
           card.innerHTML = `
             <div class="advisee-name">${escapeHtml(name)}</div>
             <div class="advisee-meta">${escapeHtml(s.program || '')} • Year ${escapeHtml(String(s.yearOfStudy || ''))}</div>
@@ -925,19 +929,9 @@
               <div style="font-size:13px;color:#666">CGPA: <strong>${escapeHtml(cgpa)}</strong></div>
               <div style="font-size:13px;color:#666">Credits: <strong>${escapeHtml(String(credits))}</strong></div>
             </div>
-            <div style="margin-top:8px;display:flex;gap:8px;">
-              <a class="btn" href="/Advisor/view_student_detail.html?student_id=${encodeURIComponent(s.studentID||'')}" style="padding:6px 10px;font-size:13px;">View</a>
-              <button class="page-btn email-advisee" data-id="${escapeHtml(s.studentID||'')}" style="padding:6px 10px;font-size:13px;">Email</button>
-            </div>
+            ${remark ? `<div style="margin-top:8px;font-size:12px;padding:8px;background:#f0f8ff;border-left:3px solid #3498db;border-radius:4px;color:#333;"><strong>Remark:</strong> ${escapeHtml(remark)}</div>` : ''}
           `;
           container.appendChild(card);
-        });
-        // wire email buttons
-        container.querySelectorAll('.email-advisee').forEach(b => {
-          b.addEventListener('click', () => {
-            const id = b.dataset.id;
-            window.location.href = 'mailto:' + (advisees.find(a=>a.studentID===id)?.email || '');
-          });
         });
       }
 
