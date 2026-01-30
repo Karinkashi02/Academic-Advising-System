@@ -1,3 +1,17 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.*" %>
+<%
+    // Session check for student role
+    if (session.getAttribute("role") == null || !"student".equals(session.getAttribute("role"))) {
+        response.sendRedirect(request.getContextPath() + "/index.jsp?error=unauthorized");
+        return;
+    }
+    
+    // Get URL parameters for error/success messages
+    String error = request.getParameter("error");
+    String success = request.getParameter("success");
+    String message = request.getParameter("message");
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1085,11 +1099,11 @@
             <p>Student Portal</p>
         </div>
         <ul class="nav-links">
-            <li><a href="Dashboard.html" class="active"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
-            <li><a href="Mycourse.html"><i class="fas fa-book"></i> <span>My Courses</span></a></li>
-            <li><a href="UpdateCourse.html"><i class="fas fa-edit"></i> <span>Update Grade</span></a></li>
-            <li><a href="AdvisingSessions.html"><i class="fas fa-calendar-alt"></i> <span>Advising Sessions</span></a></li>
-            <li><a href="Activity.html"><i class="fas fa-chart-line"></i> <span>Activity</span></a></li>
+            <li><a href="Dashboard.jsp" class="active"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
+            <li><a href="Mycourse.jsp"><i class="fas fa-book"></i> <span>My Courses</span></a></li>
+            <li><a href="UpdateCourse.jsp"><i class="fas fa-edit"></i> <span>Update Grade</span></a></li>
+            <li><a href="AdvisingSessions.jsp"><i class="fas fa-calendar-alt"></i> <span>Advising Sessions</span></a></li>
+            <li><a href="Activity.jsp"><i class="fas fa-chart-line"></i> <span>Activity</span></a></li>
         </ul>
     </nav>
 
@@ -1114,7 +1128,7 @@
 
             <div class="profile-dropdown-menu" id="profileMenu">
               <div class="dropdown-header" id="profileMenuHeader">Student</div>
-              <a href="Profile.html"><i class="fas fa-user-circle"></i> My Profile</a>
+              <a href="Profile.jsp"><i class="fas fa-user-circle"></i> My Profile</a>
               <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
           </div>
@@ -1628,51 +1642,51 @@
         const paginatedList = list.slice(startIdx, endIdx);
 
         paginatedList.forEach(a => {
-          const headerStyle = `background: ${getCategoryGradient(a.category)}; padding:18px;`;
+          const headerStyle = `background: \${getCategoryGradient(a.category)}; padding:18px;`;
           const dt = parseDate(a.dateTime);
           const dateStr = dt ? dt.toLocaleDateString() : '';
           const timeStr = dt ? dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
-          const spots = (a.capacity != null && a.capacity !== '') ? `${a.participantCount || 0}/${a.capacity}` : `${a.participantCount || 0}`;
+          const spots = (a.capacity != null && a.capacity !== '') ? `\${a.participantCount || 0}/\${a.capacity}` : `\${a.participantCount || 0}`;
           const hostLabel = a.host || a.ownerName || a.ownerID || '';
 
           // join/leave button rendering
           let joinHtml = '';
           if (a.joined) {
-            if (isLeaveAllowed(a)) joinHtml = `<button class="btn btn-sm btn-outline leave-activity" data-id="${a.activityID}">Leave</button>`;
+            if (isLeaveAllowed(a)) joinHtml = `<button class="btn btn-sm btn-outline leave-activity" data-id="\${a.activityID}">Leave</button>`;
             else joinHtml = `<button class="btn btn-sm btn-disabled" disabled title="Cannot leave within 24 hours or after completion">Leave</button>`;
           } else {
             // If activity is past and user didn't join, we should not show join button (we already filtered past ones out).
-            joinHtml = `<button class="btn btn-sm btn-primary join-activity" data-id="${a.activityID}">Join</button>`;
+            joinHtml = `<button class="btn btn-sm btn-primary join-activity" data-id="\${a.activityID}">Join</button>`;
           }
 
           const isOwner = (a.ownerID && profile && String(a.ownerID) === String(profile.userID));
-          const manageHtml = isOwner ? `<button class="btn btn-sm btn-outline edit-activity" data-id="${a.activityID}">Edit</button>
-                                       <button class="btn btn-sm btn-outline delete-activity" data-id="${a.activityID}">Delete</button>` : '';
+          const manageHtml = isOwner ? `<button class="btn btn-sm btn-outline edit-activity" data-id="\${a.activityID}">Edit</button>
+                                       <button class="btn btn-sm btn-outline delete-activity" data-id="\${a.activityID}">Delete</button>` : '';
 
           const card = document.createElement('div');
           card.className = 'activity-card';
           if (a.featured) card.classList.add('featured');
 
           card.innerHTML = `
-            <div class="activity-header" style="${headerStyle}">
-              <div class="activity-type">${escapeHtml(a.category || 'General')}</div>
-              <div class="activity-title" style="color:white; font-size:1.2rem; font-weight:700;">${escapeHtml(a.title)}</div>
+            <div class="activity-header" style="\${headerStyle}">
+              <div class="activity-type">\${escapeHtml(a.category || 'General')}</div>
+              <div class="activity-title" style="color:white; font-size:1.2rem; font-weight:700;">\${escapeHtml(a.title)}</div>
               <div class="activity-meta" style="color:white; opacity:0.95; margin-top:8px;">
-                <span><i class="far fa-calendar"></i> ${escapeHtml(dateStr)}</span>
-                <span style="margin-left:12px;"><i class="far fa-clock"></i> ${escapeHtml(timeStr)}</span>
-                <span style="margin-left:12px;"><i class="fas fa-user-friends"></i> ${escapeHtml(spots)}</span>
+                <span><i class="far fa-calendar"></i> \${escapeHtml(dateStr)}</span>
+                <span style="margin-left:12px;"><i class="far fa-clock"></i> \${escapeHtml(timeStr)}</span>
+                <span style="margin-left:12px;"><i class="fas fa-user-friends"></i> \${escapeHtml(spots)}</span>
               </div>
             </div>
             <div class="activity-body" style="padding:16px;">
-              <div style="margin-bottom:10px;color:#475569">Host: ${escapeHtml(hostLabel)}</div>
-              <div class="activity-description" style="margin-bottom:12px;">${escapeHtml(a.description || '')}</div>
-              <div style="margin-bottom:6px;color:#475569"><strong>Points:</strong> ${a.points || 0}</div>
+              <div style="margin-bottom:10px;color:#475569">Host: \${escapeHtml(hostLabel)}</div>
+              <div class="activity-description" style="margin-bottom:12px;">\${escapeHtml(a.description || '')}</div>
+              <div style="margin-bottom:6px;color:#475569"><strong>Points:</strong> \${a.points || 0}</div>
                 <div class="activity-footer" style="display:flex; flex-direction:column; gap: 8px;">
-                  <div style="color:#0f172a; opacity:0.85; align-self: flex-start;">${escapeHtml(a.location || '')}</div>
+                  <div style="color:#0f172a; opacity:0.85; align-self: flex-start;">\${escapeHtml(a.location || '')}</div>
                   <div style="display:flex; gap:8px; align-items:center; justify-content:flex-end;">
-                    <button class="btn btn-sm btn-outline details-activity" data-id="${a.activityID}">Details</button>
-                    ${joinHtml}
-                    ${manageHtml}
+                    <button class="btn btn-sm btn-outline details-activity" data-id="\${a.activityID}">Details</button>
+                    \${joinHtml}
+                    \${manageHtml}
                   </div>
                 </div>
             </div>
@@ -1732,7 +1746,7 @@
         const createPageBtn = (page, text, isActive = false) => {
           const btn = document.createElement('button');
           btn.textContent = text;
-          btn.style.cssText = `padding: 8px 12px; border: 1px solid #93c5fd; background: ${isActive ? 'var(--secondary-blue)' : 'white'}; color: ${isActive ? 'white' : 'var(--primary-blue)'}; border-radius: 6px; cursor: pointer; font-weight: ${isActive ? '600' : '500'}; transition: all 0.2s;`;
+          btn.style.cssText = `padding: 8px 12px; border: 1px solid #93c5fd; background: \${isActive ? 'var(--secondary-blue)' : 'white'}; color: \${isActive ? 'white' : 'var(--primary-blue)'}; border-radius: 6px; cursor: pointer; font-weight: \${isActive ? '600' : '500'}; transition: all 0.2s;`;
           btn.disabled = isActive;
           if (!isActive) {
             btn.addEventListener('mouseover', () => btn.style.background = 'var(--light-blue)');
@@ -1796,49 +1810,49 @@
 
         activitiesContainer.innerHTML = '';
         paginatedList.forEach(a => {
-          const headerStyle = `background: ${getCategoryGradient(a.category)}; padding:18px;`;
+          const headerStyle = `background: \${getCategoryGradient(a.category)}; padding:18px;`;
           const dt = parseDate(a.dateTime);
           const dateStr = dt ? dt.toLocaleDateString() : '';
           const timeStr = dt ? dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
-          const spots = (a.capacity != null && a.capacity !== '') ? `${a.participantCount || 0}/${a.capacity}` : `${a.participantCount || 0}`;
+          const spots = (a.capacity != null && a.capacity !== '') ? `\${a.participantCount || 0}/\${a.capacity}` : `\${a.participantCount || 0}`;
           const hostLabel = a.host || a.ownerName || a.ownerID || '';
 
           let joinHtml = '';
           if (a.joined) {
-            if (isLeaveAllowed(a)) joinHtml = `<button class="btn btn-sm btn-outline leave-activity" data-id="${a.activityID}">Leave</button>`;
+            if (isLeaveAllowed(a)) joinHtml = `<button class="btn btn-sm btn-outline leave-activity" data-id="\${a.activityID}">Leave</button>`;
             else joinHtml = `<button class="btn btn-sm btn-disabled" disabled title="Cannot leave within 24 hours or after completion">Leave</button>`;
           } else {
-            joinHtml = `<button class="btn btn-sm btn-primary join-activity" data-id="${a.activityID}">Join</button>`;
+            joinHtml = `<button class="btn btn-sm btn-primary join-activity" data-id="\${a.activityID}">Join</button>`;
           }
 
           const isOwner = (a.ownerID && profile && String(a.ownerID) === String(profile.userID));
-          const manageHtml = isOwner ? `<button class="btn btn-sm btn-outline edit-activity" data-id="${a.activityID}">Edit</button>
-                                       <button class="btn btn-sm btn-outline delete-activity" data-id="${a.activityID}">Delete</button>` : '';
+          const manageHtml = isOwner ? `<button class="btn btn-sm btn-outline edit-activity" data-id="\${a.activityID}">Edit</button>
+                                       <button class="btn btn-sm btn-outline delete-activity" data-id="\${a.activityID}">Delete</button>` : '';
 
           const card = document.createElement('div');
           card.className = 'activity-card';
           if (a.featured) card.classList.add('featured');
 
           card.innerHTML = `
-            <div class="activity-header" style="${headerStyle}">
-              <div class="activity-type">${escapeHtml(a.category || 'General')}</div>
-              <div class="activity-title" style="color:white; font-size:1.2rem; font-weight:700;">${escapeHtml(a.title)}</div>
+            <div class="activity-header" style="\${headerStyle}">
+              <div class="activity-type">\${escapeHtml(a.category || 'General')}</div>
+              <div class="activity-title" style="color:white; font-size:1.2rem; font-weight:700;">\${escapeHtml(a.title)}</div>
               <div class="activity-meta" style="color:white; opacity:0.95; margin-top:8px;">
-                <span><i class="far fa-calendar"></i> ${escapeHtml(dateStr)}</span>
-                <span style="margin-left:12px;"><i class="far fa-clock"></i> ${escapeHtml(timeStr)}</span>
-                <span style="margin-left:12px;"><i class="fas fa-user-friends"></i> ${escapeHtml(spots)}</span>
+                <span><i class="far fa-calendar"></i> \${escapeHtml(dateStr)}</span>
+                <span style="margin-left:12px;"><i class="far fa-clock"></i> \${escapeHtml(timeStr)}</span>
+                <span style="margin-left:12px;"><i class="fas fa-user-friends"></i> \${escapeHtml(spots)}</span>
               </div>
             </div>
             <div class="activity-body" style="padding:16px;">
-              <div style="margin-bottom:10px;color:#475569">Host: ${escapeHtml(hostLabel)}</div>
-              <div class="activity-description" style="margin-bottom:12px;">${escapeHtml(a.description || '')}</div>
-              <div style="margin-bottom:6px;color:#475569"><strong>Points:</strong> ${a.points || 0}</div>
+              <div style="margin-bottom:10px;color:#475569">Host: \${escapeHtml(hostLabel)}</div>
+              <div class="activity-description" style="margin-bottom:12px;">\${escapeHtml(a.description || '')}</div>
+              <div style="margin-bottom:6px;color:#475569"><strong>Points:</strong> \${a.points || 0}</div>
                 <div class="activity-footer" style="display:flex; flex-direction:column; gap: 8px;">
-                  <div style="color:#0f172a; opacity:0.85; align-self: flex-start;">${escapeHtml(a.location || '')}</div>
+                  <div style="color:#0f172a; opacity:0.85; align-self: flex-start;">\${escapeHtml(a.location || '')}</div>
                   <div style="display:flex; gap:8px; align-items:center; justify-content:flex-end;">
-                    <button class="btn btn-sm btn-outline details-activity" data-id="${a.activityID}">Details</button>
-                    ${joinHtml}
-                    ${manageHtml}
+                    <button class="btn btn-sm btn-outline details-activity" data-id="\${a.activityID}">Details</button>
+                    \${joinHtml}
+                    \${manageHtml}
                   </div>
                 </div>
             </div>
@@ -1915,18 +1929,18 @@
           item.className = 'my-activity-item';
           item.innerHTML = `
             <div class="my-activity-info">
-              <h4>${escapeHtml(a.title)}</h4>
+              <h4>\${escapeHtml(a.title)}</h4>
               <div class="my-activity-details">
-                <span><i class="far fa-calendar"></i> ${escapeHtml(dateStr)} ${escapeHtml(timeStr)}</span>
-                <span><i class="far fa-clock"></i> ${escapeHtml(a.location || '')}</span>
-                <span><i class="fas fa-star"></i> ${escapeHtml(a.points || 0)} pts</span>
-                <span style="margin-left:8px;color:#64748b">Host: ${escapeHtml(hostLabel)}</span>
-                <span style="margin-left:8px;color:#64748b"><strong>Status:</strong> ${escapeHtml(statusLabel)}</span>
+                <span><i class="far fa-calendar"></i> \${escapeHtml(dateStr)} \${escapeHtml(timeStr)}</span>
+                <span><i class="far fa-clock"></i> \${escapeHtml(a.location || '')}</span>
+                <span><i class="fas fa-star"></i> \${escapeHtml(a.points || 0)} pts</span>
+                <span style="margin-left:8px;color:#64748b">Host: \${escapeHtml(hostLabel)}</span>
+                <span style="margin-left:8px;color:#64748b"><strong>Status:</strong> \${escapeHtml(statusLabel)}</span>
               </div>
             </div>
             <div class="my-activity-actions">
-              <button class="btn btn-outline view-details" data-id="${a.activityID}"><i class="fas fa-eye"></i> Details</button>
-              ${leaveAllowed ? `<button class="btn btn-outline leave-activity" data-id="${a.activityID}"><i class="fas fa-times"></i> Leave</button>` : `<button class="btn btn-disabled" disabled title="Cannot leave within 24 hours or after completion">Leave</button>`}
+              <button class="btn btn-outline view-details" data-id="\${a.activityID}"><i class="fas fa-eye"></i> Details</button>
+              \${leaveAllowed ? `<button class="btn btn-outline leave-activity" data-id="\${a.activityID}"><i class="fas fa-times"></i> Leave</button>` : `<button class="btn btn-disabled" disabled title="Cannot leave within 24 hours or after completion">Leave</button>`}
             </div>
           `;
           myActivitiesList.appendChild(item);
@@ -1972,7 +1986,7 @@
         const createPageBtn = (page, text, isActive = false) => {
           const btn = document.createElement('button');
           btn.textContent = text;
-          btn.style.cssText = `padding: 8px 12px; border: 1px solid #93c5fd; background: ${isActive ? 'var(--secondary-blue)' : 'white'}; color: ${isActive ? 'white' : 'var(--primary-blue)'}; border-radius: 6px; cursor: pointer; font-weight: ${isActive ? '600' : '500'}; transition: all 0.2s;`;
+          btn.style.cssText = `padding: 8px 12px; border: 1px solid #93c5fd; background: \${isActive ? 'var(--secondary-blue)' : 'white'}; color: \${isActive ? 'white' : 'var(--primary-blue)'}; border-radius: 6px; cursor: pointer; font-weight: \${isActive ? '600' : '500'}; transition: all 0.2s;`;
           btn.disabled = isActive;
           if (!isActive) {
             btn.addEventListener('mouseover', () => btn.style.background = 'var(--light-blue)');
@@ -2019,18 +2033,18 @@
           item.className = 'my-activity-item';
           item.innerHTML = `
             <div class="my-activity-info">
-              <h4>${escapeHtml(a.title)}</h4>
+              <h4>\${escapeHtml(a.title)}</h4>
               <div class="my-activity-details">
-                <span><i class="far fa-calendar"></i> ${escapeHtml(dateStr)} ${escapeHtml(timeStr)}</span>
-                <span><i class="far fa-clock"></i> ${escapeHtml(a.location || '')}</span>
-                <span><i class="fas fa-star"></i> ${escapeHtml(a.points || 0)} pts</span>
-                <span style="margin-left:8px;color:#64748b">Host: ${escapeHtml(hostLabel)}</span>
-                <span style="margin-left:8px;color:#64748b"><strong>Status:</strong> ${escapeHtml(statusLabel)}</span>
+                <span><i class="far fa-calendar"></i> \${escapeHtml(dateStr)} \${escapeHtml(timeStr)}</span>
+                <span><i class="far fa-clock"></i> \${escapeHtml(a.location || '')}</span>
+                <span><i class="fas fa-star"></i> \${escapeHtml(a.points || 0)} pts</span>
+                <span style="margin-left:8px;color:#64748b">Host: \${escapeHtml(hostLabel)}</span>
+                <span style="margin-left:8px;color:#64748b"><strong>Status:</strong> \${escapeHtml(statusLabel)}</span>
               </div>
             </div>
             <div class="my-activity-actions">
-              <button class="btn btn-outline view-details" data-id="${a.activityID}"><i class="fas fa-eye"></i> Details</button>
-              ${leaveAllowed ? `<button class="btn btn-outline leave-activity" data-id="${a.activityID}"><i class="fas fa-times"></i> Leave</button>` : `<button class="btn btn-disabled" disabled title="Cannot leave within 24 hours or after completion">Leave</button>`}
+              <button class="btn btn-outline view-details" data-id="\${a.activityID}"><i class="fas fa-eye"></i> Details</button>
+              \${leaveAllowed ? `<button class="btn btn-outline leave-activity" data-id="\${a.activityID}"><i class="fas fa-times"></i> Leave</button>` : `<button class="btn btn-disabled" disabled title="Cannot leave within 24 hours or after completion">Leave</button>`}
             </div>
           `;
           myActivitiesList.appendChild(item);
@@ -2081,14 +2095,14 @@
         const timeStr = dt ? dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
         const hostLabel = a.host || a.ownerName || a.ownerID || '';
         activityDetailBody.innerHTML = `
-          <h3>${escapeHtml(a.title)}</h3>
-          <div style="color:#64748b">${escapeHtml(dateStr)} • ${escapeHtml(timeStr)} • ${escapeHtml(a.location || '')}</div>
-          <div style="margin-top:12px">${escapeHtml(a.description || '')}</div>
-          <div style="margin-top:12px"><strong>Category:</strong> ${escapeHtml(a.category || '')}</div>
-          <div style="margin-top:6px"><strong>Host:</strong> ${escapeHtml(hostLabel)}</div>
-          <div style="margin-top:6px"><strong>Participants:</strong> ${a.participantCount || 0}${a.capacity ? ' / ' + a.capacity : ''}</div>
-          <div style="margin-top:6px"><strong>Points:</strong> ${a.points || 0}</div>
-          <div style="margin-top:6px"><strong>Status:</strong> ${escapeHtml(a.status || '')}</div>
+          <h3>\${escapeHtml(a.title)}</h3>
+          <div style="color:#64748b">\${escapeHtml(dateStr)} • \${escapeHtml(timeStr)} • \${escapeHtml(a.location || '')}</div>
+          <div style="margin-top:12px">\${escapeHtml(a.description || '')}</div>
+          <div style="margin-top:12px"><strong>Category:</strong> \${escapeHtml(a.category || '')}</div>
+          <div style="margin-top:6px"><strong>Host:</strong> \${escapeHtml(hostLabel)}</div>
+          <div style="margin-top:6px"><strong>Participants:</strong> \${a.participantCount || 0}\${a.capacity ? ' / ' + a.capacity : ''}</div>
+          <div style="margin-top:6px"><strong>Points:</strong> \${a.points || 0}</div>
+          <div style="margin-top:6px"><strong>Status:</strong> \${escapeHtml(a.status || '')}</div>
         `;
         if (activityDetailModal) activityDetailModal.classList.add('show');
         if (dropdownBackdrop) dropdownBackdrop.classList.add('active');
@@ -2126,7 +2140,7 @@
               const dd = String(dt.getDate()).padStart(2,'0');
               const hh = String(dt.getHours()).padStart(2,'0');
               const min = String(dt.getMinutes()).padStart(2,'0');
-              cf.dateTime.value = `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+              cf.dateTime.value = `\${yyyy}-\${mm}-\${dd}T\${hh}:\${min}`;
             } else cf.dateTime.value = '';
           } else cf.dateTime.value = '';
         }
@@ -2226,7 +2240,7 @@
       (function setActiveNav() {
         try {
           const links = document.querySelectorAll('.nav-links a');
-          const current = window.location.pathname.split('/').pop() || 'Activity.html';
+          const current = window.location.pathname.split('/').pop() || 'Activity.jsp';
           links.forEach(a => {
             const href = (a.getAttribute('href') || '').split('/').pop();
             if (href === current) a.classList.add('active'); else a.classList.remove('active');

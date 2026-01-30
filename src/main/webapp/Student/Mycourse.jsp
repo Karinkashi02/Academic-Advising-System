@@ -1,3 +1,17 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.*" %>
+<%
+    // Session check for student role
+    if (session.getAttribute("role") == null || !"student".equals(session.getAttribute("role"))) {
+        response.sendRedirect(request.getContextPath() + "/index.jsp?error=unauthorized");
+        return;
+    }
+    
+    // Get URL parameters for error/success messages
+    String error = request.getParameter("error");
+    String success = request.getParameter("success");
+    String message = request.getParameter("message");
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -925,11 +939,11 @@
             <p>Student Portal</p>
         </div>
         <ul class="nav-links">
-            <li><a href="Dashboard.html"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
-            <li><a href="Mycourse.html" class="active"><i class="fas fa-book"></i> <span>My Courses</span></a></li>
-            <li><a href="UpdateCourse.html"><i class="fas fa-edit"></i> <span>Update Grade</span></a></li>
-            <li><a href="AdvisingSessions.html"><i class="fas fa-calendar-alt"></i> <span>Advising Sessions</span></a></li>
-            <li><a href="Activity.html"><i class="fas fa-chart-line"></i> <span>Activity</span></a></li>
+            <li><a href="Dashboard.jsp"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
+            <li><a href="Mycourse.jsp" class="active"><i class="fas fa-book"></i> <span>My Courses</span></a></li>
+            <li><a href="UpdateCourse.jsp"><i class="fas fa-edit"></i> <span>Update Grade</span></a></li>
+            <li><a href="AdvisingSessions.jsp"><i class="fas fa-calendar-alt"></i> <span>Advising Sessions</span></a></li>
+            <li><a href="Activity.jsp"><i class="fas fa-chart-line"></i> <span>Activity</span></a></li>
         </ul>
     </nav>
 
@@ -955,7 +969,7 @@
 
                     <div class="dropdown-menu" id="dropdownMenu">
                       <div class="dropdown-header" id="profileMenuHeader" style="padding:12px 20px; background:#f8fafc; border-bottom:1px solid #e5e7eb; font-weight:600; color:var(--primary-blue);"></div>
-                      <a href="Profile.html" class="dropdown-item"><i class="fas fa-user-circle"></i> My Profile</a>
+                      <a href="Profile.jsp" class="dropdown-item"><i class="fas fa-user-circle"></i> My Profile</a>
                       <a href="#" class="dropdown-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
                     </div>
                 </div>
@@ -1370,21 +1384,21 @@
                 if (String(statusText).toLowerCase() === 'completed') statusClass = 'status-completed';
                 else if (String(statusText).toLowerCase() === 'ongoing') statusClass = 'status-ongoing';
 
-                const gradeHtml = course.grade ? `<span class="grade-badge">${escapeHtml(course.grade)}</span>` : `<span class="grade-badge na">-</span>`;
+                const gradeHtml = course.grade ? `<span class="grade-badge">\${escapeHtml(course.grade)}</span>` : `<span class="grade-badge na">-</span>`;
 
                 card.innerHTML = `
                     <div class="course-header">
-                        <div class="course-code">${escapeHtml(course.courseID || '')}</div>
-                        <div class="course-name">${escapeHtml(course.courseName || '')}</div>
-                        <div class="course-credits"><i class="fas fa-clock"></i> <span>${escapeHtml(String(course.creditHour || '0'))} Credit Hours</span></div>
-                        <div class="course-status"><span class="status-badge ${statusClass}">${escapeHtml(statusText)}</span></div>
+                        <div class="course-code">\${escapeHtml(course.courseID || '')}</div>
+                        <div class="course-name">\${escapeHtml(course.courseName || '')}</div>
+                        <div class="course-credits"><i class="fas fa-clock"></i> <span>\${escapeHtml(String(course.creditHour || '0'))} Credit Hours</span></div>
+                        <div class="course-status"><span class="status-badge \${statusClass}">\${escapeHtml(statusText)}</span></div>
                     </div>
                     <div class="course-body">
                         <div class="course-info">
-                            <div class="info-item"><span class="info-label">Semester</span><span class="info-value">Semester ${escapeHtml(String(course.semester || ''))}</span></div>
-                            <div class="info-item"><span class="info-label">Program</span><span class="info-value">${escapeHtml(course.program || '')}</span></div>
-                            <div class="info-item"><span class="info-label">${(String(course.status || '').toLowerCase() === 'completed') ? 'Final Grade' : 'Current Grade'}</span>
-                                ${gradeHtml}
+                            <div class="info-item"><span class="info-label">Semester</span><span class="info-value">Semester \${escapeHtml(String(course.semester || ''))}</span></div>
+                            <div class="info-item"><span class="info-label">Program</span><span class="info-value">\${escapeHtml(course.program || '')}</span></div>
+                            <div class="info-item"><span class="info-label">\${(String(course.status || '').toLowerCase() === 'completed') ? 'Final Grade' : 'Current Grade'}</span>
+                                \${gradeHtml}
                             </div>
                         </div>
                     </div>
@@ -1398,11 +1412,11 @@
                 const paginationDiv = document.createElement('div');
                 paginationDiv.className = 'grid-pagination';
                 paginationDiv.style = 'display:flex;justify-content:center;gap:10px;margin-top:30px;flex-wrap:wrap;';
-                let paginationHtml = `<button id="gridPrevBtn" class="btn btn-outline" style="flex:0 0 auto;" ${currentGridPage === 0 ? 'disabled' : ''}>Prev</button>`;
+                let paginationHtml = `<button id="gridPrevBtn" class="btn btn-outline" style="flex:0 0 auto;" \${currentGridPage === 0 ? 'disabled' : ''}>Prev</button>`;
                 for (let i = 0; i < totalPages; i++) {
-                    paginationHtml += `<button id="gridPageBtn${i}" class="btn btn-outline" style="flex:0 0 auto;${i === currentGridPage ? 'background:var(--secondary-blue);color:white;' : ''}">${i + 1}</button>`;
+                    paginationHtml += `<button id="gridPageBtn\${i}" class="btn btn-outline" style="flex:0 0 auto;\${i === currentGridPage ? 'background:var(--secondary-blue);color:white;' : ''}">\${i + 1}</button>`;
                 }
-                paginationHtml += `<button id="gridNextBtn" class="btn btn-outline" style="flex:0 0 auto;" ${currentGridPage >= totalPages - 1 ? 'disabled' : ''}>Next</button>`;
+                paginationHtml += `<button id="gridNextBtn" class="btn btn-outline" style="flex:0 0 auto;" \${currentGridPage >= totalPages - 1 ? 'disabled' : ''}>Next</button>`;
                 paginationDiv.innerHTML = paginationHtml;
                 courseGrid.insertAdjacentElement('afterend', paginationDiv);
 
@@ -1420,7 +1434,7 @@
                     }
                 });
                 for (let i = 0; i < totalPages; i++) {
-                    document.getElementById(`gridPageBtn${i}`)?.addEventListener('click', function() {
+                    document.getElementById(`gridPageBtn\${i}`)?.addEventListener('click', function() {
                         currentGridPage = i;
                         renderCourseCards(list);
                     });
@@ -1455,13 +1469,13 @@
                 if (String(statusText).toLowerCase() === 'completed') statusClass = 'status-completed';
                 else if (String(statusText).toLowerCase() === 'ongoing') statusClass = 'status-ongoing';
                 tr.innerHTML = `
-                    <td><strong>${escapeHtml(course.courseID)}</strong></td>
-                    <td>${escapeHtml(course.courseName)}</td>
-                    <td>${escapeHtml(String(course.creditHour || 0))}</td>
-                    <td>Semester ${escapeHtml(String(course.semester || ''))}</td>
-                    <td>${escapeHtml(course.program || '')}</td>
-                    <td>${course.grade ? `<span class="grade">${escapeHtml(course.grade)}</span>` : '-'}</td>
-                    <td><span class="status-badge ${statusClass}">${escapeHtml(statusText)}</span></td>
+                    <td><strong>\${escapeHtml(course.courseID)}</strong></td>
+                    <td>\${escapeHtml(course.courseName)}</td>
+                    <td>\${escapeHtml(String(course.creditHour || 0))}</td>
+                    <td>Semester \${escapeHtml(String(course.semester || ''))}</td>
+                    <td>\${escapeHtml(course.program || '')}</td>
+                    <td>\${course.grade ? `<span class="grade">\${escapeHtml(course.grade)}</span>` : '-'}</td>
+                    <td><span class="status-badge \${statusClass}">\${escapeHtml(statusText)}</span></td>
                 `;
                 coursesTableBody.appendChild(tr);
             });
@@ -1472,11 +1486,11 @@
                 const paginationDiv = document.createElement('div');
                 paginationDiv.className = 'table-pagination';
                 paginationDiv.style = 'display:flex;justify-content:center;gap:10px;margin-top:20px;flex-wrap:wrap;';
-                let paginationHtml = `<button id="tablePrevBtn" class="btn btn-outline" style="flex:0 0 auto;" ${currentTablePage === 0 ? 'disabled' : ''}>Prev</button>`;
+                let paginationHtml = `<button id="tablePrevBtn" class="btn btn-outline" style="flex:0 0 auto;" \${currentTablePage === 0 ? 'disabled' : ''}>Prev</button>`;
                 for (let i = 0; i < totalPages; i++) {
-                    paginationHtml += `<button id="tablePageBtn${i}" class="btn btn-outline" style="flex:0 0 auto;${i === currentTablePage ? 'background:var(--secondary-blue);color:white;' : ''}">${i + 1}</button>`;
+                    paginationHtml += `<button id="tablePageBtn\${i}" class="btn btn-outline" style="flex:0 0 auto;\${i === currentTablePage ? 'background:var(--secondary-blue);color:white;' : ''}">\${i + 1}</button>`;
                 }
-                paginationHtml += `<button id="tableNextBtn" class="btn btn-outline" style="flex:0 0 auto;" ${currentTablePage >= totalPages - 1 ? 'disabled' : ''}>Next</button>`;
+                paginationHtml += `<button id="tableNextBtn" class="btn btn-outline" style="flex:0 0 auto;" \${currentTablePage >= totalPages - 1 ? 'disabled' : ''}>Next</button>`;
                 paginationDiv.innerHTML = paginationHtml;
                 document.querySelector('.detailed-view')?.insertAdjacentElement('afterend', paginationDiv);
 
@@ -1494,7 +1508,7 @@
                     }
                 });
                 for (let i = 0; i < totalPages; i++) {
-                    document.getElementById(`tablePageBtn${i}`)?.addEventListener('click', function() {
+                    document.getElementById(`tablePageBtn\${i}`)?.addEventListener('click', function() {
                         currentTablePage = i;
                         renderTable(list);
                     });

@@ -1,3 +1,11 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.*" %>
+<%
+    // Get URL parameters for error/success messages
+    String error = request.getParameter("error");
+    String success = request.getParameter("success");
+    String message = request.getParameter("message");
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -138,10 +146,10 @@
                 <div class="logo-main">Advise<span>.</span></div>
             </div>
             <nav class="sidebar-nav" aria-label="Primary">
-                <a href="advisor_dashboard.html" class="nav-item active"><i class="fas fa-home"></i><span>Dashboard</span></a>
-                <a href="manage_student.html" class="nav-item"><i class="fas fa-users"></i><span>My Students</span></a>
-                <a href="view_advising_session.html" class="nav-item"><i class="fas fa-calendar-check"></i><span>Sessions</span></a>
-                <a href="advisor_report.html" class="nav-item"><i class="fas fa-chart-bar"></i><span>Reports</span></a>
+                <a href="advisor_dashboard.jsp" class="nav-item active"><i class="fas fa-home"></i><span>Dashboard</span></a>
+                <a href="manage_student.jsp" class="nav-item"><i class="fas fa-users"></i><span>My Students</span></a>
+                <a href="view_advising_session.jsp" class="nav-item"><i class="fas fa-calendar-check"></i><span>Sessions</span></a>
+                <a href="advisor_report.jsp" class="nav-item"><i class="fas fa-chart-bar"></i><span>Reports</span></a>
             </nav>
         </div>
 
@@ -208,7 +216,7 @@
 
                         <div class="action-buttons" role="group" aria-label="Profile actions">
                             <button class="btn btn-primary" id="editProfileBtn">Edit Profile</button>
-                            <a class="btn btn-secondary" href="advisor_dashboard.html">Back to Dashboard</a>
+                            <a class="btn btn-secondary" href="advisor_dashboard.jsp">Back to Dashboard</a>
                         </div>
                     </div>
                 </section>
@@ -386,7 +394,7 @@
           displayOfficeLocation.textContent = adv.officeLoc || adv.officeLocation || '';
           const numSTD = (adv.numSTD === null || typeof adv.numSTD === 'undefined') ? '' : adv.numSTD;
           const maxSTD = (adv.maxSTD === null || typeof adv.maxSTD === 'undefined') ? '' : adv.maxSTD;
-          displayNumStd.textContent = (numSTD || maxSTD) ? `${numSTD || 0} / ${maxSTD || '—'}` : '—';
+          displayNumStd.textContent = (numSTD || maxSTD) ? (numSTD || 0) + ' / ' + (maxSTD || '—') : '—';
         } catch (err){
           console.error('loadAdvisor', err);
           showToast('Could not load advisor data', 'error');
@@ -493,7 +501,7 @@
         modalCloseBtn.addEventListener('click', closeModal);
         cancelEditBtn.addEventListener('click', closeModal);
         document.getElementById('logoutBtn').addEventListener('click', logout);
-        document.getElementById('profileHomeBtn').addEventListener('click', ()=> window.location.href = 'advisor_dashboard.html');
+        document.getElementById('profileHomeBtn').addEventListener('click', ()=> window.location.href = 'advisor_dashboard.jsp');
 
         // close modal on ESC
         document.addEventListener('keydown', (e)=> { if (e.key === 'Escape') closeModal(); });

@@ -1,3 +1,52 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.*" %>
+<%
+    // Get URL parameters for error/success messages
+    String error = request.getParameter("error");
+    String reg = request.getParameter("reg");
+    
+    // Prepare error/success messages
+    String errorTitle = "";
+    String errorMessage = "";
+    String messageType = "error";
+    boolean showModal = false;
+    boolean switchToRegister = false;
+    
+    if (error != null) {
+        showModal = true;
+        switch (error) {
+            case "invalid":
+                errorTitle = "Login Failed";
+                errorMessage = "Invalid username or password. Please check your credentials and try again.";
+                break;
+            case "db_error":
+                errorTitle = "Database Error";
+                errorMessage = "A database error occurred. Please try again later or contact support.";
+                break;
+            case "advisor_full":
+                errorTitle = "Advisor Full";
+                errorMessage = "The selected advisor has reached their maximum student capacity. Please select another advisor.";
+                break;
+            case "username_exists":
+                errorTitle = "Username Already Taken";
+                errorMessage = "This username is already registered in the system. Please choose a different username.";
+                switchToRegister = true;
+                break;
+            case "email_exists":
+                errorTitle = "Email Already Registered";
+                errorMessage = "This email address is already associated with an account. Please use a different email or try logging in.";
+                switchToRegister = true;
+                break;
+        }
+    }
+    
+    if ("success".equals(reg)) {
+        showModal = true;
+        messageType = "success";
+        errorTitle = "Registration Successful";
+        errorMessage = "Your account has been created successfully! You can now log in with your credentials.";
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -271,6 +320,7 @@
             filter: drop-shadow(0 0 3px rgba(38, 162, 105, 0.5));
         }
         
+       
         .credential-item {
             padding: 10px;
             margin: 8px 0;
@@ -422,6 +472,26 @@
         }
         
         .switch-form a:hover {
+            color: #2d87d8;
+            text-decoration: underline;
+        }
+        
+        /* Forgot password link */
+        .forgot-password {
+            text-align: right;
+            margin-top: -10px;
+            margin-bottom: 20px;
+        }
+        
+        .forgot-password a {
+            color: #1a5fb4;
+            font-size: 13px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .forgot-password a:hover {
             color: #2d87d8;
             text-decoration: underline;
         }
@@ -760,7 +830,7 @@
                 </li>
                 <li>
                     <i class="fas fa-comments"></i>
-                    <span>Real-time Activities Among Peers</span>
+                    <span>Real-time communication with advisors</span>
                 </li>
                 <li>
                     <i class="fas fa-chart-line"></i>
@@ -821,6 +891,10 @@
                     <div class="input-group">
                         <label for="login-password">Password <span class="required">*</span></label>
                         <input type="password" id="login-password" name="password" required placeholder="Enter your password">
+                    </div>
+
+                    <div class="forgot-password">
+                        <a href="#">Forgot Password?</a>
                     </div>
 
                     <button type="submit" class="submit-btn">
@@ -918,11 +992,6 @@
                                 <option value="">Select Semester</option>
                                 <option value="1">Semester 1</option>
                                 <option value="2">Semester 2</option>
-                                <option value="3">Semester 3</option>
-                                <option value="4">Semester 4</option>
-                                <option value="5">Semester 5</option>
-                                <option value="6">Semester 6</option>
-                                <option value="7">Semester 7</option>
                             </select>
                         </div>
 
@@ -1039,31 +1108,15 @@
             }
         });
 
-        // Check for URL parameters on page load
-        window.addEventListener('load', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            
-            // Check for login errors
-            if (urlParams.get('error') === 'invalid') {
-                showModal('Login Failed', 'Invalid username or password. Please check your credentials and try again.');
-            } else if (urlParams.get('error') === 'db_error') {
-                showModal('Database Error', 'A database error occurred. Please try again later or contact support.');
-            } else if (urlParams.get('error') === 'advisor_full') {
-                showModal('Advisor Full', 'The selected advisor has reached their maximum student capacity. Please select another advisor.');
-            } else if (urlParams.get('error') === 'username_exists') {
-                showModal('Username Already Taken', 'This username is already registered in the system. Please choose a different username.');
-                switchTab('register');
-            } else if (urlParams.get('error') === 'email_exists') {
-                showModal('Email Already Registered', 'This email address is already associated with an account. Please use a different email or try logging in.');
-                switchTab('register');
-            }
-            
-            // Check for registration success
-            if (urlParams.get('reg') === 'success') {
-                showModal('Registration Successful', 'Your account has been created successfully! You can now log in with your credentials.', 'success');
-                switchTab('login');
-            }
-        });
+        // JSP-driven modal display
+        <% if (showModal) { %>
+            window.addEventListener('load', function() {
+                showModal('<%= errorTitle %>', '<%= errorMessage %>', '<%= messageType %>');
+                <% if (switchToRegister) { %>
+                    switchTab('register');
+                <% } %>
+            });
+        <% } %>
 
         // Form validation for registration
         function validateRegistration() {
@@ -1203,7 +1256,7 @@
                 // Build a robust base path in case the app is deployed under a context path.
                 // e.g. /Academic_Advising/index.html -> base = /Academic_Advising
                 const base = window.location.pathname.replace(/\/[^\/]*$/, '') || '';
-                const url = `${base}/api/advisors/available`;
+                const url = base + '/api/advisors/available';
                 const response = await fetch(url, { cache: 'no-store' });
                 if (!response.ok) {
                     throw new Error('Failed to load advisors: ' + response.status);
@@ -1224,27 +1277,25 @@
                     if (!matchesSearch) return;
 
                     const card = document.createElement('div');
-                    card.className = `advisor-card ${advisor.available ? 'available' : 'unavailable'}`;
+                    card.className = 'advisor-card ' + (advisor.available ? 'available' : 'unavailable');
                     
                     // Use the exact properties the servlet provides (officeLocation vs officeLoc mapping)
                     const officeLocation = advisor.officeLocation || advisor.officeLoc || '';
                     const numStudents = advisor.numStudents != null ? advisor.numStudents : advisor.numSTD;
                     const maxStudents = advisor.maxStudents != null ? advisor.maxStudents : advisor.maxSTD;
                     
-                    card.innerHTML = `
-                        <h4>${advisor.name}</h4>
-                        <p><strong>Department:</strong> ${advisor.department || ''}</p>
-                        <p><strong>Expertise:</strong> ${advisor.expertise || ''}</p>
-                        <p><strong>Office Hours:</strong> ${advisor.officeHours || ''}</p>
-                        <p><strong>Location:</strong> ${officeLocation}</p>
-                        <p><strong>Current Students:</strong> ${numStudents}/${maxStudents}</p>
-                        <p class="${advisor.available ? 'status-available' : 'status-full'}">
-                            ${advisor.status || (advisor.available ? 'Available' : 'Full')} ${advisor.available ? `(${advisor.availableSlots} slots remaining)` : ''}
-                        </p>
-                        ${advisor.available ? 
-                            `<div style="margin-top:8px"><label><input type="radio" name="advisorID" value="${advisor.advisorID}" onchange="selectAdvisor(${advisor.advisorID})"> Select this advisor</label></div>` : 
-                            '<em>Currently unavailable</em>'}
-                    `;
+                    card.innerHTML = '<h4>' + advisor.name + '</h4>' +
+                        '<p><strong>Department:</strong> ' + (advisor.department || '') + '</p>' +
+                        '<p><strong>Expertise:</strong> ' + (advisor.expertise || '') + '</p>' +
+                        '<p><strong>Office Hours:</strong> ' + (advisor.officeHours || '') + '</p>' +
+                        '<p><strong>Location:</strong> ' + officeLocation + '</p>' +
+                        '<p><strong>Current Students:</strong> ' + numStudents + '/' + maxStudents + '</p>' +
+                        '<p class="' + (advisor.available ? 'status-available' : 'status-full') + '">' +
+                            (advisor.status || (advisor.available ? 'Available' : 'Full')) + ' ' + (advisor.available ? '(' + advisor.availableSlots + ' slots remaining)' : '') +
+                        '</p>' +
+                        (advisor.available ? 
+                            '<div style="margin-top:8px"><label><input type="radio" name="advisorID" value="' + advisor.advisorID + '" onchange="selectAdvisor(' + advisor.advisorID + ')"> Select this advisor</label></div>' : 
+                            '<em>Currently unavailable</em>');
                     
                     container.appendChild(card);
                 });

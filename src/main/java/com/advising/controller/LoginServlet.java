@@ -41,16 +41,16 @@ public class LoginServlet extends HttpServlet {
 
                 // Redirect to your specific paths
                 if (role.equals("student")) {
-                    response.sendRedirect("Student/Dashboard.html");
+                    response.sendRedirect("Student/Dashboard.jsp");
                 } else {
-                    response.sendRedirect("Advisor/advisor_dashboard.html");
+                    response.sendRedirect("Advisor/advisor_dashboard.jsp");
                 }
             } else {
-                response.sendRedirect("index.html?error=invalid");
+                response.sendRedirect("index.jsp?error=invalid");
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            response.sendRedirect("index.html?error=db_error");
+            response.sendRedirect("index.jsp?error=db_error");
         }
     }
 }

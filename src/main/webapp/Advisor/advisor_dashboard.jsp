@@ -1,3 +1,11 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.*" %>
+<%
+    // Get URL parameters for error/success messages
+    String error = request.getParameter("error");
+    String success = request.getParameter("success");
+    String message = request.getParameter("message");
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -548,19 +556,19 @@
           </div>
             
           <nav class="sidebar-nav">
-            <a href="advisor_dashboard.html" class="nav-item active">
+            <a href="advisor_dashboard.jsp" class="nav-item active">
               <i class="fas fa-home"></i>
               <span>Dashboard</span>
             </a>
-            <a href="manage_student.html" class="nav-item">
+            <a href="manage_student.jsp" class="nav-item">
               <i class="fas fa-users"></i>
               <span>My Advisees</span>
             </a>
-            <a href="view_advising_session.html" class="nav-item">
+            <a href="view_advising_session.jsp" class="nav-item">
               <i class="fas fa-calendar-check"></i>
               <span>Advising Sessions</span>
             </a>
-            <a href="advisor_report.html" class="nav-item">
+            <a href="advisor_report.jsp" class="nav-item">
               <i class="fas fa-chart-bar"></i>
               <span>Reports</span>
             </a>
@@ -572,7 +580,7 @@
             <header class="header">
                 <h1>Dashboard Overview</h1>
                 <div class="header-actions">
-                    <a href="advisor_profile.html" class="profile-btn" title="My Profile"><i class="fas fa-user"></i></a>
+                    <a href="advisor_profile.jsp" class="profile-btn" title="My Profile"><i class="fas fa-user"></i></a>
                     <div class="logout-btn" title="Logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></div>
                 </div>
             </header>
@@ -637,7 +645,7 @@
                                 <option value="pending">Pending</option>
                                 <option value="denied">Denied</option>
                             </select>
-                            <a href="view_advising_session.html" class="btn" style="margin-left:8px;">View All Sessions</a>
+                            <a href="view_advising_session.jsp" class="btn" style="margin-left:8px;">View All Sessions</a>
                         </div>
                     </div>
 
@@ -648,7 +656,7 @@
                     <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
                         <h2>My Advisees</h2>
                         <div>
-                            <a href="manage_student.html" class="btn btn-outline" id="manageAdviseesBtn">Manage Advisees</a>
+                            <a href="manage_student.jsp" class="btn btn-outline" id="manageAdviseesBtn">Manage Advisees</a>
                         </div>
                     </div>
 
@@ -816,22 +824,7 @@
 
           const when = fmtDate(s.sessionDateTime);
 
-          card.innerHTML = `
-            <div class="activity-icon meeting"><i class="fas fa-calendar-check"></i></div>
-            <div class="activity-details">
-              <div style="display:flex;align-items:center;gap:8px">
-                <div class="activity-title">${escapeHtml(s.title || '(no title)')}</div>
-                <span class="status-badge ${statusClass}" title="Status">${escapeHtml(statusLabel)}</span>
-              </div>
-              <div class="activity-description">${escapeHtml(student)} • <span style="color:#666">${escapeHtml(when)}</span></div>
-              ${ notes ? `<div style="margin-top:6px;font-size:13px;color:#445">${escapeHtml(notes)}</div>` : '' }
-              ${ (status === 'denied' || status === 'cancelled' || cancelReason) ? `<div class="cancel-reason">Reason: ${escapeHtml(cancelReason)}</div>` : '' }
-              <div class="activity-meta" style="margin-top:8px;">
-                <div class="activity-time"><i class="far fa-clock"></i> ${escapeHtml(when)}</div>
-                <div class="activity-student"><i class="fas fa-user"></i> ${escapeHtml(student)}</div>
-              </div>
-            </div>
-          `;
+          card.innerHTML = '\n            <div class="activity-icon meeting"><i class="fas fa-calendar-check"></i></div>\n            <div class="activity-details">\n              <div style="display:flex;align-items:center;gap:8px">\n                <div class="activity-title">' + (escapeHtml(s.title || '(no title)')) + '</div>\n                <span class="status-badge ' + (statusClass) + '" title="Status">' + (escapeHtml(statusLabel)) + '</span>\n              </div>\n              <div class="activity-description">' + (escapeHtml(student)) + ' • <span style="color:#666">' + (escapeHtml(when)) + '</span></div>\n              ' + (notes ? '<div style="margin-top:6px;font-size:13px;color:#445">' + escapeHtml(notes) + '</div>' : '') + '\n              ' + ((status === 'denied' || status === 'cancelled' || cancelReason) ? '<div class="cancel-reason">Reason: ' + escapeHtml(cancelReason) + '</div>' : '') + '\n              <div class="activity-meta" style="margin-top:8px;">\n                <div class="activity-time"><i class="far fa-clock"></i> ' + (escapeHtml(when)) + '</div>\n                <div class="activity-student"><i class="fas fa-user"></i> ' + (escapeHtml(student)) + '</div>\n              </div>\n            </div>\n          ';
 
           // actions area
           const actions = document.createElement('div');
@@ -934,15 +927,7 @@
           const cgpa = (s.cgpa === null || typeof s.cgpa === 'undefined') ? 'N/A' : Number(s.cgpa).toFixed(2);
           const credits = s.creditsCompleted === null || typeof s.creditsCompleted === 'undefined' ? 'N/A' : s.creditsCompleted;
           const remark = s.remark || '';
-          card.innerHTML = `
-            <div class="advisee-name">${escapeHtml(name)}</div>
-            <div class="advisee-meta">${escapeHtml(s.program || '')} • Year ${escapeHtml(String(s.yearOfStudy || ''))}</div>
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
-              <div style="font-size:13px;color:#666">CGPA: <strong>${escapeHtml(cgpa)}</strong></div>
-              <div style="font-size:13px;color:#666">Credits: <strong>${escapeHtml(String(credits))}</strong></div>
-            </div>
-            ${remark ? `<div style="margin-top:8px;font-size:12px;padding:8px;background:#f0f8ff;border-left:3px solid #3498db;border-radius:4px;color:#333;"><strong>Remark:</strong> ${escapeHtml(remark)}</div>` : ''}
-          `;
+          card.innerHTML = '\n            <div class="advisee-name">' + (escapeHtml(name)) + '</div>\n            <div class="advisee-meta">' + (escapeHtml(s.program || '')) + ' • Year ' + (escapeHtml(String(s.yearOfStudy || ''))) + '</div>\n            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">\n              <div style="font-size:13px;color:#666">CGPA: <strong>' + (escapeHtml(cgpa)) + '</strong></div>\n              <div style="font-size:13px;color:#666">Credits: <strong>' + (escapeHtml(String(credits))) + '</strong></div>\n            </div>\n            ' + (remark ? '<div style="margin-top:8px;font-size:12px;padding:8px;background:#f0f8ff;border-left:3px solid #3498db;border-radius:4px;color:#333;"><strong>Remark:</strong> ' + escapeHtml(remark) + '</div>' : '') + '\n          ';
           container.appendChild(card);
         });
       }

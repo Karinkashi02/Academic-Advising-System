@@ -1,3 +1,11 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.*" %>
+<%
+    // Get URL parameters for error/success messages
+    String error = request.getParameter("error");
+    String success = request.getParameter("success");
+    String message = request.getParameter("message");
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1530,19 +1538,19 @@
             </div>
             
             <nav class="sidebar-nav">
-                <a href="advisor_dashboard.html" class="nav-item">
+                <a href="advisor_dashboard.jsp" class="nav-item">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="manage_student.html" class="nav-item">
+                <a href="manage_student.jsp" class="nav-item">
                     <i class="fas fa-users"></i>
                     <span>My Advisees</span>
                 </a>
-                <a href="view_advising_session.html" class="nav-item">
+                <a href="view_advising_session.jsp" class="nav-item">
                     <i class="fas fa-calendar-check"></i>
                     <span>Advising Sessions</span>
                 </a>
-                <a href="advisor_report.html" class="nav-item active">
+                <a href="advisor_report.jsp" class="nav-item active">
                     <i class="fas fa-chart-bar"></i>
                     <span>Reports</span>
                 </a>
@@ -1565,7 +1573,7 @@
                     <button class="btn btn-secondary" id="printReportBtn">
                         <i class="fas fa-print"></i> Print
                     </button>
-                    <a href="advisor_profile.html" class="profile-btn" title="Advisor Profile">👤</a>
+                    <a href="advisor_profile.jsp" class="profile-btn" title="Advisor Profile">👤</a>
                     <div class="logout-btn" title="Logout">🚪</div>
                 </div>
             </header>
@@ -1887,7 +1895,7 @@
                                         </table>
                                     </div>
                                     <div class="view-all-link">
-                                        <a href="view_advising_session.html">View all upcoming sessions →</a>
+                                        <a href="view_advising_session.jsp">View all upcoming sessions →</a>
                                     </div>
                                 </div>
                             </div>
@@ -2354,20 +2362,13 @@
                 };
 
                 const statusItem = document.createElement('div');
-                statusItem.className = `status-item ${colorMap[item.name] || ''}`;
+                statusItem.className = 'status-item ' + (colorMap[item.name] || '');
                 statusItem.setAttribute('data-status', item.name);
 
                 const total = data.reduce((sum, d) => sum + d.value, 0);
                 const percentage = Math.round((item.value / total) * 100);
 
-                statusItem.innerHTML = `
-                    <div class="status-checkbox"></div>
-                    <div class="status-info">
-                        <div class="status-name">${item.name}</div>
-                        <div class="status-count">${item.value} students</div>
-                    </div>
-                    <div class="status-percentage">${percentage}%</div>
-                `;
+                statusItem.innerHTML = '\n                    <div class="status-checkbox"></div>\n                    <div class="status-info">\n                        <div class="status-name">' + (item.name) + '</div>\n                        <div class="status-count">' + (item.value) + ' students</div>\n                    </div>\n                    <div class="status-percentage">' + (percentage) + '%</div>\n                ';
 
                 statusContainer.appendChild(statusItem);
             });
@@ -2398,13 +2399,7 @@
                 const page = pendingSessionsData.slice(start, start + pendingPerPage);
                 page.forEach(session => {
                     const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${session.no}</td>
-                        <td><strong>${session.title}</strong></td>
-                        <td>${session.type}</td>
-                        <td>${session.scheduled}</td>
-                        <td><span class="status-badge status-badge-pending">Upcoming</span></td>
-                    `;
+                    row.innerHTML = '\n                        <td>' + (session.no) + '</td>\n                        <td><strong>' + (session.title) + '</strong></td>\n                        <td>' + (session.type) + '</td>\n                        <td>' + (session.scheduled) + '</td>\n                        <td><span class="status-badge status-badge-pending">Upcoming</span></td>\n                    ';
                     tableBody.appendChild(row);
                 });
 
@@ -2416,7 +2411,7 @@
                     const paginator = document.createElement('div');
                     paginator.id = 'pendingSessionsPagination';
                     paginator.style = 'display:flex;justify-content:center;gap:10px;margin-top:12px;';
-                    paginator.innerHTML = `<button id="pendingPrev" class="btn-outline" ${currentPendingPage === 0 ? 'disabled' : ''}>Prev</button> <span>Page ${currentPendingPage+1} of ${totalPages}</span> <button id="pendingNext" class="btn-outline" ${currentPendingPage >= totalPages-1 ? 'disabled' : ''}>Next</button>`;
+                    paginator.innerHTML = '<button id="pendingPrev" class="btn-outline" ' + (currentPendingPage === 0 ? 'disabled' : '') + '>Prev</button> <span>Page ' + (currentPendingPage+1) + ' of ' + (totalPages) + '</span> <button id="pendingNext" class="btn-outline" ' + (currentPendingPage >= totalPages-1 ? 'disabled' : '') + '>Next</button>';
                     tableBody.parentElement.insertAdjacentElement('afterend', paginator);
 
                     document.getElementById('pendingPrev').addEventListener('click', function() {
@@ -2593,11 +2588,11 @@
             
             // Add active class to selected status if provided
             if (statusName) {
-                document.querySelectorAll(`.status-item[data-status="${statusName}"]`).forEach(item => {
+                document.querySelectorAll('.status-item[data-status="' + (statusName) + '"]').forEach(item => {
                     item.classList.add('active');
                 });
                 
-                document.querySelectorAll(`.legend-item[data-status="${statusName}"]`).forEach(item => {
+                document.querySelectorAll('.legend-item[data-status="' + (statusName) + '"]').forEach(item => {
                     item.classList.add('active');
                 });
             }
@@ -2682,7 +2677,7 @@
                 const start = currentPercent;
                 const end = currentPercent + percent;
                 
-                conicGradient += `${item.color} ${start}% ${end}%`;
+                conicGradient += (item.color) + ' ' + (start) + '% ' + (end) + '%';
                 if (index < data.length - 1) {
                     conicGradient += ', ';
                 }
@@ -2732,7 +2727,7 @@
                 highlight.style.width = '100%';
                 highlight.style.height = '100%';
                 highlight.style.borderRadius = '50%';
-                highlight.style.background = `conic-gradient(from 0deg, ${dataItem.color} 0% 100%)`;
+                highlight.style.background = 'conic-gradient(from 0deg, ' + (dataItem.color) + ' 0% 100%)';
                 highlight.style.mask = 'radial-gradient(circle at center, transparent 58%, black 58.5%)';
                 highlight.style.webkitMask = 'radial-gradient(circle at center, transparent 58%, black 58.5%)';
                 highlight.style.opacity = '0.2';
@@ -2811,7 +2806,7 @@
                 
                 const bar = document.createElement('div');
                 bar.className = 'horizontal-bar';
-                bar.style.width = `${barWidth}%`;
+                bar.style.width = (barWidth) + '%';
                 bar.style.backgroundColor = item.color;
                 
                 const barValue = document.createElement('div');
@@ -2845,7 +2840,7 @@
                 colorBox.style.backgroundColor = item.color;
                 
                 const label = document.createElement('span');
-                label.textContent = `${item.name} (${percentage}%)`;
+                label.textContent = (item.name) + ' (' + (percentage) + '%)';
                 
                 legendItem.appendChild(colorBox);
                 legendItem.appendChild(label);
@@ -2877,7 +2872,7 @@
                     highlightDonutSegment(statusName, 'academicDonutChart');
                     
                     // Highlight corresponding status item
-                    document.querySelectorAll(`.status-item[data-status="${statusName}"]`).forEach(item => {
+                    document.querySelectorAll('.status-item[data-status="' + (statusName) + '"]').forEach(item => {
                         item.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
                     });
                 });
@@ -2891,7 +2886,7 @@
                         resetDonutHighlight('academicDonutChart');
                         
                         // Reset status item shadows
-                        document.querySelectorAll(`.status-item[data-status="${statusName}"]`).forEach(item => {
+                        document.querySelectorAll('.status-item[data-status="' + (statusName) + '"]').forEach(item => {
                             if (!item.classList.contains('active')) {
                                 item.style.boxShadow = '';
                             }
@@ -2920,7 +2915,7 @@
                 colorBox.style.backgroundColor = item.color;
                 
                 const label = document.createElement('span');
-                label.textContent = `${item.name} (${percentage}%)`;
+                label.textContent = (item.name) + ' (' + (percentage) + '%)';
                 
                 legendItem.appendChild(colorBox);
                 legendItem.appendChild(label);
@@ -2953,15 +2948,7 @@
                     statusClass = 'status-badge-fail';
                 }
                 
-                row.innerHTML = `
-                    <td><strong>${student.name}</strong></td>
-                    <td>${student.major}</td>
-                    <td>${student.year}</td>
-                    <td><strong>${student.cgpa}</strong></td>
-                    <td><span class="status-badge ${statusClass}">${student.status}</span></td>
-                    <td>${student.lastSession}</td>
-                    <td>${student.nextDue}</td>
-                `;
+                row.innerHTML = '\n                    <td><strong>' + (student.name) + '</strong></td>\n                    <td>' + (student.major) + '</td>\n                    <td>' + (student.year) + '</td>\n                    <td><strong>' + (student.cgpa) + '</strong></td>\n                    <td><span class="status-badge ' + (statusClass) + '">' + (student.status) + '</span></td>\n                    <td>' + (student.lastSession) + '</td>\n                    <td>' + (student.nextDue) + '</td>\n                ';
                 
                 tableBody.appendChild(row);
             });
@@ -2969,9 +2956,9 @@
 
         // Update major students table
         function updateMajorStudentsTable(major, statusFilter = null) {
-            let url = ctx + `/api/advisor/performance?major=${encodeURIComponent(major)}`;
+            let url = ctx + '/api/advisor/performance?major=' + (encodeURIComponent(major));
             if (statusFilter) {
-                url += `&status=${encodeURIComponent(statusFilter)}`;
+                url += '&status=' + (encodeURIComponent(statusFilter));
             }
 
             fetch(url)
@@ -2996,12 +2983,8 @@
 
                     if (topStudents.length === 0) {
                         const row = document.createElement('tr');
-                        const filterText = statusFilter ? ` with status "${statusFilter}"` : '';
-                        row.innerHTML = `
-                            <td colspan="4" style="text-align: center; color: var(--text-light); padding: 30px;">
-                                No students found in ${major}${filterText}
-                            </td>
-                        `;
+                        const filterText = statusFilter ? ' with status "' + (statusFilter) + '"' : '';
+                        row.innerHTML = '\n                            <td colspan="4" style="text-align: center; color: var(--text-light); padding: 30px;">\n                                No students found in ' + (major) + (filterText) + '\n                            </td>\n                        ';
                         tableBody.appendChild(row);
                     } else {
                         topStudents.forEach((student, index) => {
@@ -3015,14 +2998,7 @@
                                 statusClass = 'status-badge-fail';
                             }
 
-                            row.innerHTML = `
-                                <td>
-                                    <span class="rank-badge">${index + 1}</span>
-                                </td>
-                                <td style="font-weight: 600;">${student.name}</td>
-                                <td><strong>${student.cgpa}</strong></td>
-                                <td><span class="status-badge ${statusClass}">${student.status}</span></td>
-                            `;
+                            row.innerHTML = '\n                                <td>\n                                    <span class="rank-badge">' + (index + 1) + '</span>\n                                </td>\n                                <td style="font-weight: 600;">' + (student.name) + '</td>\n                                <td><strong>' + (student.cgpa) + '</strong></td>\n                                <td><span class="status-badge ' + (statusClass) + '">' + (student.status) + '</span></td>\n                            ';
 
                             tableBody.appendChild(row);
                         });

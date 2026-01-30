@@ -1,4 +1,17 @@
-<!-- name=manage_student.html -->
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.*" %>
+<%
+    // Session check for advisor role
+    if (session.getAttribute("role") == null || !"advisor".equals(session.getAttribute("role"))) {
+        response.sendRedirect(request.getContextPath() + "/index.html?error=unauthorized");
+        return;
+    }
+    
+    // Get URL parameters for error/success messages
+    String error = request.getParameter("error");
+    String success = request.getParameter("success");
+    String message = request.getParameter("message");
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -538,10 +551,10 @@
             </div>
 
             <nav class="sidebar-nav">
-                <a href="advisor_dashboard.html" class="nav-item"><i class="fas fa-home"></i><span>Dashboard</span></a>
-                <a href="manage_student.html" class="nav-item active"><i class="fas fa-users"></i><span>My Advisees</span></a>
-                <a href="view_advising_session.html" class="nav-item"><i class="fas fa-calendar-check"></i><span>Advising Sessions</span></a>
-                <a href="advisor_report.html" class="nav-item"><i class="fas fa-chart-bar"></i><span>Reports</span></a>
+                <a href="advisor_dashboard.jsp" class="nav-item"><i class="fas fa-home"></i><span>Dashboard</span></a>
+                <a href="manage_student.jsp" class="nav-item active"><i class="fas fa-users"></i><span>My Advisees</span></a>
+                <a href="view_advising_session.jsp" class="nav-item"><i class="fas fa-calendar-check"></i><span>Advising Sessions</span></a>
+                <a href="advisor_report.jsp" class="nav-item"><i class="fas fa-chart-bar"></i><span>Reports</span></a>
             </nav>
 
             <div class="sidebar-footer">© 2025 Advising System</div>
@@ -552,7 +565,7 @@
                 <h1>My Students - Advisor Dashboard</h1>
                 <div class="header-actions">
                     <button class="btn btn-success" id="addAdviseeBtn"><i class="fas fa-user-plus"></i> Add Advisee</button>
-                    <a href="advisor_profile.html" class="profile-btn" title="Advisor Profile">👤</a>
+                    <a href="advisor_profile.jsp" class="profile-btn" title="Advisor Profile">👤</a>
                     <button class="logout-btn" id="logoutBtn" title="Logout">🚪</button>
                 </div>
             </header>
@@ -721,29 +734,29 @@
                 card.innerHTML = `
                     <div class="student-header">
                         <div style="display:flex;align-items:center;gap:12px">
-                            <div class="student-avatar" aria-hidden="true">${(s.firstName||'').charAt(0) || (s.name||'').charAt(0) || 'S'}</div>
+                            <div class="student-avatar" aria-hidden="true">\${(s.firstName||'').charAt(0) || (s.name||'').charAt(0) || 'S'}</div>
                             <div class="student-info">
-                                <div class="student-name">${escapeHtml(name)}</div>
-                                <div class="student-major-year">${escapeHtml(program)}<br><span style="font-size:12px;color:#999">Year ${escapeHtml(String(year||''))}</span></div>
+                                <div class="student-name">\${escapeHtml(name)}</div>
+                                <div class="student-major-year">\${escapeHtml(program)}<br><span style="font-size:12px;color:#999">Year \${escapeHtml(String(year||''))}</span></div>
                             </div>
                         </div>
                         <div style="display:flex;gap:8px;flex-direction:column;align-items:flex-end">
-                            <div style="font-size:13px;color:#666">CGPA: <strong>${escapeHtml(cgpa)}</strong></div>
-                            <div style="font-size:13px;color:#666">Credits: <strong>${escapeHtml(String(credits))}</strong></div>
+                            <div style="font-size:13px;color:#666">CGPA: <strong>\${escapeHtml(cgpa)}</strong></div>
+                            <div style="font-size:13px;color:#666">Credits: <strong>\${escapeHtml(String(credits))}</strong></div>
                         </div>
                     </div>
                     <div class="student-details" aria-hidden="false">
                         <div>
                             <div class="detail-label">Email</div>
-                            <div class="detail-value">${escapeHtml(s.email || '')}</div>
+                            <div class="detail-value">\${escapeHtml(s.email || '')}</div>
                         </div>
                         <div>
                             <div class="detail-label">Phone</div>
-                            <div class="detail-value">${escapeHtml(s.phoneNum || '')}</div>
+                            <div class="detail-value">\${escapeHtml(s.phoneNum || '')}</div>
                         </div>
                         <div class="detail-remark" style="display:flex;gap:8px;justify-content:flex-start">
-                            <a class="btn btn-secondary" href="view_student_detail.html?student_id=${encodeURIComponent(s.studentID||'')}">View Profile</a>
-                            <button class="btn btn-primary btn-email" data-id="${escapeHtml(s.studentID||'')}" data-email="${escapeHtml(s.email||'')}">Email</button>
+                            <a class="btn btn-secondary" href="view_student_detail.jsp?student_id=\${encodeURIComponent(s.studentID||'')}">View Profile</a>
+                            <button class="btn btn-primary btn-email" data-id="\${escapeHtml(s.studentID||'')}" data-email="\${escapeHtml(s.email||'')}">Email</button>
                         </div>
                     </div>
                 `;
@@ -756,7 +769,7 @@
                         e.preventDefault();
                         const email = emailBtn.getAttribute('data-email');
                         if (email) {
-                            const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`;
+                            const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=\${encodeURIComponent(email)}`;
                             window.open(gmailUrl, '_blank');
                         } else {
                             alert('Email address not available for this student.');
@@ -809,29 +822,29 @@
                 card.innerHTML = `
                     <div class="student-header">
                         <div style="display:flex;align-items:center;gap:12px">
-                            <div class="student-avatar" aria-hidden="true">${(s.firstName||'').charAt(0) || (s.name||'').charAt(0) || 'S'}</div>
+                            <div class="student-avatar" aria-hidden="true">\${(s.firstName||'').charAt(0) || (s.name||'').charAt(0) || 'S'}</div>
                             <div class="student-info">
-                                <div class="student-name">${escapeHtml(name)}</div>
-                                <div class="student-major-year">${escapeHtml(program)}<br><span style="font-size:12px;color:#999">Year ${escapeHtml(String(year||''))}</span></div>
+                                <div class="student-name">\${escapeHtml(name)}</div>
+                                <div class="student-major-year">\${escapeHtml(program)}<br><span style="font-size:12px;color:#999">Year \${escapeHtml(String(year||''))}</span></div>
                             </div>
                         </div>
                         <div style="display:flex;gap:8px;flex-direction:column;align-items:flex-end">
-                            <div style="font-size:13px;color:#666">CGPA: <strong>${escapeHtml(cgpa)}</strong></div>
-                            <div style="font-size:13px;color:#666">Credits: <strong>${escapeHtml(String(credits))}</strong></div>
+                            <div style="font-size:13px;color:#666">CGPA: <strong>\${escapeHtml(cgpa)}</strong></div>
+                            <div style="font-size:13px;color:#666">Credits: <strong>\${escapeHtml(String(credits))}</strong></div>
                         </div>
                     </div>
                     <div class="student-details" aria-hidden="false">
                         <div>
                             <div class="detail-label">Email</div>
-                            <div class="detail-value">${escapeHtml(s.email || '')}</div>
+                            <div class="detail-value">\${escapeHtml(s.email || '')}</div>
                         </div>
                         <div>
                             <div class="detail-label">Phone</div>
-                            <div class="detail-value">${escapeHtml(s.phoneNum || '')}</div>
+                            <div class="detail-value">\${escapeHtml(s.phoneNum || '')}</div>
                         </div>
                         <div class="detail-remark" style="display:flex;gap:8px;justify-content:flex-start">
-                            <a class="btn btn-secondary" href="view_student_detail.html?student_id=${encodeURIComponent(s.studentID||'')}">View Profile</a>
-                            <button class="btn btn-primary btn-email" data-id="${escapeHtml(s.studentID||'')}" data-email="${escapeHtml(s.email||"")}">Email</button>
+                            <a class="btn btn-secondary" href="view_student_detail.jsp?student_id=\${encodeURIComponent(s.studentID||'')}">View Profile</a>
+                            <button class="btn btn-primary btn-email" data-id="\${escapeHtml(s.studentID||'')}" data-email="\${escapeHtml(s.email||"")}">Email</button>
                         </div>
                     </div>
                 `;
@@ -844,7 +857,7 @@
                         e.preventDefault();
                         const email = emailBtn.getAttribute('data-email');
                         if (email) {
-                            const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`;
+                            const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=\${encodeURIComponent(email)}`;
                             window.open(gmailUrl, '_blank');
                         } else {
                             alert('Email address not available for this student.');
@@ -902,11 +915,11 @@
                 item.className = 'candidate-item';
                 const name = s.name || ((s.firstName||'') + ' ' + (s.lastName||'')).trim() || s.studentID;
                 const isAssigned = s.advisorID != null && s.advisorID !== '';
-                item.innerHTML = `<div style="width:40px;height:40px;border-radius:8px;background:var(--blue-light);display:flex;align-items:center;justify-content:center;color:var(--blue-dark);font-weight:700">${escapeHtml((s.firstName||'').charAt(0) || (s.name||'').charAt(0) || 'S')}</div>
+                item.innerHTML = `<div style="width:40px;height:40px;border-radius:8px;background:var(--blue-light);display:flex;align-items:center;justify-content:center;color:var(--blue-dark);font-weight:700">\${escapeHtml((s.firstName||'').charAt(0) || (s.name||'').charAt(0) || 'S')}</div>
                                   <div style="flex:1">
-                                    <div style="font-weight:700">${escapeHtml(name)}</div>
-                                    <div style="font-size:13px;color:var(--text-light)">${escapeHtml(s.studentID || '')} • ${escapeHtml(s.program || s.major || '')}</div>
-                                    ${isAssigned ? '<div style="font-size:12px;color:#f00">Already assigned to advisor</div>' : ''}
+                                    <div style="font-weight:700">\${escapeHtml(name)}</div>
+                                    <div style="font-size:13px;color:var(--text-light)">\${escapeHtml(s.studentID || '')} • \${escapeHtml(s.program || s.major || '')}</div>
+                                    \${isAssigned ? '<div style="font-size:12px;color:#f00">Already assigned to advisor</div>' : ''}
                                   </div>`;
                 item.addEventListener('click', () => {
                     selectCandidate(s);
@@ -922,25 +935,25 @@
             const name = s.name || ((s.firstName||'') + ' ' + (s.lastName||'')).trim() || s.studentID;
             selectedPreview.innerHTML = `
                 <div style="display:flex;gap:12px;align-items:center">
-                    <div style="width:60px;height:60px;border-radius:8px;background:var(--blue-light);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--blue-dark)">${escapeHtml((s.firstName||'').charAt(0) || (s.name||'').charAt(0) || 'S')}</div>
+                    <div style="width:60px;height:60px;border-radius:8px;background:var(--blue-light);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--blue-dark)">\${escapeHtml((s.firstName||'').charAt(0) || (s.name||'').charAt(0) || 'S')}</div>
                     <div>
-                        <div style="font-weight:700">${escapeHtml(name)}</div>
-                        <div style="font-size:13px;color:var(--text-light)">${escapeHtml(s.studentID || '')}</div>
-                        <div style="margin-top:8px;font-size:13px">Email: <strong>${escapeHtml(s.email || '-')}</strong></div>
-                        ${isAssigned ? '<div style="margin-top:8px;font-size:13px;color:#f00">Currently assigned to advisor ID: ' + escapeHtml(s.advisorID) + '</div>' : ''}
+                        <div style="font-weight:700">\${escapeHtml(name)}</div>
+                        <div style="font-size:13px;color:var(--text-light)">\${escapeHtml(s.studentID || '')}</div>
+                        <div style="margin-top:8px;font-size:13px">Email: <strong>\${escapeHtml(s.email || '-')}</strong></div>
+                        \${isAssigned ? '<div style="margin-top:8px;font-size:13px;color:#f00">Currently assigned to advisor ID: ' + escapeHtml(s.advisorID) + '</div>' : ''}
                     </div>
                 </div>
                 <div style="margin-top:12px">
                     <div style="font-size:13px;color:var(--text-light)">Program / Major</div>
-                    <div style="font-weight:700">${escapeHtml(s.program || s.major || '-')}</div>
+                    <div style="font-weight:700">\${escapeHtml(s.program || s.major || '-')}</div>
                     <div style="margin-top:8px;font-size:13px;color:var(--text-light)">Year</div>
-                    <div style="font-weight:700">${escapeHtml(String(s.yearOfStudy || s.year || '-'))}</div>
+                    <div style="font-weight:700">\${escapeHtml(String(s.yearOfStudy || s.year || '-'))}</div>
                     <div style="margin-top:8px;font-size:13px;color:var(--text-light)">CGPA</div>
-                    <div style="font-weight:700">${(s.cgpa===null||s.cgpa===undefined)?'-':escapeHtml(String(s.cgpa))}</div>
+                    <div style="font-weight:700">\${(s.cgpa===null||s.cgpa===undefined)?'-':escapeHtml(String(s.cgpa))}</div>
                 </div>
             `;
             confirmAddBtn.disabled = false;
-            confirmAddBtn.innerHTML = `<i class="fas fa-user-plus"></i> ${isAssigned ? 'Reassign Advisee' : 'Add Advisee'}`;
+            confirmAddBtn.innerHTML = `<i class="fas fa-user-plus"></i> \${isAssigned ? 'Reassign Advisee' : 'Add Advisee'}`;
         }
 
         // Add advisee action: POST to /api/advisor/students/add (best-effort). If 404, show helpful message.

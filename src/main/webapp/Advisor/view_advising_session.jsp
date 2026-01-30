@@ -1,3 +1,11 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.*" %>
+<%
+    // Get URL parameters for error/success messages
+    String error = request.getParameter("error");
+    String success = request.getParameter("success");
+    String message = request.getParameter("message");
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1097,19 +1105,19 @@
             </div>
             
             <nav class="sidebar-nav">
-                <a href="advisor_dashboard.html" class="nav-item">
+                <a href="advisor_dashboard.jsp" class="nav-item">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="manage_student.html" class="nav-item">
+                <a href="manage_student.jsp" class="nav-item">
                     <i class="fas fa-users"></i>
                     <span>My Advisees</span>
                 </a>
-                <a href="view_advising_session.html" class="nav-item active">
+                <a href="view_advising_session.jsp" class="nav-item active">
                     <i class="fas fa-calendar-check"></i>
                     <span>Advising Sessions</span>
                 </a>
-                <a href="advisor_report.html" class="nav-item">
+                <a href="advisor_report.jsp" class="nav-item">
                     <i class="fas fa-chart-bar"></i>
                     <span>Reports</span>
                 </a>
@@ -1127,7 +1135,7 @@
                 <h1>Advising Session Management</h1>
                 <div class="header-actions">
                     <div class="search-btn" title="Search">🔍</div>
-                    <a href="advisor_profile.html" class="profile-btn" title="Admin Profile">👤</a>
+                    <a href="advisor_profile.jsp" class="profile-btn" title="Admin Profile">👤</a>
                     <div class="logout-btn" title="Logout">🚪</div>
                 </div>
             </header>
@@ -1659,7 +1667,7 @@
             
             document.querySelector('.profile-btn').addEventListener('click', function(e) {
                 e.preventDefault();
-                window.location.href = "advisor_profile.html";
+                window.location.href = "advisor_profile.jsp";
             });
             
             document.querySelector('.logout-btn').addEventListener('click', function(e) {
@@ -1805,52 +1813,26 @@
                     if (hasLocation && hasGmeet) {
                         // Both location and gmeet
                         const truncatedLocation = session.location.length > 60 ? session.location.substring(0, 60) + '...' : session.location;
-                        detailsDisplay = `${truncatedLocation} + Meet`;
-                        detailsTitle = `Location: ${session.location} | Meet Link: ${session.meetlink}`;
+                        detailsDisplay = (truncatedLocation) + ' + Meet';
+                        detailsTitle = 'Location: ' + (session.location) + ' | Meet Link: ' + (session.meetlink);
                     } else if (hasGmeet) {
                         // Only gmeet
                         detailsDisplay = 'Google Meet';
-                        detailsTitle = `Meet Link: ${session.meetlink}`;
+                        detailsTitle = 'Meet Link: ' + (session.meetlink);
                     } else if (hasLocation) {
                         // Only location
                         const truncatedLocation = session.location.length > 60 ? session.location.substring(0, 60) + '...' : session.location;
-                        detailsDisplay = `${truncatedLocation}`;
-                        detailsTitle = `Location: ${session.location}`;
+                        detailsDisplay = (truncatedLocation);
+                        detailsTitle = 'Location: ' + (session.location);
                     }
                 }
                 
-                row.innerHTML = `
-                    <td class="number-cell">${startIndex + index + 1}</td>
-                    <td>
-                        <div class="session-name-cell">${session.title || ''}</div>
-                        <div class="session-type-cell">${capitalize(session.sessionType || 'General')} • 60 mins</div>
-                    </td>
-                    <td class="date-cell">
-                        <div>${formattedDate}</div>
-                        <div style="font-size: 12px; color: var(--text-light);">${formattedTime}</div>
-                    </td>
-                    <td class="status-cell" style="text-align: center;">
-                        <span class="status-badge ${statusClass}">${statusText}</span>
-                    </td>
-                    <td class="notes-cell" style="text-align: center;" title="${detailsTitle}">${detailsDisplay}</td>
-                    <td class="notes-cell" style="text-align: center;" title="${notes}">${truncatedNotes}</td>
-                    <td class="actions-cell" style="text-align: center;">
-                        <div class="action-buttons">
-                            ${(() => {
+                row.innerHTML = '\n                    <td class="number-cell">' + (startIndex + index + 1) + '</td>\n                    <td>\n                        <div class="session-name-cell">' + (session.title || '') + '</div>\n                        <div class="session-type-cell">' + (capitalize(session.sessionType || 'General')) + ' • 60 mins</div>\n                    </td>\n                    <td class="date-cell">\n                        <div>' + (formattedDate) + '</div>\n                        <div style="font-size: 12px; color: var(--text-light);">' + (formattedTime) + '</div>\n                    </td>\n                    <td class="status-cell" style="text-align: center;">\n                        <span class="status-badge ' + (statusClass) + '">' + (statusText) + '</span>\n                    </td>\n                    <td class="notes-cell" style="text-align: center;" title="' + (detailsTitle) + '">' + (detailsDisplay) + '</td>\n                    <td class="notes-cell" style="text-align: center;" title="' + (notes) + '">' + (truncatedNotes) + '</td>\n                    <td class="actions-cell" style="text-align: center;">\n                        <div class="action-buttons">\n                            ' + ((() => {
                                 const statusLower = (session.status || '').toLowerCase();
                                 const isConfirmed = statusLower === 'confirmed' || statusLower === 'scheduled';
                                 const hasLink = session.meetlink && session.meetlink.trim();
-                                return isConfirmed && hasLink ? `<button class="btn btn-success btn-small" onclick="window.open('${session.meetlink}', '_blank')" title="Join Meeting"><i class="fas fa-video"></i></button>` : '';
-                            })()}
-                            <button class="btn btn-secondary btn-small view-session-btn" onclick="viewSession(${session.sessionID})" title="View Details">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="btn btn-success btn-small edit-session-btn" onclick="editSession(${session.sessionID})" title="Edit Session">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
+                                return isConfirmed && hasLink ? '<button class="btn btn-success btn-small" onclick="window.open(\'' + session.meetlink + '\', \'_blank\')" title="Join Meeting"><i class="fas fa-video"></i></button>' : '';
+                            })()) + '\n                            <button class="btn btn-secondary btn-small view-session-btn" onclick="viewSession(' + (session.sessionID) + ')" title="View Details">\n                                <i class="fas fa-eye"></i>\n                            </button>\n                            <button class="btn btn-success btn-small edit-session-btn" onclick="editSession(' + (session.sessionID) + ')" title="Edit Session">\n                                <i class="fas fa-edit"></i>\n                            </button>\n                        </div>\n                    </td>\n                ';
                 
                 tbody.appendChild(row);
             });
@@ -1908,25 +1890,7 @@
                 const notes = request.notes || request.cancelReason || '';
                 const truncatedNotes = notes.length > 80 ? notes.substring(0, 80) + '...' : notes;
                 
-                row.innerHTML = `
-                    <td class="number-cell">${startIndex + index + 1}</td>
-                    <td>${request.title || ''}</td>
-                    <td class="date-cell">${formattedDate}</td>
-                    <td class="status-cell">
-                        <span class="status-badge ${statusClass}">${statusText}</span>
-                    </td>
-                    <td class="notes-cell" title="${notes}">${truncatedNotes}</td>
-                    <td class="actions-cell">
-                        <div class="action-buttons">
-                            <button class="btn btn-success btn-small" onclick="approveRequest(${request.sessionID})" title="Approve Request">
-                                <i class="fas fa-check"></i>
-                            </button>
-                            <button class="btn btn-danger btn-small" onclick="rejectRequest(${request.sessionID})" title="Reject Request">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
+                row.innerHTML = '\n                    <td class="number-cell">' + (startIndex + index + 1) + '</td>\n                    <td>' + (request.title || '') + '</td>\n                    <td class="date-cell">' + (formattedDate) + '</td>\n                    <td class="status-cell">\n                        <span class="status-badge ' + (statusClass) + '">' + (statusText) + '</span>\n                    </td>\n                    <td class="notes-cell" title="' + (notes) + '">' + (truncatedNotes) + '</td>\n                    <td class="actions-cell">\n                        <div class="action-buttons">\n                            <button class="btn btn-success btn-small" onclick="approveRequest(' + (request.sessionID) + ')" title="Approve Request">\n                                <i class="fas fa-check"></i>\n                            </button>\n                            <button class="btn btn-danger btn-small" onclick="rejectRequest(' + (request.sessionID) + ')" title="Reject Request">\n                                <i class="fas fa-times"></i>\n                            </button>\n                        </div>\n                    </td>\n                ';
                 
                 tbody.appendChild(row);
             });
@@ -1944,14 +1908,7 @@
             
             paginationContainer.style.display = 'flex';
             
-            let paginationHTML = `
-                <button class="pagination-btn" id="firstPageMySessions" ${currentPageMySessions === 1 ? 'disabled' : ''}>
-                    <i class="fas fa-angle-double-left"></i> First
-                </button>
-                <button class="pagination-btn" id="prevPageMySessions" ${currentPageMySessions === 1 ? 'disabled' : ''}>
-                    <i class="fas fa-angle-left"></i> Previous
-                </button>
-            `;
+            let paginationHTML = '\n                <button class="pagination-btn" id="firstPageMySessions" ' + (currentPageMySessions === 1 ? 'disabled' : '') + '>\n                    <i class="fas fa-angle-double-left"></i> First\n                </button>\n                <button class="pagination-btn" id="prevPageMySessions" ' + (currentPageMySessions === 1 ? 'disabled' : '') + '>\n                    <i class="fas fa-angle-left"></i> Previous\n                </button>\n            ';
             
             // Show page numbers
             const maxVisiblePages = 5;
@@ -1965,20 +1922,13 @@
             
             for (let i = startPage; i <= endPage; i++) {
                 if (i === currentPageMySessions) {
-                    paginationHTML += `<button class="pagination-btn active">${i}</button>`;
+                    paginationHTML += '<button class="pagination-btn active">' + (i) + '</button>';
                 } else {
-                    paginationHTML += `<button class="pagination-btn page-number-my-sessions" data-page="${i}">${i}</button>`;
+                    paginationHTML += '<button class="pagination-btn page-number-my-sessions" data-page="' + (i) + '">' + (i) + '</button>';
                 }
             }
             
-            paginationHTML += `
-                <button class="pagination-btn" id="nextPageMySessions" ${currentPageMySessions === totalPages ? 'disabled' : ''}>
-                    Next <i class="fas fa-angle-right"></i>
-                </button>
-                <button class="pagination-btn" id="lastPageMySessions" ${currentPageMySessions === totalPages ? 'disabled' : ''}>
-                    Last <i class="fas fa-angle-double-right"></i>
-                </button>
-            `;
+            paginationHTML += '\n                <button class="pagination-btn" id="nextPageMySessions" ' + (currentPageMySessions === totalPages ? 'disabled' : '') + '>\n                    Next <i class="fas fa-angle-right"></i>\n                </button>\n                <button class="pagination-btn" id="lastPageMySessions" ' + (currentPageMySessions === totalPages ? 'disabled' : '') + '>\n                    Last <i class="fas fa-angle-double-right"></i>\n                </button>\n            ';
             
             paginationContainer.innerHTML = paginationHTML;
             
@@ -2038,17 +1988,7 @@
             
             paginationContainer.style.display = 'flex';
             
-            let paginationHTML = `
-                <button class="pagination-btn" id="firstPageRequests" ${currentPageRequests === 1 ? 'disabled' : ''}>
-                    <i class="fas fa-angle-double-left"></i> First
-                </button>
-                <button class="pagination-btn" id="prevPageRequests" ${currentPageRequests === 1 ? 'disabled' : ''}>
-                    <i class="fas fa-angle-left"></i> Previous
-                </button>
-                <div class="pagination-info">
-                    Page ${currentPageRequests} of ${totalPages}
-                </div>
-            `;
+            let paginationHTML = '\n                <button class="pagination-btn" id="firstPageRequests" ' + (currentPageRequests === 1 ? 'disabled' : '') + '>\n                    <i class="fas fa-angle-double-left"></i> First\n                </button>\n                <button class="pagination-btn" id="prevPageRequests" ' + (currentPageRequests === 1 ? 'disabled' : '') + '>\n                    <i class="fas fa-angle-left"></i> Previous\n                </button>\n                <div class="pagination-info">\n                    Page ' + (currentPageRequests) + ' of ' + (totalPages) + '\n                </div>\n            ';
             
             // Show page numbers
             const maxVisiblePages = 5;
@@ -2062,20 +2002,13 @@
             
             for (let i = startPage; i <= endPage; i++) {
                 if (i === currentPageRequests) {
-                    paginationHTML += `<button class="pagination-btn active">${i}</button>`;
+                    paginationHTML += '<button class="pagination-btn active">' + (i) + '</button>';
                 } else {
-                    paginationHTML += `<button class="pagination-btn page-number-requests" data-page="${i}">${i}</button>`;
+                    paginationHTML += '<button class="pagination-btn page-number-requests" data-page="' + (i) + '">' + (i) + '</button>';
                 }
             }
             
-            paginationHTML += `
-                <button class="pagination-btn" id="nextPageRequests" ${currentPageRequests === totalPages ? 'disabled' : ''}>
-                    Next <i class="fas fa-angle-right"></i>
-                </button>
-                <button class="pagination-btn" id="lastPageRequests" ${currentPageRequests === totalPages ? 'disabled' : ''}>
-                    Last <i class="fas fa-angle-double-right"></i>
-                </button>
-            `;
+            paginationHTML += '\n                <button class="pagination-btn" id="nextPageRequests" ' + (currentPageRequests === totalPages ? 'disabled' : '') + '>\n                    Next <i class="fas fa-angle-right"></i>\n                </button>\n                <button class="pagination-btn" id="lastPageRequests" ' + (currentPageRequests === totalPages ? 'disabled' : '') + '>\n                    Last <i class="fas fa-angle-double-right"></i>\n                </button>\n            ';
             
             paginationContainer.innerHTML = paginationHTML;
             
@@ -2209,13 +2142,7 @@
                 const studentItem = document.createElement('div');
                 studentItem.className = 'student-item';
                 const initials = (student.studentName || '').split(' ').map(n => n[0]).join('').toUpperCase();
-                studentItem.innerHTML = `
-                    <div class="student-avatar">${initials}</div>
-                    <div class="student-info">
-                        <div class="student-name">${student.studentName}</div>
-                        <div class="student-major-year">Student ID: ${student.studentID}</div>
-                    </div>
-                `;
+                studentItem.innerHTML = '\n                    <div class="student-avatar">' + (initials) + '</div>\n                    <div class="student-info">\n                        <div class="student-name">' + (student.studentName) + '</div>\n                        <div class="student-major-year">Student ID: ' + (student.studentID) + '</div>\n                    </div>\n                ';
                 studentsContainer.appendChild(studentItem);
             });
             
@@ -2242,7 +2169,7 @@
                 const day = String(ts.getDate()).padStart(2, '0');
                 const hours = String(ts.getHours()).padStart(2, '0');
                 const mins = String(ts.getMinutes()).padStart(2, '0');
-                dateTimeStr = `${year}-${month}-${day}T${hours}:${mins}`;
+                dateTimeStr = (year) + '-' + (month) + '-' + (day) + 'T' + (hours) + ':' + (mins);
             }
             
             // Load students for multi-select
@@ -2254,7 +2181,7 @@
                 studentData.students.forEach(student => {
                     const option = document.createElement('option');
                     option.value = student.studentID;
-                    option.textContent = `${student.firstName} ${student.lastName} (${student.studentID})`;
+                    option.textContent = (student.firstName) + ' ' + (student.lastName) + ' (' + (student.studentID) + ')';
                     studentSelect.appendChild(option);
                 });
                 
@@ -2311,7 +2238,7 @@
                 const response = await fetch(ctx + '/api/advisor/session/update', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: `action=update&sessionID=${sessionId}&title=${encodeURIComponent(title)}&sessionType=${encodeURIComponent(sessionType)}&sessionDateTime=${encodeURIComponent(sessionDateTime)}&meetLink=${encodeURIComponent(meetLink)}&location=${encodeURIComponent(location)}&notes=${encodeURIComponent(notes)}&students=${encodeURIComponent(selectedStudents.join(','))}`
+                    body: 'action=update&sessionID=' + (sessionId) + '&title=' + (encodeURIComponent(title)) + '&sessionType=' + (encodeURIComponent(sessionType)) + '&sessionDateTime=' + (encodeURIComponent(sessionDateTime)) + '&meetLink=' + (encodeURIComponent(meetLink)) + '&location=' + (encodeURIComponent(location)) + '&notes=' + (encodeURIComponent(notes)) + '&students=' + (encodeURIComponent(selectedStudents.join(',')))
                 });
                 const data = await response.json();
                 if (!response.ok || data.error) {
@@ -2335,7 +2262,7 @@
                     const response = await fetch(ctx + '/api/advisor/session/update', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: `sessionID=${sessionId}&action=delete`
+                        body: 'sessionID=' + (sessionId) + '&action=delete'
                     });
                     const data = await response.json();
                     if (!response.ok || data.error) {
@@ -2375,7 +2302,7 @@
                 studentData.students.forEach(student => {
                     const option = document.createElement('option');
                     option.value = student.studentID;
-                    option.textContent = `${student.firstName} ${student.lastName} (${student.studentID})`;
+                    option.textContent = (student.firstName) + ' ' + (student.lastName) + ' (' + (student.studentID) + ')';
                     studentSelect.appendChild(option);
                 });
             } catch (e) {
@@ -2456,7 +2383,7 @@
                 const response = await fetch(ctx + '/api/advisor/session/update', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: `sessionID=${sessionId}&action=accept&meetLink=${encodeURIComponent(meetLink || '')}`
+                    body: 'sessionID=' + (sessionId) + '&action=accept&meetLink=' + (encodeURIComponent(meetLink || ''))
                 });
                 const data = await response.json();
                 if (!response.ok || data.error) {
@@ -2464,7 +2391,7 @@
                     return;
                 }
                 
-                alert(`Session request #${sessionId} has been approved.`);
+                alert('Session request #' + (sessionId) + ' has been approved.');
                 await loadSessions();
             } catch (e) {
                 console.error('Error approving request:', e);
@@ -2479,7 +2406,7 @@
                 const response = await fetch(ctx + '/api/advisor/session/update', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: `sessionID=${sessionId}&action=deny&reason=${encodeURIComponent(reason || '')}`
+                    body: 'sessionID=' + (sessionId) + '&action=deny&reason=' + (encodeURIComponent(reason || ''))
                 });
                 const data = await response.json();
                 if (!response.ok || data.error) {
@@ -2487,7 +2414,7 @@
                     return;
                 }
                 
-                alert(`Session request #${sessionId} has been rejected.`);
+                alert('Session request #' + (sessionId) + ' has been rejected.');
                 await loadSessions();
             } catch (e) {
                 console.error('Error rejecting request:', e);

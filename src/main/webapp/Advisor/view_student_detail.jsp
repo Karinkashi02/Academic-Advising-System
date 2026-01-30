@@ -1,3 +1,11 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.*" %>
+<%
+    // Get URL parameters for error/success messages
+    String error = request.getParameter("error");
+    String success = request.getParameter("success");
+    String message = request.getParameter("message");
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -723,11 +731,11 @@
             </div>
             
             <nav class="sidebar-nav">
-                <a href="advisor_dashboard.html" class="nav-item">
+                <a href="advisor_dashboard.jsp" class="nav-item">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="manage_student.html" class="nav-item">
+                <a href="manage_student.jsp" class="nav-item">
                     <i class="fas fa-users"></i>
                     <span>My Students</span>
                 </a>
@@ -735,7 +743,7 @@
                     <i class="fas fa-user-graduate"></i>
                     <span>Student Details</span>
                 </a>
-                <a href="advisor_report.html" class="nav-item">
+                <a href="advisor_report.jsp" class="nav-item">
                     <i class="fas fa-chart-bar"></i>
                     <span>Reports</span>
                 </a>
@@ -755,7 +763,7 @@
                     <div class="back-btn" title="Back to Students" id="backBtn">
                         <i class="fas fa-arrow-left"></i>
                     </div>
-                    <a href="advisor_profile.html" class="profile-btn" title="Advisor Profile">👤</a>
+                    <a href="advisor_profile.jsp" class="profile-btn" title="Advisor Profile">👤</a>
                     <div class="logout-btn" title="Logout">🚪</div>
                 </div>
             </header>
@@ -1008,8 +1016,8 @@
         console.log('Context path detected:', contextPath || '(root deployment)');
         console.log('API base URL:', apiBase || '(using root)');
         console.log('Full API URLs will be:');
-        console.log('  - Students search:', `${apiBase}/api/students/search`);
-        console.log('  - Courses:', `${apiBase}/api/student/courses`);
+        console.log('  - Students search:', (apiBase) + '/api/students/search');
+        console.log('  - Courses:', (apiBase) + '/api/student/courses');
         console.log('=====================================');
 
         // Initialize the page
@@ -1029,11 +1037,11 @@
             if (!studentID) {
                 console.error('ERROR: No student ID provided in URL');
                 alert("No student ID provided. Please provide ?student_id=XXX or ?studentID=XXX");
-                window.location.href = 'manage_student.html';
+                window.location.href = 'manage_student.jsp';
                 return;
             }
             
-            console.log(`Loading data for student: ${studentID}`);
+            console.log('Loading data for student: ' + (studentID));
             
             // Load student data and courses
             console.log('Starting parallel data load...');
@@ -1048,7 +1056,7 @@
             if (!studentData) {
                 console.error('ERROR: Could not load student data');
                 alert('Could not load student data. Please check the student ID and try again.');
-                window.location.href = 'manage_student.html';
+                window.location.href = 'manage_student.jsp';
                 return;
             }
             
@@ -1073,7 +1081,7 @@
             });
             
             document.getElementById('backBtn').addEventListener('click', function() {
-                window.location.href = 'manage_student.html';
+                window.location.href = 'manage_student.jsp';
             });
             
 
@@ -1082,7 +1090,7 @@
                 if (confirm("Are you sure you want to logout?")) {
                     // Perform a full-page navigation to the logout endpoint so the
                     // servlet can invalidate the session and redirect the browser.
-                    window.location.href = `${apiBase}/logout`;
+                    window.location.href = (apiBase) + '/logout';
                 }
             });
             
@@ -1100,17 +1108,17 @@
         // Fetch student data from backend
         async function loadStudentData(studentID) {
             try {
-                const url = `${apiBase}/api/students/search?q=${encodeURIComponent(studentID)}&limit=1`;
+                const url = (apiBase) + '/api/students/search?q=' + (encodeURIComponent(studentID)) + '&limit=1';
                 console.log('🔄 Fetching student data from:', url);
                 const response = await fetch(url);
                 
                 console.log('Response status:', response.status, response.statusText);
                 
                 if (!response.ok) {
-                    console.error(`❌ API Error: ${response.status} ${response.statusText}`);
+                    console.error('❌ API Error: ' + (response.status) + ' ' + (response.statusText));
                     const errorText = await response.text();
                     console.error('Response body:', errorText);
-                    throw new Error(`HTTP ${response.status}: Failed to load student`);
+                    throw new Error('HTTP ' + (response.status) + ': Failed to load student');
                 }
                 
                 const data = await response.json();
@@ -1124,7 +1132,7 @@
                 }
             } catch (error) {
                 console.error('❌ Error loading student:', error);
-                alert(`Failed to load student data:\n${error.message}\n\nCheck browser console for details.`);
+                alert('Failed to load student data:\n' + (error.message) + '\n\nCheck browser console for details.');
             }
         }
 
@@ -1132,24 +1140,24 @@
         async function loadStudentCourses(studentID) {
             try {
                 // First, fetch all courses for this student with their progress
-                const url = `${apiBase}/api/student/courses?studentID=${encodeURIComponent(studentID)}`;
+                const url = (apiBase) + '/api/student/courses?studentID=' + (encodeURIComponent(studentID));
                 console.log('🔄 Fetching courses from:', url);
                 const response = await fetch(url);
                 
                 console.log('Response status:', response.status, response.statusText);
                 
                 if (!response.ok) {
-                    console.error(`❌ API Error: ${response.status} ${response.statusText}`);
+                    console.error('❌ API Error: ' + (response.status) + ' ' + (response.statusText));
                     const errorText = await response.text();
                     console.error('Response body:', errorText);
-                    throw new Error(`HTTP ${response.status}: Failed to load courses`);
+                    throw new Error('HTTP ' + (response.status) + ': Failed to load courses');
                 }
                 
                 const data = await response.json();
                 console.log('✅ API Response:', data);
                 
                 allCourses = data.courses || [];
-                console.log(`✅ Loaded ${allCourses.length} courses`);
+                console.log('✅ Loaded ' + (allCourses.length) + ' courses');
                 
                 // Group courses by semester
                 semesterCourses = {};
@@ -1163,7 +1171,7 @@
                 console.log('📊 Semesters available:', Object.keys(semesterCourses));
             } catch (error) {
                 console.error('❌ Error loading courses:', error);
-                alert(`Failed to load courses:\n${error.message}\n\nCheck browser console for details.`);
+                alert('Failed to load courses:\n' + (error.message) + '\n\nCheck browser console for details.');
                 allCourses = [];
             }
         }
@@ -1177,9 +1185,9 @@
             document.querySelector('.square-avatar').textContent = initials;
             
             // Update student name
-            const fullName = `${studentData.firstName || ''} ${studentData.lastName || ''}`.trim();
+            const fullName = (studentData.firstName || '') + ' ' + (studentData.lastName || '').trim();
             document.querySelector('.square-name').textContent = fullName;
-            document.querySelector('.square-major').textContent = `${studentData.program || 'Unknown'} • Year ${studentData.yearOfStudy || 1}`;
+            document.querySelector('.square-major').textContent = (studentData.program || 'Unknown') + ' • Year ' + (studentData.yearOfStudy || 1);
             
             // Update detail squares
             const detailSquares = document.querySelectorAll('.profile-details-grid .detail-square');
@@ -1217,9 +1225,9 @@
             // Update academic details in CGPA square
             const academicDetailsDiv = document.querySelectorAll('.cgpa-square [style*="display: grid"] > div');
             if (academicDetailsDiv.length >= 4) {
-                academicDetailsDiv[0].querySelector('.detail-value').textContent = `Semester ${studentData.semester || 1}`;
-                academicDetailsDiv[1].querySelector('.detail-value').textContent = `${studentData.creditsCompleted || 0}`;
-                academicDetailsDiv[2].querySelector('.detail-value').textContent = `Year ${studentData.yearOfStudy || 1}`;
+                academicDetailsDiv[0].querySelector('.detail-value').textContent = 'Semester ' + (studentData.semester || 1);
+                academicDetailsDiv[1].querySelector('.detail-value').textContent = (studentData.creditsCompleted || 0);
+                academicDetailsDiv[2].querySelector('.detail-value').textContent = 'Year ' + (studentData.yearOfStudy || 1);
                 academicDetailsDiv[3].querySelector('.detail-value').textContent = 'Active';
             }
 
@@ -1269,7 +1277,7 @@
             semesters.forEach(sem => {
                 const option = document.createElement('option');
                 option.value = sem;
-                option.textContent = `Semester ${sem}`;
+                option.textContent = 'Semester ' + (sem);
                 if (sem === currentSemester) {
                     option.textContent += ' (Current)';
                     option.selected = true;
@@ -1322,16 +1330,9 @@
                 const gradeClass = getGradeClass(course.grade);
                 const gradeDisplay = course.grade || 'Not Yet Taken';
                 
-                row.innerHTML = `
-                    <td><div class="course-code">${course.courseID}</div></td>
-                    <td><div class="course-name">${course.courseName}</div></td>
-                    <td class="credit-hours">${course.creditHour}</td>
-                    <td>
-                        ${gradeClass ? 
-                          `<span class="grade-badge ${gradeClass}">${gradeDisplay}</span>` : 
-                          `<span class="not-taken">${gradeDisplay}</span>`}
-                    </td>
-                `;
+                row.innerHTML = '\n                    <td><div class="course-code">' + (course.courseID) + '</div></td>\n                    <td><div class="course-name">' + (course.courseName) + '</div></td>\n                    <td class="credit-hours">' + (course.creditHour) + '</td>\n                    <td>\n                        ' + (gradeClass ? 
+                          '<span class="grade-badge ' + gradeClass + '">' + gradeDisplay + '</span>' : 
+                          '<span class="not-taken">' + gradeDisplay + '</span>') + '\n                    </td>\n                ';
                 
                 tableBody.appendChild(row);
             });
@@ -1373,33 +1374,33 @@
                 
                 console.log('💾 Saving remark for student:', studentID, 'Remark:', remark);
                 
-                const url = `${apiBase}/api/advisor/student/update?studentID=${encodeURIComponent(studentID)}`;
+                const url = (apiBase) + '/api/advisor/student/update?studentID=' + (encodeURIComponent(studentID));
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
-                    body: `remark=${encodeURIComponent(remark)}`
+                    body: 'remark=' + (encodeURIComponent(remark))
                 });
                 
                 if (!response.ok) {
-                    console.error(`❌ API Error: ${response.status} ${response.statusText}`);
+                    console.error('❌ API Error: ' + (response.status) + ' ' + (response.statusText));
                     const errorText = await response.text();
                     console.error('Response body:', errorText);
                     
                     // Try alternative endpoint
                     console.log('⚠️ Trying alternative endpoint...');
-                    const altUrl = `${apiBase}/api/student/update`;
+                    const altUrl = (apiBase) + '/api/student/update';
                     const altResponse = await fetch(altUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'
                         },
-                        body: `remark=${encodeURIComponent(remark)}`
+                        body: 'remark=' + (encodeURIComponent(remark))
                     });
                     
                     if (!altResponse.ok) {
-                        throw new Error(`HTTP ${response.status}: Failed to save remark`);
+                        throw new Error('HTTP ' + (response.status) + ': Failed to save remark');
                     }
                 }
                 
@@ -1412,7 +1413,7 @@
                 // Show success message
                 const statusDiv = document.getElementById('remarkStatus');
                 const statusText = document.getElementById('remarkStatusText');
-                statusText.textContent = `✓ Remark updated successfully: "${remark}"`;
+                statusText.textContent = '✓ Remark updated successfully: "' + (remark) + '"';
                 statusDiv.style.display = 'block';
                 
                 setTimeout(() => {
@@ -1421,7 +1422,7 @@
                 
             } catch (error) {
                 console.error('❌ Error saving remark:', error);
-                alert(`Failed to save remark:\n${error.message}`);
+                alert('Failed to save remark:\n' + (error.message));
             }
         }
     </script>

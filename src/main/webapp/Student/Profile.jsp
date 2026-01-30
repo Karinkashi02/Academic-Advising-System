@@ -1,3 +1,17 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.*" %>
+<%
+    // Session check for student role
+    if (session.getAttribute("role") == null || !"student".equals(session.getAttribute("role"))) {
+        response.sendRedirect(request.getContextPath() + "/index.jsp?error=unauthorized");
+        return;
+    }
+    
+    // Get URL parameters for error/success messages
+    String error = request.getParameter("error");
+    String success = request.getParameter("success");
+    String message = request.getParameter("message");
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -713,11 +727,11 @@
             <p>Student Portal</p>
         </div>
         <ul class="nav-links">
-            <li><a href="Dashboard.html"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
-            <li><a href="Mycourse.html"><i class="fas fa-book"></i> <span>My Courses</span></a></li>
-            <li><a href="UpdateCourse.html"><i class="fas fa-edit"></i> <span>Update Grade</span></a></li>
-            <li><a href="AdvisingSessions.html"><i class="fas fa-calendar-alt"></i> <span>Advising Sessions</span></a></li>
-            <li><a href="Activity.html"><i class="fas fa-chart-line"></i> <span>Activity</span></a></li>
+            <li><a href="Dashboard.jsp"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
+            <li><a href="Mycourse.jsp"><i class="fas fa-book"></i> <span>My Courses</span></a></li>
+            <li><a href="UpdateCourse.jsp"><i class="fas fa-edit"></i> <span>Update Grade</span></a></li>
+            <li><a href="AdvisingSessions.jsp"><i class="fas fa-calendar-alt"></i> <span>Advising Sessions</span></a></li>
+            <li><a href="Activity.jsp"><i class="fas fa-chart-line"></i> <span>Activity</span></a></li>
         </ul>
     </nav>
 
@@ -730,7 +744,7 @@
             </div>
             <div class="header-actions">
                 
-                <a href="Dashboard.html" class="profile-btn">
+                <a href="Dashboard.jsp" class="profile-btn">
                     <div class="profile-pic">MA</div>
                     <span>Dashboard</span>
                 </a>
@@ -755,7 +769,7 @@
                         <div class="info-label">
                             <i class="fas fa-envelope"></i> Email Address
                         </div>
-                        <div class="info-value" id="displayEmail">amar.ghazali@student.uitm.edu.my</div>
+                        <div class="info-value" id="displayEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4b2a262a39652c232a312a27220b383f3e2f2e253f653e223f26652e2f3e652632">[email&#160;protected]</a></div>
                     </div>
                     
                     <!-- Program -->
@@ -807,7 +821,7 @@
                 
                 <!-- Action Buttons -->
                 <div class="action-buttons">
-                    <a href="Dashboard.html" class="action-btn secondary-btn">
+                    <a href="Dashboard.jsp" class="action-btn secondary-btn">
                         <i class="fas fa-arrow-left"></i> Back to Dashboard
                     </a>
                     <button class="action-btn edit-btn" onclick="openEditForm()">
@@ -883,7 +897,7 @@
         </footer>
     </div>
 
-    <script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cloudflare-email-decode/1.0.0/email-decode.min.js"></script><script>
     document.addEventListener('DOMContentLoaded', function() {
         const displayName = document.getElementById('displayName');
         const displayStudentID = document.getElementById('displayStudentID');
@@ -1060,12 +1074,9 @@
         editOverlay.addEventListener('click', function(e) {
             if (e.target === this) closeEditForm();
         });
-
-        // Escape key closes overlay
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && editOverlay.style.display === 'flex') closeEditForm();
-        });
     });
     </script>
 </body>
 </html>
+
+  

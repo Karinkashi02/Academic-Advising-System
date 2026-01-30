@@ -1,3 +1,17 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.*" %>
+<%
+    // Session check for student role
+    if (session.getAttribute("role") == null || !"student".equals(session.getAttribute("role"))) {
+        response.sendRedirect(request.getContextPath() + "/index.jsp?error=unauthorized");
+        return;
+    }
+    
+    // Get URL parameters for error/success messages
+    String error = request.getParameter("error");
+    String success = request.getParameter("success");
+    String message = request.getParameter("message");
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -953,11 +967,11 @@
             <p>Student Portal</p>
         </div>
         <ul class="nav-links">
-            <li><a href="Dashboard.html" class="active"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
-            <li><a href="Mycourse.html"><i class="fas fa-book"></i> <span>My Courses</span></a></li>
-            <li><a href="UpdateCourse.html"><i class="fas fa-edit"></i> <span>Update Grade</span></a></li>
-            <li><a href="AdvisingSessions.html"><i class="fas fa-calendar-alt"></i> <span>Advising Sessions</span></a></li>
-            <li><a href="Activity.html"><i class="fas fa-chart-line"></i> <span>Activity</span></a></li>
+            <li><a href="Dashboard.jsp" class="active"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
+            <li><a href="Mycourse.jsp"><i class="fas fa-book"></i> <span>My Courses</span></a></li>
+            <li><a href="UpdateCourse.jsp"><i class="fas fa-edit"></i> <span>Update Grade</span></a></li>
+            <li><a href="AdvisingSessions.jsp"><i class="fas fa-calendar-alt"></i> <span>Advising Sessions</span></a></li>
+            <li><a href="Activity.jsp"><i class="fas fa-chart-line"></i> <span>Activity</span></a></li>
         </ul>
     </nav>
 
@@ -1013,7 +1027,7 @@
                   </div>
 
                   <div class="dropdown-menu" id="dropdownMenu">
-                    <a href="Profile.html" class="dropdown-item"><i class="fas fa-user-circle"></i> My Profile</a>
+                    <a href="Profile.jsp" class="dropdown-item"><i class="fas fa-user-circle"></i> My Profile</a>
                     <a href="#" class="dropdown-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
                   </div>
                 </div>
@@ -1187,7 +1201,7 @@
           q('profileName').textContent = name;
           q('profilePic').textContent = ( (data.firstName || '').charAt(0) + (data.lastName || '').charAt(0) || 'ME' ).toUpperCase();
           q('profileRole').textContent = 'Student';
-          q('studentMeta').textContent = `Student ID: ${data.studentID || ''} | Semester: ${data.semester || ''} | ${data.program || ''}`;
+          q('studentMeta').textContent = `Student ID: \${data.studentID || ''} | Semester: \${data.semester || ''} | \${data.program || ''}`;
 
           // Stats: prefer server values
           const cgpa = (typeof data.cgpa !== 'undefined' && data.cgpa !== null) ? Number(data.cgpa) : null;
@@ -1213,8 +1227,8 @@
 
           // Update semester progress labels
           const semesterNum = Number(data.semester) || 0;
-          q('progressCompleted').textContent = `Semester ${semesterNum} of 7`;
-          q('progressRemaining').textContent = `${Math.max(0, 7 - semesterNum)} Semesters Remaining`;
+          q('progressCompleted').textContent = `Semester \${semesterNum} of 7`;
+          q('progressRemaining').textContent = `\${Math.max(0, 7 - semesterNum)} Semesters Remaining`;
 
           q('statPoints') && (q('statPoints').textContent = points);
 
@@ -1268,14 +1282,14 @@
         // Render page items
         pageRows.forEach(c => {
           const tr = document.createElement('tr');
-          const gradeHtml = c.grade ? `<span class="grade">${escapeHtml(c.grade)}</span>` : '-';
+          const gradeHtml = c.grade ? `<span class="grade">\${escapeHtml(c.grade)}</span>` : '-';
           const statusText = c.status ? escapeHtml(c.status) : '-';
           tr.innerHTML = `
-            <td><strong>${escapeHtml(c.courseID)}</strong></td>
-            <td>${escapeHtml(c.courseName)}</td>
-            <td>${escapeHtml(String(c.creditHour || 0))}</td>
-            <td>${gradeHtml}</td>
-            <td>${statusText}</td>
+            <td><strong>\${escapeHtml(c.courseID)}</strong></td>
+            <td>\${escapeHtml(c.courseName)}</td>
+            <td>\${escapeHtml(String(c.creditHour || 0))}</td>
+            <td>\${gradeHtml}</td>
+            <td>\${statusText}</td>
           `;
           tbody.appendChild(tr);
         });
@@ -1287,11 +1301,11 @@
           const paginationDiv = document.createElement('div');
           paginationDiv.className = 'courses-pagination';
           paginationDiv.style = 'display:flex;justify-content:center;gap:10px;margin-top:20px;flex-wrap:wrap;';
-          let paginationHtml = `<button id="coursesPrevBtn" style="flex:0 0 auto;padding:8px 15px;border:2px solid #0ea5e9;background:transparent;color:#0ea5e9;border-radius:8px;cursor:pointer;font-weight:600;" ${currentCoursesPage === 0 ? 'disabled' : ''}>Prev</button>`;
+          let paginationHtml = `<button id="coursesPrevBtn" style="flex:0 0 auto;padding:8px 15px;border:2px solid #0ea5e9;background:transparent;color:#0ea5e9;border-radius:8px;cursor:pointer;font-weight:600;" \${currentCoursesPage === 0 ? 'disabled' : ''}>Prev</button>`;
           for (let i = 0; i < totalPages; i++) {
-            paginationHtml += `<button id="coursesPageBtn${i}" style="flex:0 0 auto;padding:8px 15px;border:2px solid #0ea5e9;background:${i === currentCoursesPage ? '#0ea5e9' : 'transparent'};color:${i === currentCoursesPage ? 'white' : '#0ea5e9'};border-radius:8px;cursor:pointer;font-weight:600;">${i + 1}</button>`;
+            paginationHtml += `<button id="coursesPageBtn\${i}" style="flex:0 0 auto;padding:8px 15px;border:2px solid #0ea5e9;background:\${i === currentCoursesPage ? '#0ea5e9' : 'transparent'};color:\${i === currentCoursesPage ? 'white' : '#0ea5e9'};border-radius:8px;cursor:pointer;font-weight:600;">\${i + 1}</button>`;
           }
-          paginationHtml += `<button id="coursesNextBtn" style="flex:0 0 auto;padding:8px 15px;border:2px solid #0ea5e9;background:transparent;color:#0ea5e9;border-radius:8px;cursor:pointer;font-weight:600;" ${currentCoursesPage >= totalPages - 1 ? 'disabled' : ''}>Next</button>`;
+          paginationHtml += `<button id="coursesNextBtn" style="flex:0 0 auto;padding:8px 15px;border:2px solid #0ea5e9;background:transparent;color:#0ea5e9;border-radius:8px;cursor:pointer;font-weight:600;" \${currentCoursesPage >= totalPages - 1 ? 'disabled' : ''}>Next</button>`;
           paginationDiv.innerHTML = paginationHtml;
           tableContainer.insertAdjacentElement('afterend', paginationDiv);
 
@@ -1309,7 +1323,7 @@
             }
           });
           for (let i = 0; i < totalPages; i++) {
-            document.getElementById(`coursesPageBtn${i}`)?.addEventListener('click', function() {
+            document.getElementById(`coursesPageBtn\${i}`)?.addEventListener('click', function() {
               currentCoursesPage = i;
               renderCoursesTable(allCourses);
             });
@@ -1410,13 +1424,13 @@
               const timeStr = ts ? ts.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : '';
               card.innerHTML = `
                 <div class="session-info">
-                  <h4>${escapeHtml(s.title || '(no title)')}</h4>
-                  <p class="session-date"><i class="far fa-calendar"></i> ${escapeHtml(dateStr)} &nbsp; <i class="far fa-clock"></i> ${escapeHtml(timeStr)}</p>
-                  <p style="color:#64748b;font-size:0.9rem;margin-top:6px">${escapeHtml(advisorName)} ${s.sessionType ? ` • ${escapeHtml(s.sessionType)}` : ''}</p>
+                  <h4>\${escapeHtml(s.title || '(no title)')}</h4>
+                  <p class="session-date"><i class="far fa-calendar"></i> \${escapeHtml(dateStr)} &nbsp; <i class="far fa-clock"></i> \${escapeHtml(timeStr)}</p>
+                  <p style="color:#64748b;font-size:0.9rem;margin-top:6px">\${escapeHtml(advisorName)} \${s.sessionType ? ` • \${escapeHtml(s.sessionType)}` : ''}</p>
                 </div>
                 <div style="text-align:right;">
-                  <div class="session-status" style="margin-bottom:8px">${escapeHtml((s.status||'').charAt(0).toUpperCase() + (s.status||'').slice(1))}</div>
-                  <button class="btn btn-outline btn-sm view-session" data-id="${escapeHtml(String(s.sessionID||''))}">View</button>
+                  <div class="session-status" style="margin-bottom:8px">\${escapeHtml((s.status||'').charAt(0).toUpperCase() + (s.status||'').slice(1))}</div>
+                  <button class="btn btn-outline btn-sm view-session" data-id="\${escapeHtml(String(s.sessionID||''))}">View</button>
                 </div>
               `;
               upcomingList.appendChild(card);
@@ -1462,14 +1476,14 @@
               <div class="activity-icon"><i class="fas fa-running"></i></div>
               <div style="flex:1">
                 <div class="activity-content">
-                  <h4>${escapeHtml(a.title || '(no title)')}</h4>
-                  <p>${escapeHtml((a.description || '').substring(0,120))}${(a.description || '').length>120 ? '...' : ''}</p>
-                  <div class="activity-time"><i class="far fa-calendar"></i>&nbsp; ${escapeHtml(dt)}</div>
+                  <h4>\${escapeHtml(a.title || '(no title)')}</h4>
+                  <p>\${escapeHtml((a.description || '').substring(0,120))}\${(a.description || '').length>120 ? '...' : ''}</p>
+                  <div class="activity-time"><i class="far fa-calendar"></i>&nbsp; \${escapeHtml(dt)}</div>
                 </div>
               </div>
               <div style="min-width:110px;text-align:right">
-                <div style="font-weight:700;color:#1e3a8a">${a.points ? (a.points + ' pts') : '0 pts'}</div>
-                <div style="margin-top:8px">${a.joined ? '<span style="color:#059669;font-weight:700">Joined</span>' : (a.ownerID ? '<span style="color:#1e40af">Organized</span>' : '')}</div>
+                <div style="font-weight:700;color:#1e3a8a">\${a.points ? (a.points + ' pts') : '0 pts'}</div>
+                <div style="margin-top:8px">\${a.joined ? '<span style="color:#059669;font-weight:700">Joined</span>' : (a.ownerID ? '<span style="color:#1e40af">Organized</span>' : '')}</div>
               </div>
             `;
             list.appendChild(item);
@@ -1549,7 +1563,7 @@
                                     const timeStr = ts ? ts.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : '';
                                     const item = document.createElement('div');
                                     item.style = 'padding:12px 16px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;gap:10px;';
-                                    item.innerHTML = `<div style="flex:1"><div style="font-weight:600;color:#1e3a8a">${escapeHtml(s.title||'(no title)')}</div><div style="color:#64748b;font-size:0.9rem">${escapeHtml(dateStr)} • ${escapeHtml(timeStr)}${s.sessionType? ' • '+escapeHtml(s.sessionType):''}</div></div><div style="flex-shrink:0"><button class="btn btn-outline" style="padding:6px 10px;flex:0 0 auto;" data-id="${escapeHtml(String(s.sessionID||''))}">View</button></div>`;
+                                    item.innerHTML = `<div style="flex:1"><div style="font-weight:600;color:#1e3a8a">\${escapeHtml(s.title||'(no title)')}</div><div style="color:#64748b;font-size:0.9rem">\${escapeHtml(dateStr)} • \${escapeHtml(timeStr)}\${s.sessionType? ' • '+escapeHtml(s.sessionType):''}</div></div><div style="flex-shrink:0"><button class="btn btn-outline" style="padding:6px 10px;flex:0 0 auto;" data-id="\${escapeHtml(String(s.sessionID||''))}">View</button></div>`;
                                     notifList.appendChild(item);
                                 });
 

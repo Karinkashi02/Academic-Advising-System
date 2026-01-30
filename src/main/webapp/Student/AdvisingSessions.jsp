@@ -1,3 +1,17 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.*" %>
+<%
+    // Session check for student role
+    if (session.getAttribute("role") == null || !"student".equals(session.getAttribute("role"))) {
+        response.sendRedirect(request.getContextPath() + "/index.jsp?error=unauthorized");
+        return;
+    }
+    
+    // Get URL parameters for error/success messages
+    String error = request.getParameter("error");
+    String success = request.getParameter("success");
+    String message = request.getParameter("message");
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1036,11 +1050,11 @@
             <p>Student Portal</p>
         </div>
         <ul class="nav-links">
-            <li><a href="Dashboard.html"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
-            <li><a href="Mycourse.html"><i class="fas fa-book"></i> <span>My Courses</span></a></li>
-            <li><a href="UpdateCourse.html"><i class="fas fa-edit"></i> <span>Update Grade</span></a></li>
-            <li><a href="AdvisingSessions.html" class="active"><i class="fas fa-calendar-alt"></i> <span>Advising Sessions</span></a></li>
-            <li><a href="Activity.html"><i class="fas fa-chart-line"></i> <span>Activity</span></a></li>
+            <li><a href="Dashboard.jsp"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
+            <li><a href="Mycourse.jsp"><i class="fas fa-book"></i> <span>My Courses</span></a></li>
+            <li><a href="UpdateCourse.jsp"><i class="fas fa-edit"></i> <span>Update Grade</span></a></li>
+            <li><a href="AdvisingSessions.jsp" class="active"><i class="fas fa-calendar-alt"></i> <span>Advising Sessions</span></a></li>
+            <li><a href="Activity.jsp"><i class="fas fa-chart-line"></i> <span>Activity</span></a></li>
         </ul>
     </nav>
 
@@ -1064,7 +1078,7 @@
                   </div>
 
                   <div class="dropdown-menu" id="dropdownMenu">
-                    <a href="Profile.html" class="dropdown-item"><i class="fas fa-user-circle"></i> My Profile</a>
+                    <a href="Profile.jsp" class="dropdown-item"><i class="fas fa-user-circle"></i> My Profile</a>
                     <a href="#" class="dropdown-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
                   </div>
                 </div>
@@ -1524,34 +1538,34 @@
           card.innerHTML = `
             <div class="session-header">
               <div>
-                <div class="session-title">${escapeHtml(s.title)}</div>
-                <span class="session-status">${capitalize(statusDisplay)} ${s.sessionType? ' • '+capitalize(escapeHtml(s.sessionType)):''}</span>
-                ${s.status && (s.status.toLowerCase() === 'cancelled' || s.status.toLowerCase() === 'denied') && s.cancelReason ? '<div style="color:#ef4444;font-size:0.85rem;margin-top:5px;"><i class="fas fa-exclamation-triangle"></i> Reason: '+escapeHtml(s.cancelReason)+'</div>' : ''}
+                <div class="session-title">\${escapeHtml(s.title)}</div>
+                <span class="session-status">\${capitalize(statusDisplay)} \${s.sessionType? ' • '+capitalize(escapeHtml(s.sessionType)):''}</span>
+                \${s.status && (s.status.toLowerCase() === 'cancelled' || s.status.toLowerCase() === 'denied') && s.cancelReason ? '<div style="color:#ef4444;font-size:0.85rem;margin-top:5px;"><i class="fas fa-exclamation-triangle"></i> Reason: '+escapeHtml(s.cancelReason)+'</div>' : ''}
               </div>
               <div class="session-time">
-                <div style="font-weight:600;color:#1e3a8a">${dateStr}</div>
-                <div style="color:#475569;opacity:0.8">${timeStr}</div>
+                <div style="font-weight:600;color:#1e3a8a">\${dateStr}</div>
+                <div style="color:#475569;opacity:0.8">\${timeStr}</div>
               </div>
             </div>
             <div class="session-details">
               <div class="detail-item">
                 <div class="detail-icon"><i class="fas fa-user-tie"></i></div>
-                <div class="detail-content"><h4>Advisor</h4><p>${escapeHtml(s.advisorName||'')}</p></div>
+                <div class="detail-content"><h4>Advisor</h4><p>\${escapeHtml(s.advisorName||'')}</p></div>
               </div>
               <div class="detail-item">
                 <div class="detail-icon"><i class="fas fa-sticky-note"></i></div>
-                <div class="detail-content"><h4>Notes Preview</h4><p class="notes-preview">${escapeHtml((s.notes||'').substring(0,40))}${(s.notes||'').length>40?'...':''}</p></div>
+                <div class="detail-content"><h4>Notes Preview</h4><p class="notes-preview">\${escapeHtml((s.notes||'').substring(0,40))}\${(s.notes||'').length>40?'...':''}</p></div>
               </div>
                             <div class="detail-item">
                                 <div class="detail-icon"><i class="fas fa-map-marker-alt"></i></div>
-                                <div class="detail-content"><h4>Location</h4><p>${escapeHtml(s.location || s.meetLink || 'Not specified')}</p></div>
+                                <div class="detail-content"><h4>Location</h4><p>\${escapeHtml(s.location || s.meetLink || 'Not specified')}</p></div>
                             </div>
             </div>
             <div class="session-actions">
-              ${joinBtn}
-              <button class="btn btn-sm btn-outline view-details" data-session="${s.sessionID}"><i class="fas fa-eye"></i> View Details</button>
-              ${cancelBtn}
-              ${reqCancelBtn}
+              \${joinBtn}
+              <button class="btn btn-sm btn-outline view-details" data-session="\${s.sessionID}"><i class="fas fa-eye"></i> View Details</button>
+              \${cancelBtn}
+              \${reqCancelBtn}
             </div>
           `;
           upcomingContainer.appendChild(card);
@@ -1560,7 +1574,7 @@
         // pagination
         document.querySelector('.pagination')?.remove();
         if (totalPages > 1) {
-          upcomingContainer.insertAdjacentHTML('afterend', `<div class="pagination" style="display:flex;justify-content:center;gap:10px;margin-top:20px;"> <button id="prevPage" class="btn btn-outline" ${currentPage === 0 ? 'disabled' : ''}>Prev</button> <span>Page ${currentPage+1} of ${totalPages}</span> <button id="nextPage" class="btn btn-outline" ${currentPage >= totalPages - 1 ? 'disabled' : ''}>Next</button> </div>`);
+          upcomingContainer.insertAdjacentHTML('afterend', `<div class="pagination" style="display:flex;justify-content:center;gap:10px;margin-top:20px;"> <button id="prevPage" class="btn btn-outline" \${currentPage === 0 ? 'disabled' : ''}>Prev</button> <span>Page \${currentPage+1} of \${totalPages}</span> <button id="nextPage" class="btn btn-outline" \${currentPage >= totalPages - 1 ? 'disabled' : ''}>Next</button> </div>`);
         }
 
         // past completed sessions with pagination (5 per page) - NO FILTERING, shows complete history
@@ -1589,11 +1603,11 @@
           const formattedTime = ts ? ts.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' }) : '';
           const tr = document.createElement('tr');
           tr.innerHTML = `
-            <td><strong>${formattedDate}</strong><br>${formattedTime}</td>
-            <td>${escapeHtml(s.title)}</td>
-            <td class="notes-preview">${escapeHtml((s.notes||'').substring(0,50))}${(s.notes||'').length>50?'...':''}</td>
-            <td>${escapeHtml(s.advisorName||'')}</td>
-            <td>${capitalize(escapeHtml(s.sessionType||''))}</td>
+            <td><strong>\${formattedDate}</strong><br>\${formattedTime}</td>
+            <td>\${escapeHtml(s.title)}</td>
+            <td class="notes-preview">\${escapeHtml((s.notes||'').substring(0,50))}\${(s.notes||'').length>50?'...':''}</td>
+            <td>\${escapeHtml(s.advisorName||'')}</td>
+            <td>\${capitalize(escapeHtml(s.sessionType||''))}</td>
           `;
           pastTableBody.appendChild(tr);
         });
@@ -1605,7 +1619,7 @@
           const pastPaginationDiv = document.createElement('div');
           pastPaginationDiv.className = 'past-sessions-pagination';
           pastPaginationDiv.style = 'display:flex;justify-content:center;gap:10px;margin-top:15px;';
-          pastPaginationDiv.innerHTML = `<button id="pastPrevBtn" class="btn btn-outline" ${currentPastPage === 0 ? 'disabled' : ''}>Prev</button> <span>Page ${currentPastPage+1} of ${totalPastPages}</span> <button id="pastNextBtn" class="btn btn-outline" ${currentPastPage >= totalPastPages-1 ? 'disabled' : ''}>Next</button>`;
+          pastPaginationDiv.innerHTML = `<button id="pastPrevBtn" class="btn btn-outline" \${currentPastPage === 0 ? 'disabled' : ''}>Prev</button> <span>Page \${currentPastPage+1} of \${totalPastPages}</span> <button id="pastNextBtn" class="btn btn-outline" \${currentPastPage >= totalPastPages-1 ? 'disabled' : ''}>Next</button>`;
           document.querySelector('.past-sessions-container') ? document.querySelector('.past-sessions-container').insertAdjacentElement('afterend', pastPaginationDiv) : pastTableBody.parentElement.insertAdjacentElement('afterend', pastPaginationDiv);
           
           document.getElementById('pastPrevBtn')?.addEventListener('click', function() {
@@ -1680,20 +1694,20 @@
         const statusDisplay = s.status;
         document.getElementById('notesModalBody').innerHTML = `
           <div style="margin-bottom:25px;">
-            <h4 style="color:#1e3a8a;margin-bottom:10px;">${escapeHtml(s.title)}</h4>
+            <h4 style="color:#1e3a8a;margin-bottom:10px;">\${escapeHtml(s.title)}</h4>
             <div style="display:flex;gap:15px;color:#475569;opacity:0.9">
-              <div><i class="fas fa-calendar"></i> ${dateStr}</div>
-              <div><i class="fas fa-clock"></i> ${timeStr}</div>
-              <div><i class="fas fa-info-circle"></i> ${escapeHtml(statusDisplay || '')}</div>
-              <div>${s.sessionType? ' • ' + capitalize(escapeHtml(s.sessionType)) : ''}</div>
+              <div><i class="fas fa-calendar"></i> \${dateStr}</div>
+              <div><i class="fas fa-clock"></i> \${timeStr}</div>
+              <div><i class="fas fa-info-circle"></i> \${escapeHtml(statusDisplay || '')}</div>
+              <div>\${s.sessionType? ' • ' + capitalize(escapeHtml(s.sessionType)) : ''}</div>
             </div>
           </div>
           <div class="form-row" style="margin-bottom:25px;">
-            <div class="form-group"><label class="form-label"><i class="fas fa-user-tie"></i> Advisor</label><div style="padding:10px 0;font-weight:500;">${escapeHtml(s.advisorName||'')}</div></div>
+            <div class="form-group"><label class="form-label"><i class="fas fa-user-tie"></i> Advisor</label><div style="padding:10px 0;font-weight:500;">\${escapeHtml(s.advisorName||'')}</div></div>
             <div class="form-group"><label class="form-label"><i class="fas fa-user-graduate"></i> Student</label><div style="padding:10px 0;font-weight:500;">You</div></div>
           </div>
-                    <div class="form-group"><label class="form-label"><i class="fas fa-map-marker-alt"></i> Location</label><div style="padding:10px 0;font-weight:500;">${escapeHtml(s.location || s.meetLink || 'Not specified')}</div></div>
-          <div class="form-group"><label class="form-label"><i class="fas fa-sticky-note"></i> Session Notes</label><div style="background:#f8fafc;padding:15px;border-radius:8px;margin-top:5px;">${escapeHtml(s.notes||'')}${(s.status && (s.status.toLowerCase() === 'cancelled' || s.status.toLowerCase() === 'denied') && s.cancelReason) ? '<br><br><strong style="color:#ef4444;">Cancellation Reason:</strong> '+escapeHtml(s.cancelReason) : ''}</div></div>
+                    <div class="form-group"><label class="form-label"><i class="fas fa-map-marker-alt"></i> Location</label><div style="padding:10px 0;font-weight:500;">\${escapeHtml(s.location || s.meetLink || 'Not specified')}</div></div>
+          <div class="form-group"><label class="form-label"><i class="fas fa-sticky-note"></i> Session Notes</label><div style="background:#f8fafc;padding:15px;border-radius:8px;margin-top:5px;">\${escapeHtml(s.notes||'')}\${(s.status && (s.status.toLowerCase() === 'cancelled' || s.status.toLowerCase() === 'denied') && s.cancelReason) ? '<br><br><strong style="color:#ef4444;">Cancellation Reason:</strong> '+escapeHtml(s.cancelReason) : ''}</div></div>
           <div style="margin-top:25px;"><button class="btn btn-primary" onclick="window.print()" style="width:100%"><i class="fas fa-print"></i> Print Session Details</button></div>
         `;
         document.getElementById('notesModal').classList.add('show');
@@ -1724,7 +1738,7 @@
         currentCalendarMonth = month;
         currentCalendarYear = year;
         const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-        document.getElementById('currentMonthYear').textContent = `${monthNames[month]} ${year}`;
+        document.getElementById('currentMonthYear').textContent = `\${monthNames[month]} \${year}`;
         generateCalendar(month, year);
       }
 
@@ -1808,17 +1822,17 @@
             item.style.borderRadius = '8px';
             item.innerHTML = `
               <div style="display:flex;justify-content:space-between;align-items:center;">
-                <div style="font-weight:700;color:#1e3a8a">${escapeHtml(s.title)}</div>
-                <div style="color:#475569">${timeStr}</div>
+                <div style="font-weight:700;color:#1e3a8a">\${escapeHtml(s.title)}</div>
+                <div style="color:#475569">\${timeStr}</div>
               </div>
               <div style="display:flex;justify-content:space-between;gap:10px;margin-top:6px;align-items:center;">
-                <div style="color:#64748b">${escapeHtml(s.advisorName||'')} ${s.sessionType? ' • '+capitalize(escapeHtml(s.sessionType)):''}</div>
-                <span class="session-status" style="font-size:0.8rem;padding:4px 8px;border-radius:12px;background:${statusColor(s.status)};color:white;">${capitalize(s.status)}</span>
+                <div style="color:#64748b">\${escapeHtml(s.advisorName||'')} \${s.sessionType? ' • '+capitalize(escapeHtml(s.sessionType)):''}</div>
+                <span class="session-status" style="font-size:0.8rem;padding:4px 8px;border-radius:12px;background:\${statusColor(s.status)};color:white;">\${capitalize(s.status)}</span>
               </div>
-              ${(s.status && (s.status.toLowerCase() === 'cancelled' || s.status.toLowerCase() === 'denied') && s.cancelReason) ? '<div style="color:#ef4444;font-size:0.8rem;margin-top:4px;"><i class="fas fa-exclamation-triangle"></i> '+escapeHtml(s.cancelReason)+'</div>' : ''}
+              \${(s.status && (s.status.toLowerCase() === 'cancelled' || s.status.toLowerCase() === 'denied') && s.cancelReason) ? '<div style="color:#ef4444;font-size:0.8rem;margin-top:4px;"><i class="fas fa-exclamation-triangle"></i> '+escapeHtml(s.cancelReason)+'</div>' : ''}
               <div style="display:flex;gap:8px;margin-top:8px;">
-                <button class="btn btn-sm btn-outline view-day-session" data-session="${s.sessionID}"><i class="fas fa-eye"></i> Details</button>
-                ${ (s.status||'').toLowerCase() === 'pending' ? '<button class="btn btn-sm btn-outline cancel-day-session" data-session="'+s.sessionID+'"><i class="fas fa-times"></i> Cancel</button>' : '' }
+                <button class="btn btn-sm btn-outline view-day-session" data-session="\${s.sessionID}"><i class="fas fa-eye"></i> Details</button>
+                \${ (s.status||'').toLowerCase() === 'pending' ? '<button class="btn btn-sm btn-outline cancel-day-session" data-session="'+s.sessionID+'"><i class="fas fa-times"></i> Cancel</button>' : '' }
               </div>
             `;
             list.appendChild(item);

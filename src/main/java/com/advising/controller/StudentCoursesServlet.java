@@ -93,4 +93,103 @@ public class StudentCoursesServlet extends HttpServlet {
             response.getWriter().write("{\"error\":\"Database error\"}");
         }
     }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        HttpSession session = request.getSession(false);
+        if (session == null || !"student".equals(session.getAttribute("role"))) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"error\":\"Not authenticated as student\"}");
+            return;
+        }
+
+        String studentID = String.valueOf(session.getAttribute("userID"));
+
+        try {
+            // Parse JSON body
+            StringBuilder sb = new StringBuilder();
+            String line;
+            try (java.io.BufferedReader reader = request.getReader()) {
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                }
+            }
+            JSONObject json = new JSONObject(sb.toString());
+
+            String courseID = json.optString("courseID", "").trim();
+            String courseName = json.optString("courseName", "").trim();
+            int creditHour = json.optInt("creditHour", 0);
+            int semester = json.optInt("semester", 0);
+            String program = json.optString("program", "").trim();
+            String status = json.optString("status", "ongoing").trim();
+            String grade = json.optString("grade", null);
+            if (grade != null && grade.trim().isEmpty()) {
+                grade = null;
+            }
+
+            if (courseID.isEmpty() || courseName.isEmpty() || creditHour <= 0 || semester <= 0) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"error\":\"Missing required fields\"}");
+                return;
+            }
+
+            try (Connection conn = DBConnection.getConnection()) {
+                // First, ensure the course exists in the course table
+                String checkCourseSql = "SELECT courseID FROM course WHERE courseID = ?";
+                boolean courseExists = false;
+                try (PreparedStatement checkPs = conn.prepareStatement(checkCourseSql)) {
+                    checkPs.setString(1, courseID);
+                    try (ResultSet rs = checkPs.executeQuery()) {
+                        courseExists = rs.next();
+                    }
+                }
+
+                // If course doesn't exist, insert it
+                if (!courseExists) {
+                    String insertCourseSql = "INSERT INTO course (courseID, name, creditHour, program) VALUES (?, ?, ?, ?)";
+                    try (PreparedStatement insertPs = conn.prepareStatement(insertCourseSql)) {
+                        insertPs.setString(1, courseID);
+                        insertPs.setString(2, courseName);
+                        insertPs.setInt(3, creditHour);
+                        insertPs.setString(4, program.isEmpty() ? "General" : program);
+                        insertPs.executeUpdate();
+                    }
+                }
+
+                // Now insert into student_progress
+                String insertProgressSql = "INSERT INTO student_progress (studentID, courseID, grade, status, semester) VALUES (?, ?, ?, ?, ?)";
+                try (PreparedStatement progressPs = conn.prepareStatement(insertProgressSql)) {
+                    progressPs.setString(1, studentID);
+                    progressPs.setString(2, courseID);
+                    progressPs.setString(3, grade);
+                    progressPs.setString(4, status);
+                    progressPs.setInt(5, semester);
+                    progressPs.executeUpdate();
+                }
+
+                // Return success
+                JSONObject success = new JSONObject();
+                success.put("success", true);
+                success.put("message", "Course added successfully");
+                response.getWriter().write(success.toString());
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                JSONObject err = new JSONObject();
+                err.put("error", "Database error: " + e.getMessage());
+                response.getWriter().write(err.toString());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            JSONObject err = new JSONObject();
+            err.put("error", "Server error: " + e.getMessage());
+            response.getWriter().write(err.toString());
+        }
+    }
 }

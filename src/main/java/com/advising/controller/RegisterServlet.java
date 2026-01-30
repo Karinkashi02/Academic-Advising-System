@@ -30,6 +30,56 @@ public class RegisterServlet extends HttpServlet {
         System.out.println("[RegisterServlet] incoming registration attempt: role=" + role + " username=" + username + " email=" + email + " firstName=" + firstName + " lastName=" + lastName);
 
         try (Connection conn = DBConnection.getConnection()) {
+            
+            // ============================================================
+            // CHECK FOR DUPLICATE USERNAME
+            // ============================================================
+            String checkUsernameSQL;
+            if ("student".equals(role)) {
+                // Check if username exists in student table
+                checkUsernameSQL = "SELECT username FROM student WHERE username = ?";
+            } else {
+                // Check if username exists in advisor table
+                checkUsernameSQL = "SELECT username FROM advisor WHERE username = ?";
+            }
+            
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkUsernameSQL)) {
+                checkStmt.setString(1, username);
+                ResultSet rs = checkStmt.executeQuery();
+                if (rs.next()) {
+                    // Username already exists
+                    System.out.println("[RegisterServlet] Username already exists: " + username);
+                    response.sendRedirect("index.jsp?error=username_exists");
+                    return;
+                }
+            }
+            
+            // ============================================================
+            // CHECK FOR DUPLICATE EMAIL
+            // ============================================================
+            String checkEmailSQL;
+            if ("student".equals(role)) {
+                // Check if email exists in student table
+                checkEmailSQL = "SELECT email FROM student WHERE email = ?";
+            } else {
+                // Check if email exists in advisor table
+                checkEmailSQL = "SELECT email FROM advisor WHERE email = ?";
+            }
+            
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkEmailSQL)) {
+                checkStmt.setString(1, email);
+                ResultSet rs = checkStmt.executeQuery();
+                if (rs.next()) {
+                    // Email already exists
+                    System.out.println("[RegisterServlet] Email already exists: " + email);
+                    response.sendRedirect("index.jsp?error=email_exists");
+                    return;
+                }
+            }
+            
+            // ============================================================
+            // PROCEED WITH REGISTRATION (username and email are unique)
+            // ============================================================
             String sql;
             if ("student".equals(role)) {
                 String advisorIDParam = request.getParameter("advisorID");
@@ -49,7 +99,7 @@ public class RegisterServlet extends HttpServlet {
                             if (rowsUpdated == 0) {
                                 // Advisor is full or doesn't exist
                                 System.out.println("[RegisterServlet] advisor update failed for advisorID=" + advisorID);
-                                response.sendRedirect("index.html?error=advisor_full");
+                                response.sendRedirect("index.jsp?error=advisor_full");
                                 return;
                             }
                         }
@@ -112,7 +162,7 @@ public class RegisterServlet extends HttpServlet {
                 ps.setString(11, officeloc);
                 ps.executeUpdate();
             }
-            response.sendRedirect("index.html?reg=success");
+            response.sendRedirect("index.jsp?reg=success");
         } catch (SQLException e) {
         e.printStackTrace();
         // Send detailed error to browser for debugging
